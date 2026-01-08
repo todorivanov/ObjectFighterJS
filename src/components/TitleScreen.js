@@ -230,11 +230,15 @@ export class TitleScreen extends BaseComponent {
         
         <div class="content">
           <div class="logo">
-            <h1 class="game-title">Object Fighter</h1>
-            <p class="subtitle">Battle Arena</p>
+            <h1 class="game-title">Legends of the Arena</h1>
+            <p class="subtitle">Rise to Glory</p>
           </div>
 
           <div class="menu-options">
+            <button class="menu-btn" id="story-btn">
+              <span class="btn-icon">📖</span>
+              Story Mode
+            </button>
             <button class="menu-btn" data-mode="single">
               <span class="btn-icon">⚔️</span>
               Single Combat
@@ -247,6 +251,10 @@ export class TitleScreen extends BaseComponent {
               <span class="btn-icon">🏆</span>
               Tournament
             </button>
+            <button class="menu-btn" id="marketplace-btn">
+              <span class="btn-icon">🏪</span>
+              Marketplace
+            </button>
             <button class="menu-btn" id="wiki-btn">
               <span class="btn-icon">📚</span>
               Game Wiki
@@ -254,7 +262,7 @@ export class TitleScreen extends BaseComponent {
           </div>
         </div>
 
-        <div class="version">v3.0.0</div>
+        <div class="version">v4.0.0</div>
       </div>
     `;
   }
@@ -274,6 +282,22 @@ export class TitleScreen extends BaseComponent {
     if (tournamentBtn) {
       tournamentBtn.addEventListener('click', () => {
         this.emit('tournament-selected');
+      });
+    }
+
+    // Story button
+    const storyBtn = this.shadowRoot.querySelector('#story-btn');
+    if (storyBtn) {
+      storyBtn.addEventListener('click', () => {
+        this.emit('story-selected');
+      });
+    }
+
+    // Marketplace button
+    const marketplaceBtn = this.shadowRoot.querySelector('#marketplace-btn');
+    if (marketplaceBtn) {
+      marketplaceBtn.addEventListener('click', () => {
+        this.emit('marketplace-selected');
       });
     }
 

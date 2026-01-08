@@ -1,6 +1,6 @@
 {
-  "name": "object-fighter",
-  "version": "3.0.0",
+  "name": "legends-of-the-arena",
+  "version": "4.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,9 +12,7 @@
   },
   "author": "Todor Ivanov",
   "license": "MIT",
-  "dependencies": {
-    "bootstrap": "^5.3.3"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@eslint/js": "^9.15.0",
     "eslint": "^9.15.0",
