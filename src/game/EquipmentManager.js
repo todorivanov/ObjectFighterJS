@@ -193,6 +193,13 @@ export class EquipmentManager {
     const drop = getRandomEquipmentDrop(playerLevel);
     
     if (this.addToInventory(drop.id)) {
+      // Track legendary collection achievement
+      if (drop.rarity === 'legendary') {
+        // Import will be added in game.js to avoid circular dependency
+        if (typeof window !== 'undefined' && window.AchievementManager) {
+          window.AchievementManager.trackLegendaryCollected(drop.rarity);
+        }
+      }
       // Show loot notification
       const rarityColors = {
         common: '#9e9e9e',

@@ -20,6 +20,7 @@ import { SaveManager } from './utils/saveManager.js';
 import { LevelingSystem } from './game/LevelingSystem.js';
 import { EquipmentManager } from './game/EquipmentManager.js';
 import { tournamentMode } from './game/TournamentMode.js';
+import { AchievementManager } from './game/AchievementManager.js';
 
 // Make bootstrap available globally if needed
 window.bootstrap = bootstrap;
@@ -117,9 +118,10 @@ function showTitleScreen() {
   root.appendChild(titleScreen);
   appState.currentScreen = 'title';
   
-  // Add Profile and Tournament buttons to title screen
+  // Add Profile, Tournament, and Achievements buttons to title screen
   addProfileButton();
   addTournamentButton();
+  addAchievementsButton();
 }
 
 /**
@@ -334,6 +336,75 @@ function addTournamentButton() {
   });
 
   document.body.appendChild(tournamentBtn);
+}
+
+/**
+ * Show achievements screen
+ */
+function showAchievementsScreen() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  const achievementsScreen = document.createElement('achievements-screen');
+  achievementsScreen.addEventListener('back-to-menu', () => {
+    appState.reset();
+    showTitleScreen();
+  });
+
+  root.appendChild(achievementsScreen);
+  appState.currentScreen = 'achievements';
+}
+
+/**
+ * Add achievements button overlay
+ */
+function addAchievementsButton() {
+  // Remove existing achievements button if any
+  const existingBtn = document.getElementById('achievements-overlay-btn');
+  if (existingBtn) {
+    existingBtn.remove();
+  }
+
+  const achievementsBtn = document.createElement('button');
+  achievementsBtn.id = 'achievements-overlay-btn';
+  achievementsBtn.innerHTML = '🏅 Achievements';
+  achievementsBtn.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 480px;
+    width: auto;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(26, 13, 46, 0.8);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 10000;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    font-family: 'Press Start 2P', cursive;
+  `;
+
+  achievementsBtn.addEventListener('click', () => {
+    soundManager.play('event');
+    showAchievementsScreen();
+  });
+
+  achievementsBtn.addEventListener('mouseenter', () => {
+    achievementsBtn.style.background = 'rgba(255, 215, 0, 0.3)';
+    achievementsBtn.style.borderColor = 'gold';
+    achievementsBtn.style.transform = 'translateY(-2px)';
+  });
+
+  achievementsBtn.addEventListener('mouseleave', () => {
+    achievementsBtn.style.background = 'rgba(26, 13, 46, 0.8)';
+    achievementsBtn.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+    achievementsBtn.style.transform = 'translateY(0)';
+  });
+
+  document.body.appendChild(achievementsBtn);
 }
 
 /**
@@ -603,6 +674,11 @@ function startBattle(fighters, tournamentInfo = null) {
  * Show victory screen
  */
 export function showVictoryScreen(winner) {
+  // Check achievements after every battle
+  setTimeout(() => {
+    AchievementManager.checkAchievements();
+  }, 1000);
+
   // Check if this is a tournament battle
   if (appState.tournamentActive) {
     // Check if the player won
@@ -774,3 +850,6 @@ if (document.readyState === 'loading') {
 
 // Export for game to show victory screen
 window.showVictoryScreen = showVictoryScreen;
+
+// Export AchievementManager globally for equipment tracking
+window.AchievementManager = AchievementManager;

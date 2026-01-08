@@ -304,12 +304,14 @@ Victory + Grand Prize
 7. ✅ Round transitions and victory celebrations
 8. ✅ Tournament defeat handling
 
-### **Sprint 4: Achievements & Difficulty** (Day 4-5)
-1. ✅ Achievement system
-2. ✅ Achievement tracking
-3. ✅ Achievement UI
-4. ✅ Difficulty levels
-5. ✅ AI scaling
+### **Sprint 4: Achievements & Difficulty** (Day 4-5) 🔄 IN PROGRESS
+1. ✅ Achievement system (AchievementManager)
+2. ✅ Achievement tracking (25 achievements across 4 categories)
+3. ✅ Achievement UI (AchievementsScreen component)
+4. ✅ Achievement notifications (in-game unlocks)
+5. ✅ Progress tracking (per-achievement progress bars)
+6. 🔄 Difficulty levels (TODO)
+7. 🔄 AI scaling (TODO)
 
 ### **Sprint 5: Polish & Content** (Day 5)
 1. ✅ Expanded skills (4 per class)
