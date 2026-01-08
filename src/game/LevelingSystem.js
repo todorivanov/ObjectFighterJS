@@ -178,20 +178,21 @@ export class LevelingSystem {
     const hpBonus = 1 + ((level - 1) * 0.05);
     const strBonus = 1 + ((level - 1) * 0.03);
     
-    // Apply bonuses
-    const bonusedFighter = {
-      ...fighter,
-      health: Math.floor(fighter.health * hpBonus),
-      maxHealth: Math.floor(fighter.health * hpBonus),
-      strength: Math.floor(fighter.strength * strBonus),
-    };
+    // Store original values for logging
+    const originalHealth = fighter.health;
+    const originalStrength = fighter.strength;
+    
+    // Apply bonuses directly to the fighter object (mutate in place)
+    fighter.health = Math.floor(fighter.health * hpBonus);
+    fighter.maxHealth = Math.floor(fighter.maxHealth * hpBonus);
+    fighter.strength = Math.floor(fighter.strength * strBonus);
     
     console.log(`💪 Applied level ${level} bonuses to ${fighter.name}:`, {
-      hp: `${fighter.health} → ${bonusedFighter.health}`,
-      str: `${fighter.strength} → ${bonusedFighter.strength}`,
+      hp: `${originalHealth} → ${fighter.health}`,
+      str: `${originalStrength} → ${fighter.strength}`,
     });
     
-    return bonusedFighter;
+    return fighter;
   }
 
   /**

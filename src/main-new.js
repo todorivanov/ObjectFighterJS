@@ -18,6 +18,7 @@ import { getFighters } from './api/mockFighters.js';
 import { Logger } from './utils/logger.js';
 import { SaveManager } from './utils/saveManager.js';
 import { LevelingSystem } from './game/LevelingSystem.js';
+import { EquipmentManager } from './game/EquipmentManager.js';
 
 // Make bootstrap available globally if needed
 window.bootstrap = bootstrap;
@@ -113,8 +114,9 @@ function showTitleScreen() {
   root.appendChild(titleScreen);
   appState.currentScreen = 'title';
   
-  // Add Profile button to title screen
+  // Add Profile and Equipment buttons to title screen
   addProfileButton();
+  addEquipmentButton();
 }
 
 /**
@@ -187,6 +189,75 @@ function addProfileButton() {
 }
 
 /**
+ * Show equipment screen
+ */
+function showEquipmentScreen() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  const equipmentScreen = document.createElement('equipment-screen');
+  equipmentScreen.addEventListener('back-to-menu', () => {
+    appState.reset();
+    showTitleScreen();
+  });
+
+  root.appendChild(equipmentScreen);
+  appState.currentScreen = 'equipment';
+}
+
+/**
+ * Add equipment button overlay
+ */
+function addEquipmentButton() {
+  // Remove existing equipment button if any
+  const existingBtn = document.getElementById('equipment-overlay-btn');
+  if (existingBtn) {
+    existingBtn.remove();
+  }
+
+  const equipmentBtn = document.createElement('button');
+  equipmentBtn.id = 'equipment-overlay-btn';
+  equipmentBtn.innerHTML = '⚔️ Equipment';
+  equipmentBtn.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 280px;
+    width: auto;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(26, 13, 46, 0.8);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 10000;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    font-family: 'Press Start 2P', cursive;
+  `;
+
+  equipmentBtn.addEventListener('click', () => {
+    soundManager.play('event');
+    showEquipmentScreen();
+  });
+
+  equipmentBtn.addEventListener('mouseenter', () => {
+    equipmentBtn.style.background = 'rgba(255, 167, 38, 0.3)';
+    equipmentBtn.style.borderColor = '#ffa726';
+    equipmentBtn.style.transform = 'translateY(-2px)';
+  });
+
+  equipmentBtn.addEventListener('mouseleave', () => {
+    equipmentBtn.style.background = 'rgba(26, 13, 46, 0.8)';
+    equipmentBtn.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+    equipmentBtn.style.transform = 'translateY(0)';
+  });
+
+  document.body.appendChild(equipmentBtn);
+}
+
+/**
  * Show opponent selection (player character is already determined)
  */
 function showOpponentSelection() {
@@ -223,7 +294,7 @@ function showOpponentSelection() {
 }
 
 /**
- * Create player fighter from character data with level bonuses
+ * Create player fighter from character data with level bonuses and equipment
  */
 function createPlayerFighter(characterData) {
   // Create base fighter
@@ -240,12 +311,15 @@ function createPlayerFighter(characterData) {
   // Mark as player character
   fighter.isPlayer = true;
   
-  // Apply level bonuses
-  const leveledFighter = LevelingSystem.applyLevelBonuses(fighter);
+  // Apply level bonuses (modifies fighter in place)
+  LevelingSystem.applyLevelBonuses(fighter);
   
-  console.log(`⚔️ Player Character: ${leveledFighter.name} (Lvl ${SaveManager.get('profile.level')}) - HP: ${leveledFighter.health}, STR: ${leveledFighter.strength}`);
+  // Apply equipment bonuses (modifies fighter in place)
+  EquipmentManager.applyEquipmentBonuses(fighter);
   
-  return leveledFighter;
+  console.log(`⚔️ Player Character: ${fighter.name} (Lvl ${SaveManager.get('profile.level')}) - HP: ${fighter.health}, STR: ${fighter.strength}`);
+  
+  return fighter;
 }
 
 /**

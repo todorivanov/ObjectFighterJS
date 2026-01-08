@@ -10,6 +10,7 @@ import { TurnManager } from './TurnManager.js';
 import { soundManager } from '../utils/soundManager.js';
 import { SaveManager } from '../utils/saveManager.js';
 import { LevelingSystem } from './LevelingSystem.js';
+import { EquipmentManager } from './EquipmentManager.js';
 
 const ROUND_INTERVAL = 1500;
 const AI_TURN_DELAY = 1200;
@@ -237,6 +238,13 @@ export default class Game {
           SaveManager.update('stats.bestStreak', SaveManager.get('stats.winStreak'));
         }
         LevelingSystem.awardXP(xpReward, 'Victory in Single Combat');
+        
+        // Award random equipment drop (50% chance)
+        if (Math.random() < 0.5) {
+          setTimeout(() => {
+            EquipmentManager.awardRandomDrop();
+          }, 1000);
+        }
       } else {
         // Player lost
         SaveManager.increment('stats.totalLosses');
