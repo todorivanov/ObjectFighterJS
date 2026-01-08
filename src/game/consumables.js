@@ -37,7 +37,7 @@ export default class Consumable {
     }
 
     static getConsumable() {
-        let rndNumber = Math.floor((Math.random() * 40) + 1);
+        const rndNumber = Math.floor((Math.random() * 40) + 1);
 
         if(rndNumber > 20) {
             return Consumable.getPotions()[Helpers.getRandomNumber(0,2)];

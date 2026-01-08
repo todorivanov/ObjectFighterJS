@@ -11,7 +11,7 @@ export default class GameEvent {
         this.isTeamEvent = eventObject.isTeamEvent;
         this.isGlobal = eventObject.isGlobal;
         this.logEvent = function () {
-            let msg = `<div><h5>${this.description}</h5></div>`;
+            const msg = `<div><h5>${this.description}</h5></div>`;
             Logger.log(msg);
         }
     }
@@ -25,8 +25,8 @@ export default class GameEvent {
                 isGlobal: true,
                 description: 'A giant earthquake that shakes the earth. -100HP for all fighters on the field.',
                 effect: function (objs) {
-                    for(let obj of objs) {
-                        let msg = `${obj.name} loses 100HP because of the earthquake.`;
+                    for(const obj of objs) {
+                        const msg = `${obj.name} loses 100HP because of the earthquake.`;
                         obj.health -= 100;
                         Logger.log(msg);
                     }
@@ -40,10 +40,10 @@ export default class GameEvent {
                 isTeamEvent: true,
                 description: 'A full moon is in the sky. Wild animals attack the camp. All fighters from one of the teams lose half of their HP',
                 effect: function (objs) {
-                    for(let obj of objs) {
-                        let lostHealth = Math.round(obj.health / 2);
+                    for(const obj of objs) {
+                        const lostHealth = Math.round(obj.health / 2);
                         obj.health -= lostHealth;
-                        let msg = `${obj.name} loses ${lostHealth}HP because of the animal attack.`;
+                        const msg = `${obj.name} loses ${lostHealth}HP because of the animal attack.`;
                         Logger.log(msg);
                     }
                 }
@@ -56,8 +56,8 @@ export default class GameEvent {
                 isTeamEvent: true,
                 description: 'The food of the team has been poisoned. Each fighter will loose 20HP for every turn until the event ends',
                 effect: function (objs) {
-                    for(let obj of objs) {
-                        let msg = `${obj.name} loses 20HP because of the food poisoning.`;
+                    for(const obj of objs) {
+                        const msg = `${obj.name} loses 20HP because of the food poisoning.`;
                         obj.health -= 20;
                         Logger.log(msg);
                     }

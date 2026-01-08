@@ -3,7 +3,7 @@ import {Fighter} from "../entities/fighter";
 export function getFighters() {
    return new Promise((resolve) => {
        setTimeout(() => {
-           let fighters =  [
+           const fighters =  [
                new Fighter({
                    id: 1,
                    name: 'Gosho',

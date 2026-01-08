@@ -1,58 +1,203 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
 }
 
-.round-summary, .attack-div {
-  border-left: 1px solid gray;
-  border-right: 1px solid gray;
+.container {
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  margin: 20px auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  max-width: 1200px;
+}
+
+/* Game Mode Selection */
+.choose-game-mode {
+  padding: 40px;
+}
+
+.choose-game-mode h1 {
+  color: #667eea;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Combat Log Styling */
+#log {
+  max-height: 600px;
+  overflow-y: auto;
+  margin-top: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px solid #dee2e6;
+}
+
+.round-summary,
+.attack-div {
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  border-left: 4px solid #6c757d;
+  background: white;
 }
 
 .attack-div {
-  border-bottom: 1px solid gray;
+  border-bottom: 1px solid #dee2e6;
 }
 
 .normal-attack {
-  background-color: beige;
+  background-color: #fff3cd;
+  border-left-color: #ffc107;
 }
 
 .special-attack {
-  background-color: lightcoral;
+  background-color: #f8d7da;
+  border-left-color: #dc3545;
+  font-weight: bold;
 }
 
 .missed-attack {
-  background-color: green;
-}
-
-.details-holder {
-  text-align: left;
-  border: 1px solid gray;
-  width: 45%;
-  display: inline-block;
-  cursor: pointer;
-}
-
-.img {
-  height: 100%;
-}
-
-.img img {
-  max-width: 50px;
+  background-color: #d1ecf1;
+  border-left-color: #17a2b8;
 }
 
 .consumable {
-  background-color: cadetblue;
+  background-color: #d4edda;
+  border-left-color: #28a745;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
 }
 
-.team-one, .team-two {
-  width: 400px;
-  height: 200px;
-  border: 1px solid gray;
+.intro-div,
+.winner-div {
+  padding: 20px;
+  margin: 15px 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Fighter Cards */
+.details-holder {
+  text-align: left;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  width: 48%;
+  display: inline-block;
+  cursor: pointer;
+  margin: 5px;
+  padding: 10px;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.details-holder:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  border-color: #667eea;
+}
+
+.details-holder .img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.details-holder .img img {
+  max-width: 80px;
+  max-height: 80px;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+/* Team Areas */
+.team-one,
+.team-two {
+  min-height: 200px;
+  border: 2px dashed #6c757d;
+  border-radius: 8px;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.team-one:hover,
+.team-two:hover {
+  background: #e9ecef;
+  border-color: #667eea;
 }
 
 .team-holder {
-  border: 1px solid gray;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
   width: 49%;
   display: inline-block;
+  padding: 15px;
+  margin: 5px;
+  background: #f8f9fa;
+}
+
+/* Buttons */
+.btn {
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.reset-game {
+  float: right;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .details-holder {
+    width: 100%;
+  }
+
+  .team-holder {
+    width: 100%;
+    display: block;
+  }
+
+  .choose-game-mode .btn {
+    display: block;
+    width: 100%;
+    margin: 10px 0 !important;
+  }
+}
+
+/* Scrollbar Styling */
+#log::-webkit-scrollbar {
+  width: 10px;
+}
+
+#log::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 5px;
+}
+
+#log::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 5px;
+}
+
+#log::-webkit-scrollbar-thumb:hover {
+  background: #764ba2;
 }
