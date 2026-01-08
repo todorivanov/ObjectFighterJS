@@ -128,6 +128,18 @@ function showTitleScreen() {
     showWikiScreen();
   });
 
+  titleScreen.addEventListener('story-selected', () => {
+    soundManager.init();
+    soundManager.play('event');
+    showCampaignMapScreen();
+  });
+
+  titleScreen.addEventListener('marketplace-selected', () => {
+    soundManager.init();
+    soundManager.play('event');
+    showMarketplaceScreen();
+  });
+
   root.appendChild(titleScreen);
   appState.currentScreen = 'title';
   
@@ -314,6 +326,71 @@ function showWikiScreen() {
 
   root.appendChild(wiki);
   appState.currentScreen = 'wiki';
+}
+
+/**
+ * Show campaign map screen
+ */
+function showCampaignMapScreen() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  const campaignMap = document.createElement('campaign-map');
+
+  campaignMap.addEventListener('close', () => {
+    showTitleScreen();
+  });
+
+  campaignMap.addEventListener('mission-selected', (e) => {
+    const { missionId } = e.detail;
+    showMissionBriefing(missionId);
+  });
+
+  root.appendChild(campaignMap);
+  appState.currentScreen = 'campaign';
+}
+
+/**
+ * Show mission briefing screen
+ */
+function showMissionBriefing(missionId) {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  const briefing = document.createElement('mission-briefing');
+  briefing.mission = missionId;
+
+  briefing.addEventListener('cancel', () => {
+    showCampaignMapScreen();
+  });
+
+  briefing.addEventListener('start-mission', (e) => {
+    // TODO: Start the story mission
+    console.log('Starting mission:', e.detail.missionId);
+    soundManager.play('event');
+    // For now, just go back to campaign map
+    // This will need to be connected to the combat system
+    showCampaignMapScreen();
+  });
+
+  root.appendChild(briefing);
+}
+
+/**
+ * Show marketplace screen
+ */
+function showMarketplaceScreen() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  const marketplace = document.createElement('marketplace-screen');
+
+  marketplace.addEventListener('close', () => {
+    showTitleScreen();
+  });
+
+  root.appendChild(marketplace);
+  appState.currentScreen = 'marketplace';
 }
 
 /**
