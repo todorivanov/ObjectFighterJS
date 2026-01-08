@@ -20,7 +20,7 @@ export function getFighters() {
         new Fighter({
           id: 1,
           name: 'Gosho',
-          health: 1000,
+          health: 400,
           strength: 10,
           image: getAvatarUrl('gosho'),
           description:
@@ -30,7 +30,7 @@ export function getFighters() {
         new Fighter({
           id: 2,
           name: 'Ivan',
-          health: 800,
+          health: 300,
           strength: 20,
           image: getAvatarUrl('ivan'),
           description:
@@ -40,7 +40,7 @@ export function getFighters() {
         new Fighter({
           id: 3,
           name: 'Petar',
-          health: 900,
+          health: 350,
           strength: 11,
           image: getAvatarUrl('petar'),
           description:
@@ -50,7 +50,7 @@ export function getFighters() {
         new Fighter({
           id: 4,
           name: 'Jivko',
-          health: 2000,
+          health: 600,
           strength: 4,
           image: getAvatarUrl('jivko'),
           description:
@@ -60,7 +60,7 @@ export function getFighters() {
         new Fighter({
           id: 5,
           name: 'Bobba',
-          health: 1500,
+          health: 500,
           strength: 6,
           image: getAvatarUrl('bobba'),
           description: 'Durable bruiser with high HP and moderate damage. Reliable in long fights.',
@@ -69,7 +69,7 @@ export function getFighters() {
         new Fighter({
           id: 6,
           name: 'Viktor',
-          health: 850,
+          health: 300,
           strength: 18,
           image: getAvatarUrl('viktor'),
           description: 'Aggressive striker who overwhelms enemies with rapid, powerful blows.',
@@ -78,7 +78,7 @@ export function getFighters() {
         new Fighter({
           id: 7,
           name: 'Marina',
-          health: 1100,
+          health: 400,
           strength: 9,
           image: getAvatarUrl('marina'),
           description: 'Tactical fighter with solid defense and consistent damage output.',
@@ -87,7 +87,7 @@ export function getFighters() {
         new Fighter({
           id: 8,
           name: 'Dimitri',
-          health: 1800,
+          health: 550,
           strength: 5,
           image: getAvatarUrl('dimitri'),
           description:
@@ -97,7 +97,7 @@ export function getFighters() {
         new Fighter({
           id: 9,
           name: 'Svetlana',
-          health: 950,
+          health: 350,
           strength: 13,
           image: getAvatarUrl('svetlana'),
           description: 'Versatile combatant excelling in both offense and mobility.',
@@ -106,7 +106,7 @@ export function getFighters() {
         new Fighter({
           id: 10,
           name: 'Nikolai',
-          health: 1200,
+          health: 450,
           strength: 8,
           image: getAvatarUrl('nikolai'),
           description: 'Steady brawler who wears down enemies with relentless pressure.',

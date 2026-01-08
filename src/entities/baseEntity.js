@@ -131,7 +131,7 @@ export class BaseEntity {
    * Use healing item
    */
   useItem() {
-    const healAmount = 50;
+    const healAmount = 30;
     this.health = Math.min(this.maxHealth, this.health + healAmount);
     const msg = `<div class="consumable text-center">🧪 <strong>${this.name}</strong> used a healing potion! <span class="badge bg-success">+${healAmount} HP</span></div>`;
     Logger.log(msg);

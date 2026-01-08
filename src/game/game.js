@@ -8,6 +8,8 @@ import { CombatEngine } from './CombatEngine.js';
 import { hudManager } from '../utils/hudManager.js';
 import { TurnManager } from './TurnManager.js';
 import { soundManager } from '../utils/soundManager.js';
+import { SaveManager } from '../utils/saveManager.js';
+import { LevelingSystem } from './LevelingSystem.js';
 
 const ROUND_INTERVAL = 1500;
 const AI_TURN_DELAY = 1200;
@@ -131,15 +133,23 @@ export default class Game {
       
       // Declare opponent as winner
       setTimeout(() => {
-        Referee.declareWinner(defender);
-        hudManager.showWinner(defender);
+      Referee.declareWinner(defender);
+      hudManager.showWinner(defender);
+      
+      // Track loss from surrender
+      SaveManager.increment('stats.totalLosses');
+      SaveManager.increment('stats.totalFightsPlayed');
+      SaveManager.update('stats.winStreak', 0); // Reset streak
+      
+      // Small XP for attempt
+      LevelingSystem.awardXP(25, 'Battle Participation');
         
-        // Show victory screen for opponent
-        setTimeout(() => {
-          if (window.showVictoryScreen) {
-            window.showVictoryScreen(defender);
-          }
-        }, 2000);
+      // Show victory screen for opponent
+      setTimeout(() => {
+        if (window.showVictoryScreen) {
+          window.showVictoryScreen(defender);
+        }
+      }, 2000);
       }, 1000);
       return;
     }
@@ -196,6 +206,17 @@ export default class Game {
       hudManager.showWinner(result.winner);
       // Remove any existing action-selection components
       document.querySelectorAll('action-selection').forEach(el => el.remove());
+      
+      // Award XP for victory
+      const xpReward = 100; // Base XP for single fight victory
+      SaveManager.increment('stats.totalWins');
+      SaveManager.increment('stats.totalFightsPlayed');
+      SaveManager.increment('stats.winStreak');
+      const bestStreak = SaveManager.get('stats.bestStreak') || 0;
+      if (SaveManager.get('stats.winStreak') > bestStreak) {
+        SaveManager.update('stats.bestStreak', SaveManager.get('stats.winStreak'));
+      }
+      LevelingSystem.awardXP(xpReward, 'Victory in Single Combat');
       
       // Show victory screen after delay
       setTimeout(() => {
@@ -320,6 +341,17 @@ export default class Game {
       if (result) {
         Referee.declareWinningTeam(result.winner);
         gameState.stop();
+        
+        // Award XP for team victory (more than single fight)
+        const xpReward = 150; // Higher XP for team matches
+        SaveManager.increment('stats.totalWins');
+        SaveManager.increment('stats.totalFightsPlayed');
+        SaveManager.increment('stats.winStreak');
+        const bestStreak = SaveManager.get('stats.bestStreak') || 0;
+        if (SaveManager.get('stats.winStreak') > bestStreak) {
+          SaveManager.update('stats.bestStreak', SaveManager.get('stats.winStreak'));
+        }
+        LevelingSystem.awardXP(xpReward, 'Victory in Team Battle');
         
         // Show victory screen
         setTimeout(() => {

@@ -15,6 +15,8 @@ import { Team } from './entities/team.js';
 import { soundManager } from './utils/soundManager.js';
 import { getFighters } from './api/mockFighters.js';
 import { Logger } from './utils/logger.js';
+import { SaveManager } from './utils/saveManager.js';
+import { LevelingSystem } from './game/LevelingSystem.js';
 
 // Make bootstrap available globally if needed
 window.bootstrap = bootstrap;
@@ -39,7 +41,11 @@ const appState = {
  * Initialize the application
  */
 function initApp() {
-  console.log('🎮 Object Fighter v2.4.0 - Initializing...');
+  console.log('🎮 Object Fighter v3.0.0 - Initializing...');
+  
+  // Initialize save system
+  const saveData = SaveManager.load();
+  console.log(`💾 Save data loaded. Player Level: ${saveData.profile.level}`);
   
   // Load fighters data
   getFighters().then((fighters) => {
@@ -72,6 +78,78 @@ function showTitleScreen() {
 
   root.appendChild(titleScreen);
   appState.currentScreen = 'title';
+  
+  // Add Profile button to title screen
+  addProfileButton();
+}
+
+/**
+ * Show profile screen
+ */
+function showProfileScreen() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  const profileScreen = document.createElement('profile-screen');
+  profileScreen.addEventListener('back-to-menu', () => {
+    appState.reset();
+    showTitleScreen();
+  });
+
+  root.appendChild(profileScreen);
+  appState.currentScreen = 'profile';
+}
+
+/**
+ * Add profile button overlay
+ */
+function addProfileButton() {
+  // Remove existing profile button if any
+  const existingBtn = document.getElementById('profile-overlay-btn');
+  if (existingBtn) {
+    existingBtn.remove();
+  }
+
+  const profileBtn = document.createElement('button');
+  profileBtn.id = 'profile-overlay-btn';
+  profileBtn.innerHTML = '👤 Profile';
+  profileBtn.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 140px;
+    width: auto;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(26, 13, 46, 0.8);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 10000;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    font-family: 'Press Start 2P', cursive;
+  `;
+
+  profileBtn.addEventListener('click', () => {
+    soundManager.play('event');
+    showProfileScreen();
+  });
+
+  profileBtn.addEventListener('mouseenter', () => {
+    profileBtn.style.background = 'rgba(255, 167, 38, 0.3)';
+    profileBtn.style.borderColor = '#ffa726';
+    profileBtn.style.transform = 'translateY(-2px)';
+  });
+
+  profileBtn.addEventListener('mouseleave', () => {
+    profileBtn.style.background = 'rgba(26, 13, 46, 0.8)';
+    profileBtn.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+    profileBtn.style.transform = 'translateY(0)';
+  });
+
+  document.body.appendChild(profileBtn);
 }
 
 /**
