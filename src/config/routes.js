@@ -79,6 +79,9 @@ export const RoutePaths = {
   MARKETPLACE: '/marketplace',
   EQUIPMENT: '/equipment',
 
+  // Save management
+  SAVE_MANAGEMENT: '/save-management',
+
   // Future routes (for upcoming features)
   TRAINING: '/training',
   CRAFTING: '/crafting',
