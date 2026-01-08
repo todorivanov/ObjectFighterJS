@@ -1,23 +1,82 @@
 let logElement = null;
+let autoScrollEnabled = localStorage.getItem('autoScrollEnabled') !== 'false'; // Default to true
 
 export class Logger {
+  /**
+   * Set auto-scroll enabled state
+   * @param {boolean} enabled
+   */
+  static setAutoScroll(enabled) {
+    autoScrollEnabled = enabled;
+    console.log('📜 Logger auto-scroll:', enabled ? 'ENABLED' : 'DISABLED');
+  }
+
+  /**
+   * Get current auto-scroll state
+   * @returns {boolean}
+   */
+  static isAutoScrollEnabled() {
+    return autoScrollEnabled;
+  }
+
   static setLogHolder(el) {
     logElement = typeof el === 'string' ? document.querySelector(el) : el;
+    
+    // If not found in main document, check inside combat-arena shadow DOM
+    if (!logElement) {
+      const arena = document.querySelector('combat-arena');
+      if (arena && arena.shadowRoot) {
+        logElement = arena.shadowRoot.querySelector('#log');
+      }
+    }
+    
     console.log('Logger initialized:', logElement ? 'Found log element' : 'Log element not found');
   }
 
   static log(message) {
     // Try to find log element if not set
     if (!logElement) {
-      logElement = document.querySelector('#log');
+      // Check in combat-arena shadow DOM first
+      const arena = document.querySelector('combat-arena');
+      if (arena && arena.shadowRoot) {
+        logElement = arena.shadowRoot.querySelector('#log');
+        console.log('🔍 Found log element in arena shadow DOM');
+      }
+      
+      // Fallback to regular document query
+      if (!logElement) {
+        logElement = document.querySelector('#log');
+        if (logElement) {
+          console.log('🔍 Found log element in main document');
+        }
+      }
     }
     
     if (logElement) {
       logElement.insertAdjacentHTML('beforeend', message);
-      // Auto-scroll to bottom
-      logElement.scrollTop = logElement.scrollHeight;
+      
+      // Auto-scroll to bottom only if enabled
+      if (autoScrollEnabled) {
+        // Find container in shadow DOM
+        const arena = document.querySelector('combat-arena');
+        const container = arena?.shadowRoot?.querySelector('.combat-log-container');
+        
+        if (container) {
+          // Scroll container to bottom
+          requestAnimationFrame(() => {
+            container.scrollTop = container.scrollHeight;
+          });
+        } else {
+          // Fallback: try to scroll the log element itself
+          requestAnimationFrame(() => {
+            logElement.scrollTop = logElement.scrollHeight;
+          });
+        }
+      }
     } else {
-      console.warn('Log element not found, message:', message);
+      console.warn('❌ Log element not found, message:', message.substring(0, 100));
+      console.warn('Arena exists:', !!document.querySelector('combat-arena'));
+      console.warn('Arena has shadowRoot:', !!document.querySelector('combat-arena')?.shadowRoot);
     }
   }
 

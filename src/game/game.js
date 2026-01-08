@@ -7,14 +7,32 @@ import { EventManager } from './EventManager.js';
 import { CombatEngine } from './CombatEngine.js';
 import { hudManager } from '../utils/hudManager.js';
 import { TurnManager } from './TurnManager.js';
+import { soundManager } from '../utils/soundManager.js';
 
 const ROUND_INTERVAL = 1500;
 const AI_TURN_DELAY = 1200;
 
 // Game instance state manager
 let gameState = null;
+let autoBattleEnabled = false;
 
 export default class Game {
+  /**
+   * Enable or disable auto-battle mode
+   * @param {boolean} enabled
+   */
+  static setAutoBattle(enabled) {
+    autoBattleEnabled = enabled;
+    console.log('🤖 Auto Battle:', enabled ? 'ENABLED' : 'DISABLED');
+    
+    // Log to combat log
+    const message = enabled 
+      ? '<div class="attack-div text-center" style="background: rgba(0, 230, 118, 0.2); border-left-color: #00e676;">🤖 <strong>Auto Battle ENABLED</strong> - AI will control both fighters</div>'
+      : '<div class="attack-div text-center" style="background: rgba(255, 167, 38, 0.2); border-left-color: #ffa726;">🎮 <strong>Auto Battle DISABLED</strong> - Manual control resumed</div>';
+    
+    Logger.log(message);
+    soundManager.play('event');
+  }
   /**
    * Start a 1v1 fighter match with turn-based combat
    * @param {Object} firstFighter - First fighter (player)
@@ -64,13 +82,22 @@ export default class Game {
         firstFighter.tickSkillCooldowns();
         hudManager.update();
 
-        // Player's turn - wait for input using Web Component
-        const actionSelection = document.createElement('action-selection');
-        actionSelection.fighter = firstFighter;
-        actionSelection.addEventListener('action-selected', (e) => {
-          this.executeAction(firstFighter, secondFighter, e.detail, turnManager, processTurn);
-        });
-        document.body.appendChild(actionSelection);
+        // Check if auto-battle is enabled
+        if (autoBattleEnabled) {
+          // Auto-battle: AI chooses action for player
+          setTimeout(() => {
+            const aiActionData = this.chooseAIAction(firstFighter);
+            this.executeAction(firstFighter, secondFighter, aiActionData, turnManager, processTurn);
+          }, AI_TURN_DELAY);
+        } else {
+          // Manual: Player's turn - wait for input using Web Component
+          const actionSelection = document.createElement('action-selection');
+          actionSelection.fighter = firstFighter;
+          actionSelection.addEventListener('action-selected', (e) => {
+            this.executeAction(firstFighter, secondFighter, e.detail, turnManager, processTurn);
+          });
+          document.body.appendChild(actionSelection);
+        }
       } else {
         // Process status effects at turn start
         secondFighter.processStatusEffects();
@@ -94,6 +121,28 @@ export default class Game {
    */
   static executeAction(attacker, defender, actionData, turnManager, callback) {
     const action = actionData.action || actionData;
+
+    // Handle surrender
+    if (action === 'surrender') {
+      Logger.log(`<div class="attack-div text-center" style="background: #f8d7da; border-left-color: #ff1744;">🏳️ <strong>${attacker.name}</strong> has surrendered!</div>`);
+      
+      // Remove action selection
+      document.querySelectorAll('action-selection').forEach(el => el.remove());
+      
+      // Declare opponent as winner
+      setTimeout(() => {
+        Referee.declareWinner(defender);
+        hudManager.showWinner(defender);
+        
+        // Show victory screen for opponent
+        setTimeout(() => {
+          if (window.showVictoryScreen) {
+            window.showVictoryScreen(defender);
+          }
+        }, 2000);
+      }, 1000);
+      return;
+    }
 
     switch(action) {
       case 'attack':
@@ -147,6 +196,13 @@ export default class Game {
       hudManager.showWinner(result.winner);
       // Remove any existing action-selection components
       document.querySelectorAll('action-selection').forEach(el => el.remove());
+      
+      // Show victory screen after delay
+      setTimeout(() => {
+        if (window.showVictoryScreen) {
+          window.showVictoryScreen(result.winner);
+        }
+      }, 2000);
       return;
     }
 
@@ -223,32 +279,21 @@ export default class Game {
     this.stopGame();
     gameState = new GameStateManager();
 
-    // Show combat view and hide fighter selection
-    const selectionView = document.querySelector('.fighter-selection-view');
-    const combatView = document.querySelector('.combat-view');
-    
-    if (selectionView) {
-      selectionView.style.display = 'none';
-    }
-    if (combatView) {
-      combatView.style.display = 'block';
-    }
-
     Logger.clearLog();
+    
+    // Create team summary display
+    this.displayTeamSummary(teamOne, teamTwo);
+    
     Referee.introduceTeams(teamOne, teamTwo);
 
-    // Attach reset button for combat view
-    const resetBtn = document.querySelector('.reset-game-combat');
-    if (resetBtn && !resetBtn.hasAttribute('data-listener-attached')) {
-      resetBtn.addEventListener('click', function() {
-        Game.stopGame();
-        window.location.reload();
-      });
-      resetBtn.setAttribute('data-listener-attached', 'true');
-    }
-
+    let roundCount = 0;
     const intervalId = setInterval(() => {
-      Referee.showRoundNumber();
+      roundCount++;
+      
+      // Show round number
+      const roundMsg = `<div class="round-announcement" style="background: linear-gradient(135deg, #6a42c2, #ffa726); color: white; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; border-radius: 12px; margin: 15px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">⚔️ ROUND ${roundCount} ⚔️</div>`;
+      Logger.log(roundMsg);
+      
       const randomNumber = Helpers.getRandomNumber(0, 1001);
 
       // Process random events (higher threshold for team matches)
@@ -267,18 +312,109 @@ export default class Game {
         CombatEngine.processTeamCombat(teamTwo, teamOne);
       }
 
-      // Display round summary
-      Referee.matchRoundSummary(teamOne, teamTwo);
+      // Display round summary with health bars
+      this.displayTeamHealthSummary(teamOne, teamTwo);
 
       // Check victory condition
       const result = CombatEngine.checkVictoryCondition(teamOne, teamTwo, true);
       if (result) {
         Referee.declareWinningTeam(result.winner);
         gameState.stop();
+        
+        // Show victory screen
+        setTimeout(() => {
+          if (window.showVictoryScreen) {
+            // For team match, show first fighter of winning team
+            const winningFighter = result.winner.fighters[0];
+            window.showVictoryScreen(winningFighter);
+          }
+        }, 2000);
       }
     }, ROUND_INTERVAL);
 
     gameState.setIntervalId(intervalId);
+  }
+
+  /**
+   * Display team summary at start
+   */
+  static displayTeamSummary(teamOne, teamTwo) {
+    const team1List = teamOne.fighters.map(f => `<span style="color: #00e676;">⚔️ ${f.name}</span>`).join(', ');
+    const team2List = teamTwo.fighters.map(f => `<span style="color: #ffa726;">⚔️ ${f.name}</span>`).join(', ');
+    
+    const summaryMsg = `
+      <div style="background: linear-gradient(145deg, rgba(42, 26, 71, 0.8), rgba(26, 13, 46, 0.9)); border: 2px solid rgba(106, 66, 194, 0.5); border-radius: 16px; padding: 25px; margin: 20px 0; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
+        <h3 style="text-align: center; color: #ffa726; font-size: 28px; margin: 0 0 20px 0; text-transform: uppercase;">⚔️ Team Battle ⚔️</h3>
+        <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center;">
+          <div style="text-align: right;">
+            <h4 style="color: #00e676; font-size: 20px; margin: 0 0 10px 0;">💚 ${teamOne.name}</h4>
+            <div style="color: white; line-height: 1.6;">${team1List}</div>
+          </div>
+          <div style="font-size: 40px; color: #ffa726;">VS</div>
+          <div style="text-align: left;">
+            <h4 style="color: #ffa726; font-size: 20px; margin: 0 0 10px 0;">🧡 ${teamTwo.name}</h4>
+            <div style="color: white; line-height: 1.6;">${team2List}</div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    Logger.log(summaryMsg);
+  }
+
+  /**
+   * Display team health summary
+   */
+  static displayTeamHealthSummary(teamOne, teamTwo) {
+    const team1Fighters = teamOne.fighters.map(f => {
+      // Ensure health values are valid numbers
+      const currentHealth = isNaN(f.health) ? 0 : Math.max(0, Math.round(f.health));
+      const maxHealth = isNaN(f.maxHealth) || f.maxHealth === 0 ? 100 : f.maxHealth;
+      const healthPercent = Math.max(0, Math.min(100, (currentHealth / maxHealth) * 100));
+      const healthColor = healthPercent > 60 ? '#00e676' : healthPercent > 30 ? '#ffc107' : '#ff1744';
+      const status = currentHealth > 0 ? '💚' : '💀';
+      
+      return `
+        <div style="margin: 5px 0;">
+          ${status} <strong>${f.name}</strong>: 
+          <span style="color: ${healthColor};">${currentHealth} HP</span>
+        </div>
+      `;
+    }).join('');
+
+    const team2Fighters = teamTwo.fighters.map(f => {
+      // Ensure health values are valid numbers
+      const currentHealth = isNaN(f.health) ? 0 : Math.max(0, Math.round(f.health));
+      const maxHealth = isNaN(f.maxHealth) || f.maxHealth === 0 ? 100 : f.maxHealth;
+      const healthPercent = Math.max(0, Math.min(100, (currentHealth / maxHealth) * 100));
+      const healthColor = healthPercent > 60 ? '#00e676' : healthPercent > 30 ? '#ffc107' : '#ff1744';
+      const status = currentHealth > 0 ? '🧡' : '💀';
+      
+      return `
+        <div style="margin: 5px 0;">
+          ${status} <strong>${f.name}</strong>: 
+          <span style="color: ${healthColor};">${currentHealth} HP</span>
+        </div>
+      `;
+    }).join('');
+
+    const summaryMsg = `
+      <div style="background: rgba(0, 0, 0, 0.3); border-radius: 12px; padding: 20px; margin: 15px 0; border-left: 4px solid #6a42c2;">
+        <h4 style="text-align: center; color: #b39ddb; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 2px;">📊 Team Status</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div>
+            <h5 style="color: #00e676; margin: 0 0 10px 0;">💚 ${teamOne.name}</h5>
+            ${team1Fighters}
+          </div>
+          <div>
+            <h5 style="color: #ffa726; margin: 0 0 10px 0;">🧡 ${teamTwo.name}</h5>
+            ${team2Fighters}
+          </div>
+        </div>
+      </div>
+    `;
+    
+    Logger.log(summaryMsg);
   }
 
   /**

@@ -29,26 +29,25 @@ export class HUDManager {
       existingHUD.remove();
     }
 
-    // Hide fighter selection view and show combat view
-    const selectionView = document.querySelector('.fighter-selection-view');
-    const combatView = document.querySelector('.combat-view');
+    // Find HUD area in combat arena
+    const arena = document.querySelector('combat-arena');
+    let hudArea = null;
     
-    if (selectionView) {
-      selectionView.style.display = 'none';
-    }
-    if (combatView) {
-      combatView.style.display = 'flex';
+    if (arena && arena.shadowRoot) {
+      hudArea = arena.shadowRoot.querySelector('#hud-area');
     }
 
-    const gameContent = document.querySelector('.game-content');
-    if (!gameContent) return;
+    // Fallback to old method if arena not found
+    if (!hudArea) {
+      hudArea = document.querySelector('.game-content') || document.body;
+    }
 
     // Create HUD Web Component
     const hud = document.createElement('fighter-hud');
     hud.fighter1 = this.fighter1;
     hud.fighter2 = this.fighter2;
     
-    gameContent.insertBefore(hud, gameContent.firstChild);
+    hudArea.appendChild(hud);
     this.hudElement = hud;
   }
 

@@ -10,6 +10,10 @@ export { StatusEffectIcon } from './StatusEffectIcon.js';
 export { TurnIndicator } from './TurnIndicator.js';
 export { ComboIndicator } from './ComboIndicator.js';
 export { FighterHUD } from './FighterHUD.js';
+export { TitleScreen } from './TitleScreen.js';
+export { FighterGallery } from './FighterGallery.js';
+export { VictoryScreen } from './VictoryScreen.js';
+export { CombatArena } from './CombatArena.js';
 
 // Auto-register all components by importing this file
 console.log('✅ All Web Components registered');

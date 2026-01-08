@@ -22,23 +22,25 @@ export class TurnIndicator extends BaseComponent {
     return `
       :host {
         position: fixed;
-        top: 50%;
+        top: 30%;
         left: 50%;
         transform: translate(-50%, -50%);
-        z-index: 2000;
+        z-index: 10000;
         pointer-events: none;
       }
 
       .turn-indicator {
-        background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+        background: linear-gradient(135deg, rgba(106, 66, 194, 0.95), rgba(255, 167, 38, 0.95));
         color: white;
-        padding: 30px 60px;
-        border-radius: 20px;
-        font-size: 32px;
+        padding: 20px 50px;
+        border-radius: 16px;
+        font-size: 28px;
         font-weight: bold;
         text-align: center;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
         animation: turnIndicatorPulse 0.6s ease;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
       }
 
       @keyframes turnIndicatorPulse {

@@ -36,8 +36,12 @@ export class CombatEngine {
 
       const randomEnemy =
         defendingTeam.fighters[Helpers.getRandomNumber(0, defendingTeam.fighters.length - 1)];
+      
+      const damage = fighter.hit();
+      const validDamage = isNaN(damage) ? 0 : Math.max(0, damage);
+      
       Logger.log(`${fighter.name} attacked ${randomEnemy.name}.`);
-      randomEnemy.health -= fighter.hit();
+      randomEnemy.takeDamage(validDamage);
 
       if (randomEnemy.health <= 0) {
         this.removeFighter(defendingTeam, randomEnemy);
@@ -50,9 +54,11 @@ export class CombatEngine {
       const consumable = Consumable.getConsumable();
       const randomFighter =
         attackingTeam.fighters[Helpers.getRandomNumber(0, attackingTeam.fighters.length - 1)];
-      randomFighter.health += consumable.health;
+      
+      const healAmount = isNaN(consumable.health) ? 0 : Math.max(0, consumable.health);
+      randomFighter.health = Math.min(randomFighter.maxHealth, randomFighter.health + healAmount);
 
-      const msg = `<div class="consumable text-center">${randomFighter.name} consumed ${consumable.name} which gave him ${consumable.health} HP.</div>`;
+      const msg = `<div class="consumable text-center">${randomFighter.name} consumed ${consumable.name} which gave him ${healAmount} HP.</div>`;
       Logger.log(msg);
     }
   }

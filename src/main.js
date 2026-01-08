@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import * as bootstrap from 'bootstrap';
 
 // Import custom styles
+import './styles/theme.css';
 import './index.css';
 
 // Import Web Components

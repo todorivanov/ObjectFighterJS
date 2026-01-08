@@ -51,24 +51,26 @@ export class FighterHUD extends BaseComponent {
       .fighter-stats-hud {
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: flex-start;
         gap: 20px;
-        padding: 20px;
-        background: var(--card-bg);
+        padding: 15px 20px;
+        background: transparent;
         border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       }
 
       .fighter-stat-card {
-        flex: 1;
+        flex: 0 1 auto;
         display: flex;
-        gap: 15px;
+        gap: 12px;
         align-items: center;
-        padding: 15px;
-        background: var(--bg-color);
-        border-radius: 8px;
-        border: 2px solid var(--border-color);
-        min-width: 300px;
+        padding: 12px 15px;
+        background: linear-gradient(145deg, rgba(42, 26, 71, 0.7) 0%, rgba(26, 13, 46, 0.85) 100%);
+        border-radius: 12px;
+        border: 2px solid rgba(106, 66, 194, 0.4);
+        min-width: 280px;
+        max-width: 350px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
       }
 
       .fighter-stat-avatar {
@@ -125,11 +127,12 @@ export class FighterHUD extends BaseComponent {
 
       .stat-bar-container {
         flex: 1;
-        height: 20px;
-        background: #e9ecef;
+        height: 18px;
+        background: rgba(0, 0, 0, 0.4);
         border-radius: 10px;
         overflow: hidden;
         position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
       .stat-bar-fill {
@@ -179,15 +182,18 @@ export class FighterHUD extends BaseComponent {
       }
 
       .round-indicator {
-        background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+        background: linear-gradient(135deg, rgba(106, 66, 194, 0.8), rgba(255, 167, 38, 0.8));
         color: white;
-        padding: 20px 40px;
+        padding: 12px 30px;
         border-radius: 12px;
-        font-size: 20px;
+        font-size: 18px;
         font-weight: bold;
         text-align: center;
-        min-width: 200px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        min-width: 180px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        flex-shrink: 0;
       }
 
       .round-indicator.victory {

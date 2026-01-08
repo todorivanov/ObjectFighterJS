@@ -36,11 +36,12 @@ export class ActionSelection extends BaseComponent {
       }
 
       .action-selection-ui {
-        background: var(--card-bg);
-        border-top: 3px solid var(--primary-color);
+        background: linear-gradient(145deg, rgba(42, 26, 71, 0.98) 0%, rgba(26, 13, 46, 0.98) 100%);
+        border-top: 3px solid rgba(255, 167, 38, 0.8);
         padding: 25px;
-        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.7);
         animation: slideInFromBottom 0.4s ease;
+        backdrop-filter: blur(15px);
       }
 
       @keyframes slideInFromBottom {
@@ -61,14 +62,15 @@ export class ActionSelection extends BaseComponent {
 
       .action-prompt h3 {
         margin: 0 0 5px 0;
-        color: var(--text-color);
+        color: #ffa726;
         font-size: 24px;
+        text-shadow: 0 0 10px rgba(255, 167, 38, 0.5);
       }
 
       .action-prompt p {
         margin: 0;
         font-size: 14px;
-        color: #666;
+        color: #b39ddb;
       }
 
       .action-buttons {
@@ -85,8 +87,8 @@ export class ActionSelection extends BaseComponent {
         min-width: 180px;
         max-width: 220px;
         padding: 20px;
-        background: var(--card-bg);
-        border: 2px solid var(--border-color);
+        background: linear-gradient(145deg, rgba(42, 26, 71, 0.6) 0%, rgba(26, 13, 46, 0.8) 100%);
+        border: 2px solid rgba(106, 66, 194, 0.5);
         border-radius: 12px;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -96,6 +98,8 @@ export class ActionSelection extends BaseComponent {
         gap: 8px;
         position: relative;
         overflow: hidden;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
       }
 
       .action-btn::before {
@@ -115,8 +119,9 @@ export class ActionSelection extends BaseComponent {
 
       .action-btn:hover:not(:disabled) {
         transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        border-color: var(--primary-color);
+        box-shadow: 0 8px 30px rgba(255, 167, 38, 0.4);
+        border-color: #ffa726;
+        background: linear-gradient(145deg, rgba(255, 167, 38, 0.2) 0%, rgba(106, 66, 194, 0.3) 100%);
       }
 
       .action-btn:active:not(:disabled) {
@@ -129,9 +134,11 @@ export class ActionSelection extends BaseComponent {
       }
 
       .action-btn.selected {
-        background: var(--primary-color);
+        background: linear-gradient(135deg, #ffa726, #ff6f00);
         color: white;
         transform: scale(0.95);
+        border-color: #ffa726;
+        box-shadow: 0 0 30px rgba(255, 167, 38, 0.6);
       }
 
       .action-icon {
@@ -142,7 +149,7 @@ export class ActionSelection extends BaseComponent {
       .action-name {
         font-size: 18px;
         font-weight: 600;
-        color: var(--text-color);
+        color: #ffffff;
       }
 
       .action-btn.selected .action-name {
@@ -151,7 +158,7 @@ export class ActionSelection extends BaseComponent {
 
       .action-desc {
         font-size: 12px;
-        color: #666;
+        color: #b39ddb;
         text-align: center;
       }
 
@@ -174,6 +181,51 @@ export class ActionSelection extends BaseComponent {
 
       .item-btn:hover:not(:disabled) {
         border-color: #28a745;
+      }
+
+      /* Surrender Container */
+      .surrender-container {
+        text-align: center;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .surrender-btn {
+        padding: 10px 30px;
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.6);
+        background: transparent;
+        border: 2px solid rgba(255, 23, 68, 0.4);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .surrender-btn:hover {
+        background: rgba(255, 23, 68, 0.2);
+        border-color: #ff1744;
+        color: #ff1744;
+        box-shadow: 0 0 20px rgba(255, 23, 68, 0.4);
+        transform: translateY(-2px);
+      }
+
+      .surrender-btn:active {
+        transform: translateY(0);
+      }
+
+      .surrender-icon {
+        font-size: 18px;
+      }
+
+      .surrender-text {
+        font-size: 13px;
       }
     `;
   }
@@ -231,6 +283,13 @@ export class ActionSelection extends BaseComponent {
             <span class="action-desc">+50 HP</span>
           </button>
         </div>
+
+        <div class="surrender-container">
+          <button class="surrender-btn" data-action="surrender">
+            <span class="surrender-icon">🏳️</span>
+            <span class="surrender-text">Surrender</span>
+          </button>
+        </div>
       </div>
     `;
   }
@@ -257,6 +316,17 @@ export class ActionSelection extends BaseComponent {
         }
       });
     });
+
+    // Handle surrender button
+    const surrenderBtn = this.shadowRoot.querySelector('.surrender-btn');
+    if (surrenderBtn) {
+      surrenderBtn.addEventListener('click', () => {
+        if (confirm('Are you sure you want to surrender? You will lose this battle!')) {
+          this.emit('action-selected', { action: 'surrender' });
+          this.remove();
+        }
+      });
+    }
   }
 }
 

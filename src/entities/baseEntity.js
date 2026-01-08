@@ -10,11 +10,19 @@ export class BaseEntity {
   constructor(baseEntity) {
     this.id = baseEntity.id;
     this.name = baseEntity.name;
-    this.health = baseEntity.health;
-    this.maxHealth = baseEntity.health;
+    
+    // Ensure health values are valid numbers
+    const initialHealth = isNaN(baseEntity.health) ? 100 : Math.max(1, baseEntity.health);
+    this.health = initialHealth;
+    this.maxHealth = initialHealth;
+    
     this.image = baseEntity.image;
-    this.strength = baseEntity.strength;
-    this.baseStrength = baseEntity.strength; // Store original strength
+    
+    // Ensure strength is a valid number
+    const initialStrength = isNaN(baseEntity.strength) ? 50 : Math.max(1, baseEntity.strength);
+    this.strength = initialStrength;
+    this.baseStrength = initialStrength; // Store original strength
+    
     this.description = baseEntity.description;
     this.class = baseEntity.class || 'BALANCED';
     this.mana = 100; // Starting mana
@@ -35,7 +43,9 @@ export class BaseEntity {
   hit() {
     const num = Helpers.getRandomNumber(0, 101);
     if (num < 80) {
-      return this.normalAttack();
+      const result = this.normalAttack();
+      // normalAttack returns an object { damage, isCritical }, extract just damage
+      return typeof result === 'object' ? (result.damage || 0) : result;
     } else {
       return this.specialAttack();
     }
@@ -171,16 +181,23 @@ export class BaseEntity {
    * Take damage with defense modifier
    */
   takeDamage(damage) {
-    let actualDamage = damage;
+    // Ensure damage is a valid number
+    let actualDamage = isNaN(damage) ? 0 : Math.max(0, damage);
     
     if (this.isDefending) {
-      actualDamage = Math.ceil(damage * 0.5);
+      actualDamage = Math.ceil(actualDamage * 0.5);
       const msg = `<div class="attack-div text-center" style="background: #d1ecf1;">🛡️ <strong>${this.name}</strong> blocked 50% of the damage!</div>`;
       Logger.log(msg);
       this.isDefending = false; // Defend only lasts one turn
     }
     
-    this.health -= actualDamage;
+    // Ensure health is a valid number before subtracting
+    if (isNaN(this.health)) {
+      console.error(`${this.name} has NaN health! Resetting to maxHealth.`);
+      this.health = this.maxHealth || 100;
+    }
+    
+    this.health = Math.max(0, this.health - actualDamage);
     return actualDamage;
   }
 
