@@ -91,13 +91,15 @@ export class FighterHUD extends BaseComponent {
       .fighter-stat-name {
         font-size: 18px;
         font-weight: bold;
-        color: var(--text-color);
+        color: #ffffff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
       }
 
       .fighter-stat-class {
         font-size: 12px;
-        color: var(--info-color);
+        color: #b39ddb;
         font-weight: 600;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
       }
 
       .status-effects-container {
@@ -123,6 +125,8 @@ export class FighterHUD extends BaseComponent {
         font-size: 12px;
         font-weight: 600;
         min-width: 40px;
+        color: #ffffff;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
       }
 
       .stat-bar-container {
@@ -178,7 +182,8 @@ export class FighterHUD extends BaseComponent {
         font-weight: 600;
         min-width: 60px;
         text-align: right;
-        color: var(--text-color);
+        color: #ffffff;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
       }
 
       .round-indicator {

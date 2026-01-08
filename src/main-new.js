@@ -19,6 +19,7 @@ import { Logger } from './utils/logger.js';
 import { SaveManager } from './utils/saveManager.js';
 import { LevelingSystem } from './game/LevelingSystem.js';
 import { EquipmentManager } from './game/EquipmentManager.js';
+import { tournamentMode } from './game/TournamentMode.js';
 
 // Make bootstrap available globally if needed
 window.bootstrap = bootstrap;
@@ -27,15 +28,17 @@ window.bootstrap = bootstrap;
  * Application State
  */
 const appState = {
-  currentScreen: 'title', // 'title' | 'gallery' | 'combat'
-  gameMode: null, // 'single' | 'team'
+  currentScreen: 'title', // 'title' | 'gallery' | 'combat' | 'tournament'
+  gameMode: null, // 'single' | 'team' | 'tournament'
   fighters: [],
   selectedFighters: [],
+  tournamentActive: false,
   
   reset() {
     this.currentScreen = 'title';
     this.gameMode = null;
     this.selectedFighters = [];
+    this.tournamentActive = false;
   },
 };
 
@@ -114,9 +117,10 @@ function showTitleScreen() {
   root.appendChild(titleScreen);
   appState.currentScreen = 'title';
   
-  // Add Profile and Equipment buttons to title screen
+  // Add Profile, Equipment, and Tournament buttons to title screen
   addProfileButton();
   addEquipmentButton();
+  addTournamentButton();
 }
 
 /**
@@ -258,6 +262,161 @@ function addEquipmentButton() {
 }
 
 /**
+ * Show tournament bracket screen
+ */
+function showTournamentBracketScreen() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  const bracket = document.createElement('tournament-bracket');
+  bracket.fighters = appState.fighters;
+
+  bracket.addEventListener('tournament-start', (e) => {
+    const { opponents, difficulty } = e.detail;
+    startTournament(opponents, difficulty);
+  });
+
+  bracket.addEventListener('back-to-menu', () => {
+    appState.reset();
+    showTitleScreen();
+  });
+
+  root.appendChild(bracket);
+  appState.currentScreen = 'tournament';
+}
+
+/**
+ * Add tournament button overlay
+ */
+function addTournamentButton() {
+  // Remove existing tournament button if any
+  const existingBtn = document.getElementById('tournament-overlay-btn');
+  if (existingBtn) {
+    existingBtn.remove();
+  }
+
+  const tournamentBtn = document.createElement('button');
+  tournamentBtn.id = 'tournament-overlay-btn';
+  tournamentBtn.innerHTML = '🏆 Tournament';
+  tournamentBtn.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 440px;
+    width: auto;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(26, 13, 46, 0.8);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 10000;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    font-family: 'Press Start 2P', cursive;
+  `;
+
+  tournamentBtn.addEventListener('click', () => {
+    soundManager.play('event');
+    showTournamentBracketScreen();
+  });
+
+  tournamentBtn.addEventListener('mouseenter', () => {
+    tournamentBtn.style.background = 'rgba(255, 215, 0, 0.3)';
+    tournamentBtn.style.borderColor = 'gold';
+    tournamentBtn.style.transform = 'translateY(-2px)';
+  });
+
+  tournamentBtn.addEventListener('mouseleave', () => {
+    tournamentBtn.style.background = 'rgba(26, 13, 46, 0.8)';
+    tournamentBtn.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+    tournamentBtn.style.transform = 'translateY(0)';
+  });
+
+  document.body.appendChild(tournamentBtn);
+}
+
+/**
+ * Start tournament mode
+ */
+function startTournament(opponents, difficulty) {
+  // Initialize tournament
+  if (!tournamentMode.startTournament(opponents, difficulty)) {
+    console.error('❌ Failed to start tournament');
+    return;
+  }
+
+  appState.tournamentActive = true;
+  appState.gameMode = 'tournament';
+  SaveManager.increment('stats.tournamentsPlayed');
+
+  // Start first battle
+  startTournamentBattle();
+}
+
+/**
+ * Start a tournament battle
+ */
+function startTournamentBattle() {
+  const opponent = tournamentMode.getCurrentOpponent();
+  if (!opponent) {
+    console.error('❌ No opponent available');
+    return;
+  }
+
+  // Get player's character
+  const saveData = SaveManager.load();
+  const playerCharacter = createPlayerFighter(saveData.profile.character);
+
+  // Store tournament round info to log after arena is created
+  const tournamentInfo = {
+    roundName: tournamentMode.getCurrentRoundName(),
+    roundNumber: tournamentMode.getCurrentRoundNumber(),
+    playerName: playerCharacter.name,
+    opponentName: opponent.name,
+  };
+
+  // Start battle with tournament info
+  startBattle([playerCharacter, opponent], tournamentInfo);
+}
+
+/**
+ * Handle tournament victory
+ */
+export function handleTournamentVictory(winner) {
+  if (!appState.tournamentActive) {
+    return false;
+  }
+
+  const result = tournamentMode.recordVictory();
+
+  if (result.tournamentComplete) {
+    // Tournament won!
+    appState.tournamentActive = false;
+    return true;
+  } else {
+    // Continue to next round
+    setTimeout(() => {
+      startTournamentBattle();
+    }, 3000);
+    return false;
+  }
+}
+
+/**
+ * Handle tournament defeat
+ */
+export function handleTournamentDefeat() {
+  if (!appState.tournamentActive) {
+    return;
+  }
+
+  tournamentMode.recordDefeat();
+  appState.tournamentActive = false;
+}
+
+/**
  * Show opponent selection (player character is already determined)
  */
 function showOpponentSelection() {
@@ -354,8 +513,10 @@ function showFighterGallery() {
 
 /**
  * Start the battle
+ * @param {Array} fighters - Array of fighters
+ * @param {Object} tournamentInfo - Optional tournament round info
  */
-function startBattle(fighters) {
+function startBattle(fighters, tournamentInfo = null) {
   const root = document.getElementById('root');
   root.innerHTML = '';
 
@@ -391,13 +552,39 @@ function startBattle(fighters) {
         console.log('✅ Logger initialized for combat arena');
         console.log('📜 Auto-scroll:', arena.autoScroll ? 'ENABLED' : 'DISABLED');
         console.log('Log element:', logElement);
+
+        // Log tournament round info if this is a tournament battle
+        if (tournamentInfo) {
+          const message = `
+            <div class="tournament-round-start" style="
+              background: linear-gradient(135deg, rgba(33, 150, 243, 0.3), rgba(156, 39, 176, 0.3));
+              border: 3px solid #2196f3;
+              border-radius: 12px;
+              padding: 20px;
+              margin: 20px 0;
+              text-align: center;
+              box-shadow: 0 0 30px rgba(33, 150, 243, 0.5);
+            ">
+              <div style="font-size: 32px; font-weight: bold; color: #2196f3; margin-bottom: 10px;">
+                ${tournamentInfo.roundName}
+              </div>
+              <div style="font-size: 24px; color: white; margin: 10px 0;">
+                ${tournamentInfo.playerName} vs ${tournamentInfo.opponentName}
+              </div>
+              <div style="font-size: 14px; color: #b3d4fc; margin-top: 10px;">
+                Round ${tournamentInfo.roundNumber}/3
+              </div>
+            </div>
+          `;
+          Logger.log(message);
+        }
       } else {
         console.error('❌ Could not find log element in combat arena');
         console.error('Arena shadowRoot:', arena.shadowRoot);
       }
 
       // Start game based on mode
-      if (appState.gameMode === 'single' && fighters.length >= 2) {
+      if ((appState.gameMode === 'single' || appState.gameMode === 'tournament') && fighters.length >= 2) {
         console.log('🎮 Starting single fight:', fighters[0].name, 'vs', fighters[1].name);
         Game.startGame(fighters[0], fighters[1]);
       } else if (appState.gameMode === 'team') {
@@ -417,6 +604,44 @@ function startBattle(fighters) {
  * Show victory screen
  */
 export function showVictoryScreen(winner) {
+  // Check if this is a tournament battle
+  if (appState.tournamentActive) {
+    // Check if the player won
+    if (winner.isPlayer) {
+      const result = tournamentMode.recordVictory();
+      
+      if (result.tournamentComplete) {
+        // Tournament complete! Show victory screen
+        setTimeout(() => {
+          showTournamentVictoryScreen();
+        }, 2000);
+      } else {
+        // Continue to next round
+        setTimeout(() => {
+          startTournamentBattle();
+        }, 3000);
+      }
+    } else {
+      // Player lost - tournament over
+      tournamentMode.recordDefeat();
+      appState.tournamentActive = false;
+      
+      // Show regular victory screen for opponent
+      setTimeout(() => {
+        showRegularVictoryScreen(winner);
+      }, 2000);
+    }
+    return;
+  }
+
+  // Regular battle - show victory screen
+  showRegularVictoryScreen(winner);
+}
+
+/**
+ * Show regular victory screen (non-tournament)
+ */
+function showRegularVictoryScreen(winner) {
   const victoryScreen = document.createElement('victory-screen');
   victoryScreen.setAttribute('winner-name', winner.name);
   victoryScreen.setAttribute('winner-image', winner.image);
@@ -425,7 +650,37 @@ export function showVictoryScreen(winner) {
   victoryScreen.addEventListener('play-again', () => {
     victoryScreen.remove();
     appState.selectedFighters = [];
-    showFighterGallery();
+    
+    if (appState.gameMode === 'tournament') {
+      showTournamentBracketScreen();
+    } else {
+      showOpponentSelection();
+    }
+  });
+
+  victoryScreen.addEventListener('main-menu', () => {
+    victoryScreen.remove();
+    Game.stopGame();
+    appState.reset();
+    showTitleScreen();
+  });
+
+  document.body.appendChild(victoryScreen);
+}
+
+/**
+ * Show tournament victory screen
+ */
+function showTournamentVictoryScreen() {
+  const victoryScreen = document.createElement('victory-screen');
+  victoryScreen.setAttribute('winner-name', '🏆 CHAMPION');
+  victoryScreen.setAttribute('winner-image', SaveManager.get('profile.character.image'));
+  victoryScreen.setAttribute('winner-class', 'Tournament Champion');
+
+  victoryScreen.addEventListener('play-again', () => {
+    victoryScreen.remove();
+    appState.reset();
+    showTournamentBracketScreen();
   });
 
   victoryScreen.addEventListener('main-menu', () => {

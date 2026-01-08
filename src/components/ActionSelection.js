@@ -280,7 +280,7 @@ export class ActionSelection extends BaseComponent {
           <button class="action-btn item-btn" data-action="item" ${!canHeal ? 'disabled' : ''}>
             <span class="action-icon">🧪</span>
             <span class="action-name">Heal</span>
-            <span class="action-desc">+30 HP</span>
+            <span class="action-desc">+20 HP</span>
           </button>
         </div>
 

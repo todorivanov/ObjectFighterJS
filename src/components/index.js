@@ -17,6 +17,7 @@ export { CombatArena } from './CombatArena.js';
 export { ProfileScreen } from './ProfileScreen.js'; // Phase 5
 export { CharacterCreation } from './CharacterCreation.js'; // Phase 5
 export { EquipmentScreen } from './EquipmentScreen.js'; // Phase 5 - Sprint 2
+export { TournamentBracket } from './TournamentBracket.js'; // Phase 5 - Sprint 3
 
 // Auto-register all components by importing this file
 console.log('✅ All Web Components registered');
