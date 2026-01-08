@@ -2,9 +2,9 @@
 
 **An epic browser-based RPG fighting game with story mode, turn-based tactical combat, character progression, equipment systems, and marketplace economy.**
 
-## 🎮 [Play Live Demo](https://yourusername.github.io/legends-of-the-arena/)
+## 🎮 [Play Live Demo](https://todorivanov.github.io/ObjectFighterJS/)
 
-> **Note**: Replace `yourusername` with your actual GitHub username after deployment.
+> **Note**: Once you enable GitHub Pages, your game will be available at the link above!
 
 ---
 
@@ -362,10 +362,10 @@ This project includes automatic deployment to GitHub Pages via GitHub Actions.
    git push origin main
    ```
 
-4. **Access your game** (~1-2 minutes later):
-   ```
-   https://[your-username].github.io/ObjectFighterJS/
-   ```
+4. **Access your game** (~1-2 minutes later):  
+```  
+https://todorivanov.github.io/ObjectFighterJS/  
+```
 
 **Auto-Deploy**: Every push to main/master automatically triggers deployment!
 
