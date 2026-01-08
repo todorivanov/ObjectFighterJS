@@ -117,9 +117,8 @@ function showTitleScreen() {
   root.appendChild(titleScreen);
   appState.currentScreen = 'title';
   
-  // Add Profile, Equipment, and Tournament buttons to title screen
+  // Add Profile and Tournament buttons to title screen
   addProfileButton();
-  addEquipmentButton();
   addTournamentButton();
 }
 
@@ -301,7 +300,7 @@ function addTournamentButton() {
   tournamentBtn.style.cssText = `
     position: fixed;
     top: 20px;
-    right: 440px;
+    right: 280px;
     width: auto;
     padding: 12px 24px;
     border-radius: 8px;

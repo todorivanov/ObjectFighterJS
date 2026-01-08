@@ -1,10 +1,12 @@
 import { BaseComponent } from './BaseComponent.js';
 import { SaveManager } from '../utils/saveManager.js';
 import { LevelingSystem } from '../game/LevelingSystem.js';
+import { EquipmentManager } from '../game/EquipmentManager.js';
+import { RARITY_COLORS, RARITY_NAMES } from '../data/equipment.js';
 
 /**
  * ProfileScreen Web Component
- * Displays player profile, stats, level, and progress
+ * Displays player profile, stats, level, progress, and equipment
  * 
  * Events:
  * - back-to-menu: User wants to return to main menu
@@ -13,6 +15,7 @@ export class ProfileScreen extends BaseComponent {
   constructor() {
     super();
     this.profileData = SaveManager.load();
+    this.currentTab = 'profile'; // 'profile' or 'equipment'
   }
 
   styles() {
@@ -73,6 +76,48 @@ export class ProfileScreen extends BaseComponent {
         background: rgba(255, 23, 68, 0.7);
         border-color: #ff1744;
         box-shadow: 0 0 20px rgba(255, 23, 68, 0.5);
+      }
+
+      .tab-navigation {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 40px;
+        animation: fadeIn 0.6s ease;
+      }
+
+      .tab-btn {
+        padding: 15px 40px;
+        font-size: 18px;
+        font-weight: 700;
+        background: rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 200px;
+      }
+
+      .tab-btn:hover {
+        border-color: #ffa726;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(255, 167, 38, 0.3);
+      }
+
+      .tab-btn.active {
+        background: linear-gradient(135deg, rgba(255, 167, 38, 0.3), rgba(255, 111, 0, 0.3));
+        border-color: #ffa726;
+        box-shadow: 0 0 20px rgba(255, 167, 38, 0.4);
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+        animation: fadeIn 0.4s ease;
       }
 
       .profile-grid {
@@ -220,6 +265,11 @@ export class ProfileScreen extends BaseComponent {
         box-shadow: 0 0 15px rgba(255, 23, 68, 0.6);
       }
 
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
       @keyframes fadeInUp {
         from {
           opacity: 0;
@@ -260,6 +310,18 @@ export class ProfileScreen extends BaseComponent {
           <h1 class="profile-title">👤 Player Profile</h1>
         </div>
 
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+          <button class="tab-btn ${this.currentTab === 'profile' ? 'active' : ''}" data-tab="profile">
+            👤 Stats
+          </button>
+          <button class="tab-btn ${this.currentTab === 'equipment' ? 'active' : ''}" data-tab="equipment">
+            ⚔️ Equipment
+          </button>
+        </div>
+
+        <!-- Profile Tab Content -->
+        <div class="tab-content ${this.currentTab === 'profile' ? 'active' : ''}" id="profile-tab">
         <div class="profile-grid">
           <!-- Level & XP Card -->
           <div class="profile-card">
@@ -370,6 +432,152 @@ export class ProfileScreen extends BaseComponent {
             </div>
           </div>
         </div>
+        </div>
+        <!-- End Profile Tab -->
+
+        <!-- Equipment Tab Content -->
+        <div class="tab-content ${this.currentTab === 'equipment' ? 'active' : ''}" id="equipment-tab">
+          ${this.renderEquipmentTab()}
+        </div>
+        <!-- End Equipment Tab -->
+
+      </div>
+    `;
+  }
+
+  renderEquipmentTab() {
+    const equipped = EquipmentManager.getEquippedItems();
+    const inventory = EquipmentManager.getInventoryItems();
+    const totalStats = EquipmentManager.getEquippedStats();
+
+    return `
+      ${Object.values(totalStats).some(v => v > 0) ? `
+        <div class="profile-card">
+          <h2 class="card-title">
+            <span class="card-icon">💪</span>
+            Total Equipment Bonuses
+          </h2>
+          ${totalStats.strength > 0 ? `<div class="stat-row"><span class="stat-label">Strength</span><span class="stat-value highlight">+${totalStats.strength}</span></div>` : ''}
+          ${totalStats.health > 0 ? `<div class="stat-row"><span class="stat-label">Health</span><span class="stat-value highlight">+${totalStats.health}</span></div>` : ''}
+          ${totalStats.defense > 0 ? `<div class="stat-row"><span class="stat-label">Defense</span><span class="stat-value highlight">+${totalStats.defense}</span></div>` : ''}
+          ${totalStats.critChance > 0 ? `<div class="stat-row"><span class="stat-label">Crit Chance</span><span class="stat-value highlight">+${totalStats.critChance}%</span></div>` : ''}
+          ${totalStats.critDamage > 0 ? `<div class="stat-row"><span class="stat-label">Crit Damage</span><span class="stat-value highlight">+${totalStats.critDamage}%</span></div>` : ''}
+          ${totalStats.manaRegen > 0 ? `<div class="stat-row"><span class="stat-label">Mana Regen</span><span class="stat-value highlight">+${totalStats.manaRegen}</span></div>` : ''}
+        </div>
+      ` : ''}
+
+      <div class="profile-grid">
+        ${this.renderEquipmentSlot('weapon', '⚔️', equipped.weapon)}
+        ${this.renderEquipmentSlot('armor', '🛡️', equipped.armor)}
+        ${this.renderEquipmentSlot('accessory', '💍', equipped.accessory)}
+      </div>
+
+      <h2 style="font-size: 24px; color: #ffa726; margin: 30px 0 20px 0;">📦 Inventory (${inventory.length}/20)</h2>
+      ${inventory.length > 0 ? `
+        <div class="profile-grid">
+          ${inventory.map(item => this.renderInventoryItem(item)).join('')}
+        </div>
+      ` : `
+        <div class="profile-card" style="text-align: center; padding: 60px;">
+          <div style="font-size: 48px; margin-bottom: 15px;">📦</div>
+          <div style="color: #7e57c2;">No items in inventory</div>
+          <div style="color: #7e57c2; font-size: 14px; margin-top: 10px;">Win battles to earn equipment!</div>
+        </div>
+      `}
+    `;
+  }
+
+  renderEquipmentSlot(slotType, icon, item) {
+    if (!item) {
+      return `
+        <div class="profile-card">
+          <h2 class="card-title">
+            <span class="card-icon">${icon}</span>
+            ${slotType.charAt(0).toUpperCase() + slotType.slice(1)}
+          </h2>
+          <div style="text-align: center; padding: 40px 20px; color: #7e57c2; font-style: italic;">
+            No ${slotType} equipped
+          </div>
+        </div>
+      `;
+    }
+
+    const statsHtml = Object.entries(item.stats).map(([stat, value]) => {
+      const statNames = {
+        strength: 'STR',
+        health: 'HP',
+        defense: 'DEF',
+        critChance: 'Crit%',
+        critDamage: 'Crit Dmg',
+        manaRegen: 'Mana+',
+      };
+      return `<span style="background: rgba(255, 167, 38, 0.2); border: 1px solid #ffa726; border-radius: 8px; padding: 4px 10px; font-size: 12px; color: #ffa726; font-weight: 600; display: inline-block; margin: 4px;">+${value} ${statNames[stat]}</span>`;
+    }).join('');
+
+    return `
+      <div class="profile-card" style="border: 2px solid ${RARITY_COLORS[item.rarity]};">
+        <h2 class="card-title">
+          <span class="card-icon">${icon}</span>
+          ${slotType.charAt(0).toUpperCase() + slotType.slice(1)}
+        </h2>
+        <div style="background: rgba(0, 0, 0, 0.3); border-radius: 12px; padding: 15px; border: 2px solid ${RARITY_COLORS[item.rarity]};">
+          <div style="font-size: 18px; font-weight: 700; color: white; margin-bottom: 5px;">${item.name}</div>
+          <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; color: ${RARITY_COLORS[item.rarity]};">
+            ${RARITY_NAMES[item.rarity]}
+          </div>
+          <div style="margin-top: 10px;">${statsHtml}</div>
+          <button class="reset-btn" data-unequip="${slotType}" style="margin-top: 10px; width: 100%;">Unequip</button>
+        </div>
+      </div>
+    `;
+  }
+
+  renderInventoryItem(item) {
+    const playerLevel = SaveManager.get('profile.level');
+    const playerClass = SaveManager.get('profile.character.class');
+    
+    const meetsLevel = item.requirements.level <= playerLevel;
+    const meetsClass = !item.requirements.class || item.requirements.class.includes(playerClass);
+    const canEquip = meetsLevel && meetsClass;
+
+    const statsHtml = Object.entries(item.stats).map(([stat, value]) => {
+      const statNames = {
+        strength: 'STR',
+        health: 'HP',
+        defense: 'DEF',
+        critChance: 'Crit%',
+        critDamage: 'Crit Dmg',
+        manaRegen: 'Mana+',
+      };
+      return `<span style="background: rgba(255, 167, 38, 0.2); border: 1px solid #ffa726; border-radius: 8px; padding: 4px 10px; font-size: 12px; color: #ffa726; font-weight: 600; display: inline-block; margin: 4px;">+${value} ${statNames[stat]}</span>`;
+    }).join('');
+
+    return `
+      <div class="profile-card" style="border: 2px solid ${RARITY_COLORS[item.rarity]}; cursor: pointer;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+          <div>
+            <div style="font-size: 18px; font-weight: 700; color: white;">${item.name}</div>
+            <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: ${RARITY_COLORS[item.rarity]};">
+              ${RARITY_NAMES[item.rarity]}
+            </div>
+          </div>
+          <div style="font-size: 48px;">${item.icon}</div>
+        </div>
+        <div style="color: #b39ddb; font-size: 13px; margin: 10px 0; line-height: 1.4;">${item.description}</div>
+        <div style="margin: 10px 0;">${statsHtml}</div>
+        <div style="font-size: 12px; margin-bottom: 10px;">
+          <div style="color: ${meetsLevel ? '#00e676' : '#ff1744'};">
+            Level ${item.requirements.level} ${meetsLevel ? '✓' : '✗'}
+          </div>
+          ${item.requirements.class ? `
+            <div style="color: ${meetsClass ? '#00e676' : '#ff1744'};">
+              ${item.requirements.class.join(', ')} ${meetsClass ? '✓' : '✗'}
+            </div>
+          ` : ''}
+        </div>
+        <button class="reset-btn" data-equip="${item.id}" ${!canEquip ? 'disabled' : ''} style="width: 100%; background: ${canEquip ? 'linear-gradient(135deg, #00e676 0%, #00c853 100%)' : 'rgba(0, 0, 0, 0.3)'}; opacity: ${canEquip ? '1' : '0.5'};">
+          Equip
+        </button>
       </div>
     `;
   }
@@ -382,7 +590,16 @@ export class ProfileScreen extends BaseComponent {
       });
     }
 
-    const resetBtn = this.shadowRoot.querySelector('.reset-btn');
+    // Tab switching
+    const tabBtns = this.shadowRoot.querySelectorAll('.tab-btn');
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.currentTab = btn.dataset.tab;
+        this.updateTabUI();
+      });
+    });
+
+    const resetBtn = this.shadowRoot.querySelector('.reset-btn[data-unequip]');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
         if (confirm('⚠️ Are you sure you want to reset ALL progress? This cannot be undone!')) {
@@ -394,6 +611,52 @@ export class ProfileScreen extends BaseComponent {
         }
       });
     }
+
+    // Equipment actions
+    const unequipBtns = this.shadowRoot.querySelectorAll('[data-unequip]');
+    unequipBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const slot = btn.dataset.unequip;
+        if (slot && slot !== '') { // Check if it's not the reset button
+          EquipmentManager.unequipItem(slot);
+          this.render();
+        }
+      });
+    });
+
+    const equipBtns = this.shadowRoot.querySelectorAll('[data-equip]');
+    equipBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const equipmentId = btn.dataset.equip;
+        if (EquipmentManager.equipItem(equipmentId)) {
+          this.render();
+        }
+      });
+    });
+  }
+
+  updateTabUI() {
+    // Update tab buttons
+    const tabBtns = this.shadowRoot.querySelectorAll('.tab-btn');
+    tabBtns.forEach(btn => {
+      if (btn.dataset.tab === this.currentTab) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    // Update tab content
+    const tabContents = this.shadowRoot.querySelectorAll('.tab-content');
+    tabContents.forEach(content => {
+      if (content.id === `${this.currentTab}-tab`) {
+        content.classList.add('active');
+      } else {
+        content.classList.remove('active');
+      }
+    });
   }
 }
 
