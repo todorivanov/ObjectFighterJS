@@ -1,4 +1,5 @@
 import { Logger } from '../utils/logger.js';
+import { soundManager } from '../utils/soundManager.js';
 
 let roundCounter = 0;
 
@@ -101,6 +102,7 @@ export class Referee {
       </div>`;
     Logger.log(msg);
     Logger.logFighter(fighter);
+    soundManager.play('victory');
   }
 
   static declareWinningTeam(team) {
@@ -111,6 +113,7 @@ export class Referee {
       </div>`;
     Logger.log(msg);
     Logger.logTeam(team);
+    soundManager.play('victory');
   }
 
   /**

@@ -102,8 +102,18 @@ npm run preview
 - **[Phase 1.1 Complete](PHASE_1.1_COMPLETE.md)**: Core dependencies upgrade
 - **[Phase 1.2 Complete](PHASE_1.2_COMPLETE.md)**: Architecture refactoring  
 - **[Phase 2 Complete](PHASE_2_COMPLETE.md)**: Bug fixes & content expansion
+- **[Phase 4 Complete](PHASE_4_COMPLETE.md)**: UI/UX overhaul with animations
 
 ## 🔄 Recent Updates
+
+### v2.2.0 - Phase 4 Complete (Jan 8, 2026) 🎨
+- 🎬 **20+ CSS animations** (slide, shake, pulse, zoom effects)
+- 🌙 **Dark mode** with smooth transitions and persistence
+- 🔊 **6 sound effects** (Web Audio API, zero latency)
+- 💥 **Floating damage numbers** (color-coded by type)
+- ✨ **Enhanced fighter cards** (3D transforms, shimmer effects)
+- 🔘 **Animated buttons** with ripple effects
+- 📜 **Improved combat log** with hover states
 
 ### v2.1.0 - Phase 2 Complete (Jan 8, 2026)
 - ✅ **10 fighters** with working avatars (was 5 with broken images)
@@ -111,16 +121,12 @@ npm run preview
 - ✅ **Visual health bars** with color indicators
 - ✅ **Emoji-rich combat log** for better UX
 - ✅ **Fighter classes** (Tank, Glass Cannon, Balanced, etc.)
-- ✅ **Epic announcements** with styled messages
-- ✅ **Game config file** for easy balance tuning
 
 ### v2.0.0 - Phase 1 Complete (Jan 8, 2026)
 - ⚡ **17x faster** dev server (Webpack → Vite)
 - 🗑️ **Removed jQuery** (vanilla JS)
 - 🏗️ **Clean architecture** (eliminated global state)
 - 📉 **50% less code duplication**
-- 🎨 **Bootstrap 5** with modern responsive design
-- 🔍 **ESLint + Prettier** for code quality
 
 ## 📦 Project Structure
 
@@ -162,6 +168,6 @@ Todor Ivanov
 
 ---
 
-**Version**: 2.1.0  
-**Status**: Active Development  
-**Next Phase**: Gameplay Enhancements (Player Control, Skills, Status Effects)
+**Version**: 2.2.0  
+**Status**: Visually Stunning, Ready for Gameplay  
+**Next Phase**: Phase 3 - Gameplay Enhancements (Player Control, Skills, Status Effects)

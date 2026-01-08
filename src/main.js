@@ -9,6 +9,7 @@ import './index.css';
 import Game from './game/game.js';
 import { Logger } from './utils/logger.js';
 import { Team } from './entities/team.js';
+import { soundManager } from './utils/soundManager.js';
 
 // Make bootstrap available globally if needed
 window.bootstrap = bootstrap;
@@ -265,7 +266,70 @@ function initGame(isMatchFight) {
   });
 }
 
+/**
+ * Initialize dark mode from localStorage
+ */
+function initDarkMode() {
+  const darkMode = localStorage.getItem('darkMode') === 'true';
+  if (darkMode) {
+    document.body.classList.add('dark-mode');
+  }
+}
+
+/**
+ * Create and attach dark mode toggle button
+ */
+function createDarkModeToggle() {
+  const toggle = document.createElement('button');
+  toggle.className = 'dark-mode-toggle';
+  toggle.innerHTML = `
+    <span class="toggle-icon">${document.body.classList.contains('dark-mode') ? '☀️' : '🌙'}</span>
+    <span class="toggle-text">${document.body.classList.contains('dark-mode') ? 'Light' : 'Dark'}</span>
+  `;
+
+  toggle.addEventListener('click', function () {
+    document.body.classList.toggle('dark-mode');
+    const isDark = document.body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDark);
+
+    // Update button text and icon
+    toggle.querySelector('.toggle-icon').textContent = isDark ? '☀️' : '🌙';
+    toggle.querySelector('.toggle-text').textContent = isDark ? 'Light' : 'Dark';
+
+    // Play sound effect
+    soundManager.play('heal');
+  });
+
+  document.body.appendChild(toggle);
+}
+
+/**
+ * Create sound toggle button
+ */
+function createSoundToggle() {
+  const toggle = document.createElement('button');
+  toggle.className = 'dark-mode-toggle';
+  toggle.style.right = '180px';
+  toggle.innerHTML = `
+    <span class="toggle-icon">${soundManager.enabled ? '🔊' : '🔇'}</span>
+    <span class="toggle-text">Sound</span>
+  `;
+
+  toggle.addEventListener('click', function () {
+    const enabled = soundManager.toggle();
+    toggle.querySelector('.toggle-icon').textContent = enabled ? '🔊' : '🔇';
+    if (enabled) {
+      soundManager.play('heal');
+    }
+  });
+
+  document.body.appendChild(toggle);
+}
+
 // Start the game when DOM is ready
 window.addEventListener('load', function () {
+  initDarkMode();
+  createDarkModeToggle();
+  createSoundToggle();
   chooseGame();
 });

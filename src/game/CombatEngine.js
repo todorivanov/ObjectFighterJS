@@ -1,6 +1,7 @@
 import { Helpers } from '../utils/helpers.js';
 import { Logger } from '../utils/logger.js';
 import Consumable from './consumables.js';
+import { soundManager } from '../utils/soundManager.js';
 
 /**
  * CombatEngine - Handles all combat logic including attacks and consumables
@@ -79,6 +80,12 @@ export class CombatEngine {
       fighter.health += consumable.health;
       const msg = `<div class="consumable text-center">${fighter.name} consumed ${consumable.name} which gave him ${consumable.health} HP.</div>`;
       Logger.log(msg);
+      soundManager.play('heal');
+
+      // Show floating heal number
+      if (fighter.showFloatingDamage) {
+        fighter.showFloatingDamage(consumable.health, 'heal');
+      }
     }
   }
 

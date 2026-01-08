@@ -1,5 +1,6 @@
 import { Helpers } from '../utils/helpers.js';
 import { Logger } from '../utils/logger.js';
+import { soundManager } from '../utils/soundManager.js';
 
 export default class GameEvent {
   constructor(eventObject) {
@@ -17,6 +18,7 @@ export default class GameEvent {
           <p class="mb-0">${this.description}</p>
         </div>`;
       Logger.log(msg);
+      soundManager.play('event');
     };
   }
 
