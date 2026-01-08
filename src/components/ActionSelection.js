@@ -3,10 +3,10 @@ import { BaseComponent } from './BaseComponent.js';
 /**
  * ActionSelection Web Component
  * Displays action buttons for turn-based combat
- * 
+ *
  * Properties:
  * - fighter: Fighter object with skills, mana, health data
- * 
+ *
  * Events:
  * - action-selected: { action, skillIndex }
  */
@@ -235,11 +235,14 @@ export class ActionSelection extends BaseComponent {
       return '<div class="action-selection-ui"><p>Loading...</p></div>';
     }
 
-    const skillButtonsHTML = this._fighter.skills.map((skill, index) => {
-      const isDisabled = !skill.isReady() || this._fighter.mana < skill.manaCost;
-      const cooldownText = !skill.isReady() ? `⏱️ ${skill.currentCooldown}` : `💧 ${skill.manaCost}`;
-      
-      return `
+    const skillButtonsHTML = this._fighter.skills
+      .map((skill, index) => {
+        const isDisabled = !skill.isReady() || this._fighter.mana < skill.manaCost;
+        const cooldownText = !skill.isReady()
+          ? `⏱️ ${skill.currentCooldown}`
+          : `💧 ${skill.manaCost}`;
+
+        return `
         <button 
           class="action-btn skill-btn" 
           data-action="skill" 
@@ -251,7 +254,8 @@ export class ActionSelection extends BaseComponent {
           <span class="action-desc">${cooldownText}</span>
         </button>
       `;
-    }).join('');
+      })
+      .join('');
 
     const canHeal = this._fighter.health < this._fighter.maxHealth;
 
@@ -296,20 +300,21 @@ export class ActionSelection extends BaseComponent {
 
   attachEventListeners() {
     const buttons = this.shadowRoot.querySelectorAll('.action-btn');
-    
-    buttons.forEach(btn => {
+
+    buttons.forEach((btn) => {
       btn.addEventListener('click', (e) => {
         if (!e.currentTarget.disabled) {
           const action = e.currentTarget.dataset.action;
           const skillIndex = e.currentTarget.dataset.skillIndex;
-          
+
           e.currentTarget.classList.add('selected');
-          
+
           setTimeout(() => {
-            const actionData = action === 'skill' && skillIndex !== undefined
-              ? { action: 'skill', skillIndex: parseInt(skillIndex) }
-              : { action };
-            
+            const actionData =
+              action === 'skill' && skillIndex !== undefined
+                ? { action: 'skill', skillIndex: parseInt(skillIndex) }
+                : { action };
+
             this.emit('action-selected', actionData);
             this.remove();
           }, 300);

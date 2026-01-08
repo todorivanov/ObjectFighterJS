@@ -4,7 +4,7 @@ import './StatusEffectIcon.js';
 /**
  * FighterHUD Web Component
  * Displays fighter stats during combat
- * 
+ *
  * Properties:
  * - fighter1: First fighter data
  * - fighter2: Second fighter data
@@ -240,20 +240,23 @@ export class FighterHUD extends BaseComponent {
     const currentMana = Math.max(0, fighter.mana || 0);
     const maxMana = fighter.maxMana || 100;
     const manaPercent = Math.max(0, Math.min(100, (currentMana / maxMana) * 100));
-    
+
     let healthClass = '';
     if (healthPercent < 30) healthClass = 'low';
     else if (healthPercent < 60) healthClass = 'medium';
 
     const statusEffects = fighter.statusEffects || [];
-    const statusEffectsHTML = statusEffects.map(effect => 
-      `<status-effect-icon
+    const statusEffectsHTML = statusEffects
+      .map(
+        (effect) =>
+          `<status-effect-icon
         effect-name="${effect.name}"
         effect-icon="${effect.icon}"
         effect-type="${effect.type}"
         effect-duration="${effect.duration}"
       ></status-effect-icon>`
-    ).join('');
+      )
+      .join('');
 
     return `
       <div class="fighter-stat-card ${side}">

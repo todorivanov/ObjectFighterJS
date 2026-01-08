@@ -10,7 +10,7 @@ import { GameConfig } from '../config/gameConfig.js';
 /**
  * MarketplaceScreen Web Component
  * Shopping interface for equipment, consumables, repairs, and selling
- * 
+ *
  * Events:
  * - close: User wants to exit marketplace
  */
@@ -522,42 +522,44 @@ export class MarketplaceScreen extends BaseComponent {
    * @returns {string} HTML string
    */
   getClassRequirementHTML(equipment, checkPlayer = true) {
-    const playerClass = SaveManager.get('profile.character.class') || SaveManager.get('profile.class');
-    const meetsClassReq = !equipment.requirements.class || equipment.requirements.class.includes(playerClass);
-    
+    const playerClass =
+      SaveManager.get('profile.character.class') || SaveManager.get('profile.class');
+    const meetsClassReq =
+      !equipment.requirements.class || equipment.requirements.class.includes(playerClass);
+
     const classIcons = {
-      'BALANCED': '⚖️',
-      'WARRIOR': '⚔️',
-      'TANK': '🛡️',
-      'GLASS_CANNON': '💥',
-      'BRUISER': '👊',
-      'MAGE': '🔮',
-      'ASSASSIN': '🗡️',
-      'BERSERKER': '🪓',
-      'PALADIN': '⚜️',
-      'NECROMANCER': '💀',
+      BALANCED: '⚖️',
+      WARRIOR: '⚔️',
+      TANK: '🛡️',
+      GLASS_CANNON: '💥',
+      BRUISER: '👊',
+      MAGE: '🔮',
+      ASSASSIN: '🗡️',
+      BERSERKER: '🪓',
+      PALADIN: '⚜️',
+      NECROMANCER: '💀',
     };
-    
+
     const classNames = {
-      'BALANCED': 'Balanced',
-      'WARRIOR': 'Warrior',
-      'TANK': 'Tank',
-      'GLASS_CANNON': 'Glass Cannon',
-      'BRUISER': 'Bruiser',
-      'MAGE': 'Mage',
-      'ASSASSIN': 'Assassin',
-      'BERSERKER': 'Berserker',
-      'PALADIN': 'Paladin',
-      'NECROMANCER': 'Necromancer',
+      BALANCED: 'Balanced',
+      WARRIOR: 'Warrior',
+      TANK: 'Tank',
+      GLASS_CANNON: 'Glass Cannon',
+      BRUISER: 'Bruiser',
+      MAGE: 'Mage',
+      ASSASSIN: 'Assassin',
+      BERSERKER: 'Berserker',
+      PALADIN: 'Paladin',
+      NECROMANCER: 'Necromancer',
     };
-    
+
     if (equipment.requirements.class) {
       const classesText = equipment.requirements.class
-        .map(c => `${classIcons[c] || ''} ${classNames[c] || c}`)
+        .map((c) => `${classIcons[c] || ''} ${classNames[c] || c}`)
         .join(', ');
-      
+
       let bgColor, borderColor, textColor, icon;
-      
+
       if (!checkPlayer) {
         // Just showing info, not checking compatibility
         bgColor = 'rgba(106, 66, 194, 0.15)';
@@ -577,7 +579,7 @@ export class MarketplaceScreen extends BaseComponent {
         textColor = '#ef5350';
         icon = '❌ ';
       }
-      
+
       return `
         <div style="
           text-align: center; 
@@ -613,7 +615,7 @@ export class MarketplaceScreen extends BaseComponent {
 
   renderEquipmentTab() {
     const inventory = MarketplaceManager.getCurrentInventory();
-    
+
     if (inventory.length === 0) {
       return `
         <div class="empty-state">
@@ -625,7 +627,7 @@ export class MarketplaceScreen extends BaseComponent {
 
     return `
       <div class="items-grid">
-        ${inventory.map(eq => this.renderShopItem(eq)).join('')}
+        ${inventory.map((eq) => this.renderShopItem(eq)).join('')}
       </div>
     `;
   }
@@ -634,10 +636,12 @@ export class MarketplaceScreen extends BaseComponent {
     const price = MarketplaceManager.getItemPrice(equipment);
     const canAfford = EconomyManager.canAfford(price);
     const playerLevel = SaveManager.get('profile.level');
-    const playerClass = SaveManager.get('profile.character.class') || SaveManager.get('profile.class');
-    
+    const playerClass =
+      SaveManager.get('profile.character.class') || SaveManager.get('profile.class');
+
     const meetsLevelReq = equipment.requirements.level <= playerLevel;
-    const meetsClassReq = !equipment.requirements.class || equipment.requirements.class.includes(playerClass);
+    const meetsClassReq =
+      !equipment.requirements.class || equipment.requirements.class.includes(playerClass);
     const canPurchase = canAfford && meetsLevelReq && meetsClassReq;
 
     const stats = Object.entries(equipment.stats)
@@ -672,7 +676,7 @@ export class MarketplaceScreen extends BaseComponent {
 
   renderConsumablesTab() {
     const prices = MarketplaceManager.getConsumablePrices();
-    
+
     return `
       <div class="consumables-list">
         <div class="consumable-item">
@@ -717,8 +721,8 @@ export class MarketplaceScreen extends BaseComponent {
   renderRepairTab() {
     const inventory = EquipmentManager.getInventoryItems();
     const durabilityInfo = DurabilityManager.getAllDurability();
-    
-    const repairableItems = inventory.filter(eq => {
+
+    const repairableItems = inventory.filter((eq) => {
       const info = durabilityInfo[eq.id];
       return info && info.current < info.max;
     });
@@ -734,7 +738,7 @@ export class MarketplaceScreen extends BaseComponent {
 
     return `
       <div class="items-grid">
-        ${repairableItems.map(eq => this.renderRepairItem(eq, durabilityInfo[eq.id])).join('')}
+        ${repairableItems.map((eq) => this.renderRepairItem(eq, durabilityInfo[eq.id])).join('')}
       </div>
     `;
   }
@@ -795,20 +799,23 @@ export class MarketplaceScreen extends BaseComponent {
     // Track which equipped items we've already marked
     // This handles the case where you have multiple copies of the same item
     const equippedItemsMarked = new Set();
-    
+
     return `
       <div class="items-grid">
-        ${inventory.map(eq => {
-          // Check if this specific item is equipped
-          const isThisItemEquipped = Object.values(equipped).includes(eq.id) && !equippedItemsMarked.has(eq.id);
-          
-          // If this item is equipped, mark it so we don't mark duplicates
-          if (isThisItemEquipped) {
-            equippedItemsMarked.add(eq.id);
-          }
-          
-          return this.renderSellItem(eq, isThisItemEquipped);
-        }).join('')}
+        ${inventory
+          .map((eq) => {
+            // Check if this specific item is equipped
+            const isThisItemEquipped =
+              Object.values(equipped).includes(eq.id) && !equippedItemsMarked.has(eq.id);
+
+            // If this item is equipped, mark it so we don't mark duplicates
+            if (isThisItemEquipped) {
+              equippedItemsMarked.add(eq.id);
+            }
+
+            return this.renderSellItem(eq, isThisItemEquipped);
+          })
+          .join('')}
       </div>
     `;
   }
@@ -859,15 +866,15 @@ export class MarketplaceScreen extends BaseComponent {
       refreshBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        
+
         const refreshCost = GameConfig.marketplace.refreshCost;
-        
+
         // Confirm with user
         const confirmed = confirm(
           `Refresh shop inventory for ${refreshCost} gold?\n\n` +
-          `This will generate new items immediately instead of waiting for the automatic refresh.`
+            `This will generate new items immediately instead of waiting for the automatic refresh.`
         );
-        
+
         if (confirmed) {
           const success = MarketplaceManager.forceRefreshWithCost(refreshCost);
           if (success) {
@@ -879,7 +886,7 @@ export class MarketplaceScreen extends BaseComponent {
     }
 
     // Tab buttons
-    this.shadowRoot.querySelectorAll('.tab-btn').forEach(btn => {
+    this.shadowRoot.querySelectorAll('.tab-btn').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -889,11 +896,11 @@ export class MarketplaceScreen extends BaseComponent {
     });
 
     // Action buttons
-    this.shadowRoot.querySelectorAll('[data-action]').forEach(btn => {
+    this.shadowRoot.querySelectorAll('[data-action]').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        
+
         const action = btn.dataset.action;
         const id = btn.dataset.id;
         const type = btn.dataset.type;

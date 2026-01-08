@@ -4,7 +4,7 @@ import { DifficultyManager, DIFFICULTY_CONFIG } from '../game/DifficultyManager.
 /**
  * SettingsScreen Web Component
  * Displays game settings including difficulty selection
- * 
+ *
  * Events:
  * - back-to-menu: User wants to return to main menu
  */
@@ -296,7 +296,7 @@ export class SettingsScreen extends BaseComponent {
           </div>
 
           <div class="difficulty-grid">
-            ${difficulties.map(diff => this.renderDifficultyCard(diff, currentDifficulty)).join('')}
+            ${difficulties.map((diff) => this.renderDifficultyCard(diff, currentDifficulty)).join('')}
           </div>
         </div>
       </div>
@@ -316,9 +316,13 @@ export class SettingsScreen extends BaseComponent {
         <div class="difficulty-name">${difficulty.name}</div>
         <div class="difficulty-description">${difficulty.description}</div>
         <ul class="difficulty-tips">
-          ${difficulty.tips.map(tip => `
+          ${difficulty.tips
+            .map(
+              (tip) => `
             <li class="difficulty-tip" style="color: ${difficulty.color};">${tip}</li>
-          `).join('')}
+          `
+            )
+            .join('')}
         </ul>
       </div>
     `;
@@ -335,15 +339,17 @@ export class SettingsScreen extends BaseComponent {
 
     // Difficulty cards
     const difficultyCards = this.shadowRoot.querySelectorAll('.difficulty-card');
-    difficultyCards.forEach(card => {
+    difficultyCards.forEach((card) => {
       card.addEventListener('click', () => {
         const difficulty = card.dataset.difficulty;
         if (DifficultyManager.setDifficulty(difficulty)) {
           this.render();
-          
+
           // Show confirmation
           const config = DIFFICULTY_CONFIG[difficulty];
-          alert(`✅ Difficulty set to ${config.icon} ${config.name}\n\nChanges will take effect in your next battle!`);
+          alert(
+            `✅ Difficulty set to ${config.icon} ${config.name}\n\nChanges will take effect in your next battle!`
+          );
         }
       });
     });

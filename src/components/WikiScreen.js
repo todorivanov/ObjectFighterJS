@@ -1876,7 +1876,7 @@ Flawless Victory: 3/3
 
     // Tab buttons
     const tabButtons = this.shadowRoot.querySelectorAll('.tab-button');
-    tabButtons.forEach(button => {
+    tabButtons.forEach((button) => {
       button.addEventListener('click', () => {
         const tab = button.dataset.tab;
         this._activeTab = tab;

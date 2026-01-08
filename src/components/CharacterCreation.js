@@ -5,7 +5,7 @@ import { getAllClasses } from '../data/classes.js';
 /**
  * CharacterCreation Web Component
  * Character creation screen for first-time players
- * 
+ *
  * Events:
  * - character-created: { name, class, appearance }
  */
@@ -328,7 +328,7 @@ export class CharacterCreation extends BaseComponent {
   template() {
     const classes = getAllClasses();
     const appearances = ['🧙', '🧑‍🚀', '🧝', '🧛', '🥷', '🤠', '🧙‍♀️', '🦸', '🦹'];
-    
+
     // Determine difficulty for each class
     const beginnerClasses = ['BALANCED', 'WARRIOR', 'PALADIN', 'BRUISER'];
 
@@ -362,14 +362,15 @@ export class CharacterCreation extends BaseComponent {
               Choose Your Class (${classes.length} Classes)
             </div>
             <div class="class-grid">
-              ${classes.map(cls => {
-                const baseHP = 400;
-                const baseSTR = 10;
-                const actualHP = Math.round(baseHP * cls.stats.healthMod);
-                const actualSTR = (baseSTR * cls.stats.strengthMod).toFixed(1);
-                const isBeginner = beginnerClasses.includes(cls.id);
-                
-                return `
+              ${classes
+                .map((cls) => {
+                  const baseHP = 400;
+                  const baseSTR = 10;
+                  const actualHP = Math.round(baseHP * cls.stats.healthMod);
+                  const actualSTR = (baseSTR * cls.stats.strengthMod).toFixed(1);
+                  const isBeginner = beginnerClasses.includes(cls.id);
+
+                  return `
                   <div class="class-option ${this.selectedClass === cls.id ? 'selected' : ''}" data-class="${cls.id}">
                     <div class="class-header">
                       <div class="class-icon">${cls.icon}</div>
@@ -401,7 +402,8 @@ export class CharacterCreation extends BaseComponent {
                     </div>
                   </div>
                 `;
-              }).join('')}
+                })
+                .join('')}
             </div>
           </div>
 
@@ -412,11 +414,15 @@ export class CharacterCreation extends BaseComponent {
               Choose Your Avatar
             </div>
             <div class="appearance-grid">
-              ${appearances.map((emoji, idx) => `
+              ${appearances
+                .map(
+                  (emoji, idx) => `
                 <div class="appearance-option ${this.selectedAppearance === `avatar${idx}` ? 'selected' : ''}" data-appearance="avatar${idx}">
                   ${emoji}
                 </div>
-              `).join('')}
+              `
+                )
+                .join('')}
             </div>
           </div>
 
@@ -444,10 +450,10 @@ export class CharacterCreation extends BaseComponent {
     });
 
     // Class selection - update without full re-render
-    classOptions.forEach(option => {
+    classOptions.forEach((option) => {
       option.addEventListener('click', () => {
         // Remove selected class from all options
-        classOptions.forEach(opt => opt.classList.remove('selected'));
+        classOptions.forEach((opt) => opt.classList.remove('selected'));
         // Add selected class to clicked option
         option.classList.add('selected');
         // Update selected class
@@ -456,10 +462,10 @@ export class CharacterCreation extends BaseComponent {
     });
 
     // Appearance selection - update without full re-render
-    appearanceOptions.forEach(option => {
+    appearanceOptions.forEach((option) => {
       option.addEventListener('click', () => {
         // Remove selected class from all options
-        appearanceOptions.forEach(opt => opt.classList.remove('selected'));
+        appearanceOptions.forEach((opt) => opt.classList.remove('selected'));
         // Add selected class to clicked option
         option.classList.add('selected');
         // Update selected appearance
@@ -491,15 +497,15 @@ export class CharacterCreation extends BaseComponent {
 
   createCharacter() {
     const classStats = {
-      'BALANCED': { health: 400, strength: 10 },
-      'WARRIOR': { health: 350, strength: 13 },
-      'TANK': { health: 600, strength: 4 },
-      'GLASS_CANNON': { health: 300, strength: 20 },
-      'BRUISER': { health: 500, strength: 6 },
+      BALANCED: { health: 400, strength: 10 },
+      WARRIOR: { health: 350, strength: 13 },
+      TANK: { health: 600, strength: 4 },
+      GLASS_CANNON: { health: 300, strength: 20 },
+      BRUISER: { health: 500, strength: 6 },
     };
 
     const stats = classStats[this.selectedClass];
-    
+
     const characterData = {
       name: this.characterName,
       class: this.selectedClass,

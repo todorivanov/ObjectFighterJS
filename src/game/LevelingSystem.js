@@ -33,14 +33,14 @@ export class LevelingSystem {
   static getLevelFromXP(totalXP) {
     let level = 1;
     let xpAccumulated = 0;
-    
+
     while (xpAccumulated + this.getXPForLevel(level) <= totalXP) {
       xpAccumulated += this.getXPForLevel(level);
       level++;
-      
+
       if (level > 100) break; // Safety cap
     }
-    
+
     return level;
   }
 
@@ -53,43 +53,43 @@ export class LevelingSystem {
   static awardXP(amount, reason = 'Victory') {
     // Apply difficulty multiplier
     const scaledAmount = DifficultyManager.getScaledXP(amount);
-    
+
     const currentProfile = SaveManager.get('profile');
     const currentLevel = currentProfile.level;
     const currentXP = currentProfile.xp;
     const newXP = currentXP + scaledAmount;
-    
+
     // Calculate new level
     const newLevel = this.getLevelFromXP(newXP);
     const leveledUp = newLevel > currentLevel;
-    
+
     // Update save data
     SaveManager.update('profile.xp', newXP);
     SaveManager.update('profile.level', newLevel);
-    
+
     if (newLevel > 1) {
       const xpForNextLevel = this.getTotalXPForLevel(newLevel + 1);
       SaveManager.update('profile.xpToNextLevel', xpForNextLevel - newXP);
     }
-    
+
     // Log XP gain (show scaled amount)
     const xpMessage = `<div class="xp-gain-message" style="background: rgba(255, 215, 0, 0.2); border-left-color: gold; color: white; padding: 12px; margin: 8px 0; border-radius: 8px;">
       ✨ <strong>+${scaledAmount} XP</strong> earned from ${reason}!
     </div>`;
     Logger.log(xpMessage);
-    
+
     // If leveled up, show celebration
     if (leveledUp) {
       const levelsGained = newLevel - currentLevel;
       this.showLevelUpAnimation(newLevel, levelsGained);
       soundManager.play('victory'); // Play victory sound for level up
     }
-    
+
     console.log(`🎯 Awarded ${scaledAmount} XP for ${reason}`);
     if (leveledUp) {
       console.log(`🎉 LEVEL UP! ${currentLevel} → ${newLevel}`);
     }
-    
+
     return {
       leveledUp,
       newLevel,
@@ -123,9 +123,9 @@ export class LevelingSystem {
         ${this.getLevelUpRewards(newLevel)}
       </div>
     </div>`;
-    
+
     Logger.log(levelUpMessage);
-    
+
     // Add CSS animation if not already present
     if (!document.getElementById('levelup-animations')) {
       const style = document.createElement('style');
@@ -146,26 +146,26 @@ export class LevelingSystem {
    */
   static getLevelUpRewards(level) {
     const rewards = [];
-    
+
     // Stat bonuses
     rewards.push('+5% Max HP');
     rewards.push('+3% Strength');
-    
+
     // Special rewards at milestone levels
     if (level % 5 === 0) {
       rewards.push('🎁 <strong>Bonus Reward!</strong>');
       rewards.push('+ 1 Equipment Piece');
     }
-    
+
     if (level === 10) {
       rewards.push('🏆 <strong>Special Item Unlocked!</strong>');
     }
-    
+
     if (level === 20) {
       rewards.push('👑 <strong>Max Level Reached!</strong>');
       rewards.push('🎖️ "Master Fighter" Title');
     }
-    
+
     return rewards.join(' • ');
   }
 
@@ -174,27 +174,27 @@ export class LevelingSystem {
    */
   static applyLevelBonuses(fighter) {
     const level = SaveManager.get('profile.level') || 1;
-    
+
     if (level === 1) return fighter; // No bonuses at level 1
-    
+
     // Calculate bonuses (5% HP, 3% Strength per level)
-    const hpBonus = 1 + ((level - 1) * 0.05);
-    const strBonus = 1 + ((level - 1) * 0.03);
-    
+    const hpBonus = 1 + (level - 1) * 0.05;
+    const strBonus = 1 + (level - 1) * 0.03;
+
     // Store original values for logging
     const originalHealth = fighter.health;
     const originalStrength = fighter.strength;
-    
+
     // Apply bonuses directly to the fighter object (mutate in place)
     fighter.health = Math.floor(fighter.health * hpBonus);
     fighter.maxHealth = Math.floor(fighter.maxHealth * hpBonus);
     fighter.strength = Math.floor(fighter.strength * strBonus);
-    
+
     console.log(`💪 Applied level ${level} bonuses to ${fighter.name}:`, {
       hp: `${originalHealth} → ${fighter.health}`,
       str: `${originalStrength} → ${fighter.strength}`,
     });
-    
+
     return fighter;
   }
 
@@ -218,12 +218,12 @@ export class LevelingSystem {
   static getXPProgress() {
     const currentXP = this.getCurrentXP();
     const currentLevel = this.getCurrentLevel();
-    
+
     const xpForCurrentLevel = this.getTotalXPForLevel(currentLevel);
     const xpForNextLevel = this.getTotalXPForLevel(currentLevel + 1);
     const xpInCurrentLevel = currentXP - xpForCurrentLevel;
     const xpNeededForLevel = xpForNextLevel - xpForCurrentLevel;
-    
+
     return Math.min(100, (xpInCurrentLevel / xpNeededForLevel) * 100);
   }
 
@@ -234,7 +234,7 @@ export class LevelingSystem {
     const currentXP = this.getCurrentXP();
     const currentLevel = this.getCurrentLevel();
     const xpForNextLevel = this.getTotalXPForLevel(currentLevel + 1);
-    
+
     return xpForNextLevel - currentXP;
   }
 }

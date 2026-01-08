@@ -37,14 +37,14 @@ export class MarketplaceManager {
    */
   static getItemPrice(equipment) {
     if (!equipment) return 0;
-    
+
     const range = this.getPriceRange(equipment.rarity);
     const basePrice = (range.min + range.max) / 2;
-    
+
     // Add variation based on stats
     const statBonus = Object.values(equipment.stats || {}).reduce((sum, val) => sum + val, 0);
     const variation = statBonus * 2;
-    
+
     return Math.floor(basePrice + variation);
   }
 
@@ -64,9 +64,9 @@ export class MarketplaceManager {
   static needsRefresh() {
     const marketplace = SaveManager.get('marketplace');
     const lastRefresh = marketplace?.lastRefresh;
-    
+
     if (!lastRefresh) return true;
-    
+
     const timeSinceRefresh = Date.now() - lastRefresh;
     return timeSinceRefresh >= this.REFRESH_INTERVAL;
   }
@@ -78,10 +78,10 @@ export class MarketplaceManager {
   static getTimeUntilRefresh() {
     const marketplace = SaveManager.get('marketplace');
     const lastRefresh = marketplace?.lastRefresh || 0;
-    
+
     const timeSinceRefresh = Date.now() - lastRefresh;
     const timeRemaining = this.REFRESH_INTERVAL - timeSinceRefresh;
-    
+
     return Math.max(0, timeRemaining);
   }
 
@@ -93,7 +93,7 @@ export class MarketplaceManager {
     const ms = this.getTimeUntilRefresh();
     const hours = Math.floor(ms / (60 * 60 * 1000));
     const minutes = Math.floor((ms % (60 * 60 * 1000)) / (60 * 1000));
-    
+
     if (hours > 0) {
       return `${hours}h ${minutes}m`;
     }
@@ -116,18 +116,18 @@ export class MarketplaceManager {
     }
 
     const inventory = [];
-    const availableEquipment = Object.values(EQUIPMENT_DATABASE).filter(eq => 
-      eq.requirements.level <= playerLevel + 2 // Show items slightly above level
+    const availableEquipment = Object.values(EQUIPMENT_DATABASE).filter(
+      (eq) => eq.requirements.level <= playerLevel + 2 // Show items slightly above level
     );
 
     // Determine number of items (6-8)
     const itemCount = 6 + Math.floor(Math.random() * 3);
 
     // Rarity chances based on player level
-    const getLegendaryChance = () => playerLevel >= 15 ? 0.05 : 0;
-    const getEpicChance = () => playerLevel >= 10 ? 0.15 : 0;
-    const getRareChance = () => playerLevel >= 5 ? 0.30 : 0.20;
-    
+    const getLegendaryChance = () => (playerLevel >= 15 ? 0.05 : 0);
+    const getEpicChance = () => (playerLevel >= 10 ? 0.15 : 0);
+    const getRareChance = () => (playerLevel >= 5 ? 0.3 : 0.2);
+
     // Generate items
     for (let i = 0; i < itemCount; i++) {
       const roll = Math.random();
@@ -144,7 +144,7 @@ export class MarketplaceManager {
       }
 
       // Get random item of target rarity
-      const rarityItems = availableEquipment.filter(eq => eq.rarity === targetRarity);
+      const rarityItems = availableEquipment.filter((eq) => eq.rarity === targetRarity);
       if (rarityItems.length > 0) {
         const randomItem = rarityItems[Math.floor(Math.random() * rarityItems.length)];
         // Avoid duplicates
@@ -156,11 +156,11 @@ export class MarketplaceManager {
 
     // Ensure we have at least common items if nothing was added
     while (inventory.length < 4) {
-      const commonItems = availableEquipment.filter(eq => 
-        eq.rarity === 'common' && !inventory.includes(eq.id)
+      const commonItems = availableEquipment.filter(
+        (eq) => eq.rarity === 'common' && !inventory.includes(eq.id)
       );
       if (commonItems.length === 0) break;
-      
+
       const randomItem = commonItems[Math.floor(Math.random() * commonItems.length)];
       inventory.push(randomItem.id);
     }
@@ -170,7 +170,7 @@ export class MarketplaceManager {
     SaveManager.update('marketplace.lastRefresh', Date.now());
 
     console.log(`🏪 Shop inventory refreshed! ${inventory.length} items available.`);
-    
+
     return inventory;
   }
 
@@ -181,8 +181,8 @@ export class MarketplaceManager {
   static getCurrentInventory() {
     const playerLevel = SaveManager.get('profile.level') || 1;
     const inventoryIds = this.generateRotatingInventory(playerLevel);
-    
-    return inventoryIds.map(id => getEquipmentById(id)).filter(eq => eq !== null);
+
+    return inventoryIds.map((id) => getEquipmentById(id)).filter((eq) => eq !== null);
   }
 
   /**
@@ -217,7 +217,7 @@ export class MarketplaceManager {
     const inventory = SaveManager.get('inventory.equipment') || [];
     if (inventory.length >= 20) {
       console.log('❌ Inventory full! Sell items to make space.');
-      
+
       const message = `
         <div class="inventory-full" style="
           background: linear-gradient(135deg, rgba(255, 152, 0, 0.2), rgba(245, 124, 0, 0.3));
@@ -233,7 +233,7 @@ export class MarketplaceManager {
         </div>
       `;
       Logger.log(message);
-      
+
       return false;
     }
 
@@ -321,17 +321,17 @@ export class MarketplaceManager {
     // Check if item is equipped AND if it's the only copy
     const equipped = SaveManager.get('equipped');
     const isEquipped = Object.values(equipped).includes(equipmentId);
-    
+
     // Count how many copies of this item we have
-    const itemCount = inventory.filter(id => id === equipmentId).length;
-    
+    const itemCount = inventory.filter((id) => id === equipmentId).length;
+
     // Only block the sale if:
     // 1. The item is equipped AND
     // 2. This is the only copy (no duplicates)
     // If there are duplicates, we allow selling the non-equipped copy
     if (isEquipped && itemCount === 1) {
       console.log('❌ Cannot sell equipped items. Unequip first.');
-      
+
       const message = `
         <div class="cannot-sell" style="
           background: linear-gradient(135deg, rgba(244, 67, 54, 0.2), rgba(211, 47, 47, 0.3));
@@ -347,7 +347,7 @@ export class MarketplaceManager {
         </div>
       `;
       Logger.log(message);
-      
+
       return false;
     }
 
@@ -393,7 +393,7 @@ export class MarketplaceManager {
   static forceRefresh() {
     const playerLevel = SaveManager.get('profile.level') || 1;
     this.generateRotatingInventory(playerLevel, true);
-    
+
     const message = `
       <div class="shop-refresh" style="
         background: linear-gradient(135deg, rgba(103, 58, 183, 0.2), rgba(81, 45, 168, 0.3));
@@ -488,7 +488,7 @@ export class MarketplaceManager {
   static purchaseConsumable(type, quantity = 1) {
     const prices = this.getConsumablePrices();
     const price = prices[type];
-    
+
     if (!price) {
       console.error('Invalid consumable type');
       return false;

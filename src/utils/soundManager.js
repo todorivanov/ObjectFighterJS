@@ -15,12 +15,12 @@ export class SoundManager {
    */
   init() {
     if (this.initialized) return;
-    
+
     try {
       this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
       this.initialized = true;
       console.log('🔊 Sound system initialized');
-      
+
       // Play a silent sound to "unlock" audio on mobile
       this.playTestSound();
     } catch (e) {
@@ -34,13 +34,13 @@ export class SoundManager {
    */
   playTestSound() {
     if (!this.audioContext) return;
-    
+
     const oscillator = this.audioContext.createOscillator();
     const gainNode = this.audioContext.createGain();
-    
+
     oscillator.connect(gainNode);
     gainNode.connect(this.audioContext.destination);
-    
+
     gainNode.gain.value = 0.001; // Nearly silent
     oscillator.frequency.value = 440;
     oscillator.start();
@@ -53,12 +53,12 @@ export class SoundManager {
    */
   play(type) {
     if (!this.enabled) return;
-    
+
     // Initialize on first play if needed
     if (!this.initialized) {
       this.init();
     }
-    
+
     if (!this.audioContext) return;
 
     const audioContext = this.audioContext;
@@ -144,12 +144,12 @@ export class SoundManager {
   toggle() {
     this.enabled = !this.enabled;
     localStorage.setItem('soundEnabled', this.enabled);
-    
+
     // Initialize on enable
     if (this.enabled && !this.initialized) {
       this.init();
     }
-    
+
     return this.enabled;
   }
 

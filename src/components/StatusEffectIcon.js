@@ -3,7 +3,7 @@ import { BaseComponent } from './BaseComponent.js';
 /**
  * StatusEffectIcon Web Component
  * Displays a status effect icon with tooltip
- * 
+ *
  * Attributes:
  * - effect-name: Name of the effect
  * - effect-icon: Emoji icon

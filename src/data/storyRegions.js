@@ -97,25 +97,21 @@ export function getRegionsInOrder() {
 export function isRegionUnlocked(regionId, storyProgress) {
   const region = STORY_REGIONS[regionId];
   if (!region) return false;
-  
+
   // Tutorial always unlocked
   if (region.unlocked) return true;
-  
+
   // Check if unlocking mission(s) completed
   const unlockedBy = Array.isArray(region.unlockedBy) ? region.unlockedBy : [region.unlockedBy];
-  
-  return unlockedBy.some(missionId => 
-    storyProgress.completedMissions.includes(missionId)
-  );
+
+  return unlockedBy.some((missionId) => storyProgress.completedMissions.includes(missionId));
 }
 
 /**
  * Get unlocked regions based on story progress
  */
 export function getUnlockedRegions(storyProgress) {
-  return Object.keys(STORY_REGIONS).filter(regionId => 
-    isRegionUnlocked(regionId, storyProgress)
-  );
+  return Object.keys(STORY_REGIONS).filter((regionId) => isRegionUnlocked(regionId, storyProgress));
 }
 
 /**
@@ -124,12 +120,12 @@ export function getUnlockedRegions(storyProgress) {
 export function getRegionCompletion(regionId, storyProgress) {
   const region = STORY_REGIONS[regionId];
   if (!region) return 0;
-  
+
   const totalMissions = region.missions.length;
-  const completedMissions = region.missions.filter(missionId => 
+  const completedMissions = region.missions.filter((missionId) =>
     storyProgress.completedMissions.includes(missionId)
   ).length;
-  
+
   return Math.floor((completedMissions / totalMissions) * 100);
 }
 

@@ -63,7 +63,7 @@ export class BaseComponent extends HTMLElement {
       </style>
       ${this.template()}
     `;
-    
+
     this.attachEventListeners();
   }
 
@@ -86,10 +86,12 @@ export class BaseComponent extends HTMLElement {
    * Dispatch custom event
    */
   emit(eventName, detail = {}) {
-    this.dispatchEvent(new CustomEvent(eventName, {
-      detail,
-      bubbles: true,
-      composed: true
-    }));
+    this.dispatchEvent(
+      new CustomEvent(eventName, {
+        detail,
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 }

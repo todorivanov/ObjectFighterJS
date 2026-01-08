@@ -4,7 +4,7 @@ import { getMissionById } from '../data/storyMissions.js';
 /**
  * MissionBriefing Web Component
  * Shows mission details, objectives, and dialogue before starting
- * 
+ *
  * Events:
  * - start-mission: User confirmed mission start
  * - cancel: User cancelled
@@ -253,7 +253,7 @@ export class MissionBriefing extends BaseComponent {
 
   template() {
     if (!this.missionId) return '<div>Loading...</div>';
-    
+
     const mission = getMissionById(this.missionId);
     if (!mission) return '<div>Mission not found</div>';
 
@@ -276,60 +276,88 @@ export class MissionBriefing extends BaseComponent {
         </div>
 
         <div class="content">
-          ${mission.dialogue?.before ? `
+          ${
+            mission.dialogue?.before
+              ? `
             <div class="dialogue-box">
               ${mission.dialogue.before}
             </div>
-          ` : ''}
+          `
+              : ''
+          }
 
           <div class="description">${mission.description}</div>
 
           <div class="section-title">📋 Objectives</div>
           <ul class="objectives-list">
-            ${mission.objectives.map(obj => `
+            ${mission.objectives
+              .map(
+                (obj) => `
               <li class="objective-item ${obj.required ? 'required' : ''} ${obj.star ? 'star' : ''}">
                 <span class="objective-icon">${obj.required ? '❗' : '⭐'}</span>
                 <span class="objective-text">${obj.description}</span>
               </li>
-            `).join('')}
+            `
+              )
+              .join('')}
           </ul>
 
           <div class="section-title">🎁 Rewards</div>
           <div class="rewards-grid">
-            ${mission.rewards.gold ? `
+            ${
+              mission.rewards.gold
+                ? `
               <div class="reward-item">
                 <div class="reward-icon">💰</div>
                 <div class="reward-value">${mission.rewards.gold}</div>
                 <div class="reward-label">Gold</div>
               </div>
-            ` : ''}
-            ${mission.rewards.xp ? `
+            `
+                : ''
+            }
+            ${
+              mission.rewards.xp
+                ? `
               <div class="reward-item">
                 <div class="reward-icon">✨</div>
                 <div class="reward-value">${mission.rewards.xp}</div>
                 <div class="reward-label">XP</div>
               </div>
-            ` : ''}
-            ${mission.rewards.equipment && mission.rewards.equipment.length > 0 ? `
+            `
+                : ''
+            }
+            ${
+              mission.rewards.equipment && mission.rewards.equipment.length > 0
+                ? `
               <div class="reward-item">
                 <div class="reward-icon">🎁</div>
                 <div class="reward-value">${mission.rewards.equipment.length}</div>
                 <div class="reward-label">Equipment</div>
               </div>
-            ` : ''}
+            `
+                : ''
+            }
           </div>
 
-          ${mission.type === 'boss' ? `
+          ${
+            mission.type === 'boss'
+              ? `
             <div style="background: rgba(244, 67, 54, 0.2); border: 2px solid rgba(244, 67, 54, 0.4); border-radius: 10px; padding: 15px; text-align: center; color: #ef5350; font-weight: 700;">
               ⚠️ BOSS BATTLE - Extreme Challenge Ahead!
             </div>
-          ` : ''}
+          `
+              : ''
+          }
 
-          ${mission.type === 'survival' ? `
+          ${
+            mission.type === 'survival'
+              ? `
             <div style="background: rgba(255, 152, 0, 0.2); border: 2px solid rgba(255, 152, 0, 0.4); border-radius: 10px; padding: 15px; text-align: center; color: #ffa726; font-weight: 700;">
               🛡️ SURVIVAL MODE - Face ${mission.waves ? mission.waves.length : 3} Waves
             </div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
 
         <div class="actions">

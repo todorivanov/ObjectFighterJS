@@ -142,7 +142,7 @@ export class DifficultyManager {
       fighter.health = Math.floor(fighter.health * config.modifiers.playerHealthMultiplier);
       fighter.maxHealth = Math.floor(fighter.maxHealth * config.modifiers.playerHealthMultiplier);
       fighter.strength = Math.floor(fighter.strength * config.modifiers.playerStrengthMultiplier);
-      
+
       console.log(`💪 Player difficulty modifiers applied (${config.name}):`, {
         hp: `x${config.modifiers.playerHealthMultiplier}`,
         str: `x${config.modifiers.playerStrengthMultiplier}`,
@@ -152,7 +152,7 @@ export class DifficultyManager {
       fighter.health = Math.floor(fighter.health * config.modifiers.enemyHealthMultiplier);
       fighter.maxHealth = Math.floor(fighter.maxHealth * config.modifiers.enemyHealthMultiplier);
       fighter.strength = Math.floor(fighter.strength * config.modifiers.enemyStrengthMultiplier);
-      
+
       console.log(`👹 Enemy difficulty modifiers applied (${config.name}):`, {
         hp: `x${config.modifiers.enemyHealthMultiplier}`,
         str: `x${config.modifiers.enemyStrengthMultiplier}`,
@@ -195,7 +195,7 @@ export class DifficultyManager {
   static getDifficultyInfo(difficulty = null) {
     const diff = difficulty || this.getCurrentDifficulty();
     const config = DIFFICULTY_CONFIG[diff];
-    
+
     return {
       id: diff,
       name: config.name,
@@ -211,7 +211,7 @@ export class DifficultyManager {
    * Get all difficulties info
    */
   static getAllDifficultiesInfo() {
-    return Object.keys(DIFFICULTY_CONFIG).map(diff => this.getDifficultyInfo(diff));
+    return Object.keys(DIFFICULTY_CONFIG).map((diff) => this.getDifficultyInfo(diff));
   }
 
   /**

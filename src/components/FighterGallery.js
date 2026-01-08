@@ -3,11 +3,11 @@ import { BaseComponent } from './BaseComponent.js';
 /**
  * FighterGallery Web Component
  * Modern fighter selection gallery with filters
- * 
+ *
  * Properties:
  * - fighters: Array of fighter data
  * - mode: 'single' | 'team'
- * 
+ *
  * Events:
  * - fighter-selected: { fighter, selectedCount }
  * - selection-complete: { fighter1, fighter2 } or { team1: [], team2: [] }
@@ -304,7 +304,7 @@ export class FighterGallery extends BaseComponent {
 
   template() {
     const classes = ['ALL', 'TANK', 'BALANCED', 'AGILE', 'MAGE', 'HYBRID', 'ASSASSIN', 'BRAWLER'];
-    
+
     // Determine mode text based on selection type
     let modeText, needsCount;
     if (this._mode === 'opponent') {
@@ -317,7 +317,7 @@ export class FighterGallery extends BaseComponent {
       modeText = 'Build Your Teams';
       needsCount = 4;
     }
-    
+
     const selectionCount = this._selectedFighters.length;
 
     return `
@@ -330,24 +330,32 @@ export class FighterGallery extends BaseComponent {
         </div>
 
         <div class="filter-bar">
-          ${classes.map(cls => `
+          ${classes
+            .map(
+              (cls) => `
             <button 
               class="filter-btn ${this._filter === cls ? 'active' : ''}" 
               data-class="${cls}"
             >
               ${cls}
             </button>
-          `).join('')}
+          `
+            )
+            .join('')}
         </div>
 
         <div class="fighters-grid" id="fighters-grid"></div>
 
-        ${selectionCount >= needsCount ? `
+        ${
+          selectionCount >= needsCount
+            ? `
           <div class="selection-status">
             <div class="status-text">✓ Selection Complete!</div>
             <button class="start-btn">Start Battle</button>
           </div>
-        ` : ''}
+        `
+            : ''
+        }
       </div>
     `;
   }
@@ -355,7 +363,7 @@ export class FighterGallery extends BaseComponent {
   attachEventListeners() {
     // Filter buttons
     const filterButtons = this.shadowRoot.querySelectorAll('.filter-btn');
-    filterButtons.forEach(btn => {
+    filterButtons.forEach((btn) => {
       btn.addEventListener('click', () => {
         this._filter = btn.dataset.class;
         this.render();
@@ -389,9 +397,10 @@ export class FighterGallery extends BaseComponent {
 
     grid.innerHTML = '';
 
-    const filtered = this._filter === 'ALL' 
-      ? this._fighters 
-      : this._fighters.filter(f => f.class === this._filter);
+    const filtered =
+      this._filter === 'ALL'
+        ? this._fighters
+        : this._fighters.filter((f) => f.class === this._filter);
 
     filtered.forEach((fighter, index) => {
       const card = document.createElement('fighter-card');
@@ -399,13 +408,13 @@ export class FighterGallery extends BaseComponent {
       card.setAttribute('fighter-id', fighter.id);
       card.setAttribute('selectable', 'true');
       card.style.animationDelay = `${index * 0.05}s`;
-      
+
       // Check if already selected
-      const isSelected = this._selectedFighters.find(f => f.id === fighter.id);
+      const isSelected = this._selectedFighters.find((f) => f.id === fighter.id);
       if (isSelected) {
         card.classList.add('selected');
       }
-      
+
       card.addEventListener('fighter-selected', (e) => {
         // Add selected class
         card.classList.add('selected');
@@ -418,7 +427,7 @@ export class FighterGallery extends BaseComponent {
 
   handleFighterSelection(fighter) {
     // Check if already selected
-    const alreadySelected = this._selectedFighters.find(f => f.id === fighter.id);
+    const alreadySelected = this._selectedFighters.find((f) => f.id === fighter.id);
     if (alreadySelected) {
       return; // Already selected, ignore
     }
@@ -428,10 +437,10 @@ export class FighterGallery extends BaseComponent {
       // Remove previous selection
       const previousFighter = this._selectedFighters[0];
       this._selectedFighters = [];
-      
+
       // Remove highlight from previous card
       const cards = this.shadowRoot.querySelectorAll('fighter-card');
-      cards.forEach(card => {
+      cards.forEach((card) => {
         if (parseInt(card.getAttribute('fighter-id')) === previousFighter.id) {
           card.classList.remove('selected');
         }
@@ -439,11 +448,11 @@ export class FighterGallery extends BaseComponent {
     }
 
     this._selectedFighters.push(fighter);
-    this.emit('fighter-selected', { 
-      fighter, 
-      selectedCount: this._selectedFighters.length 
+    this.emit('fighter-selected', {
+      fighter,
+      selectedCount: this._selectedFighters.length,
     });
-    
+
     // Just update the status footer, don't re-render everything
     this.updateSelectionStatus();
   }
@@ -461,12 +470,12 @@ export class FighterGallery extends BaseComponent {
     } else {
       needsCount = 4;
     }
-    
+
     const selectionCount = this._selectedFighters.length;
 
     // Update or create selection status
     const statusEl = this.shadowRoot.querySelector('.selection-status');
-    
+
     if (selectionCount >= needsCount) {
       if (!statusEl) {
         // Create status element
@@ -476,8 +485,10 @@ export class FighterGallery extends BaseComponent {
             <button class="start-btn">Start Battle</button>
           </div>
         `;
-        this.shadowRoot.querySelector('.gallery-container').insertAdjacentHTML('beforeend', statusHTML);
-        
+        this.shadowRoot
+          .querySelector('.gallery-container')
+          .insertAdjacentHTML('beforeend', statusHTML);
+
         // Attach event listener
         const startBtn = this.shadowRoot.querySelector('.start-btn');
         if (startBtn) {
@@ -499,7 +510,7 @@ export class FighterGallery extends BaseComponent {
    */
   updateSelectedFightersDisplay() {
     let displayArea = this.shadowRoot.querySelector('.selected-fighters-display');
-    
+
     if (!displayArea) {
       // Create display area
       const gallery = this.shadowRoot.querySelector('.fighters-grid');
@@ -520,24 +531,28 @@ export class FighterGallery extends BaseComponent {
         } else {
           maxCount = '4';
         }
-        
+
         displayArea.innerHTML = `
           <div class="selected-header">
             <h4>Selected: ${this._selectedFighters.length}/${maxCount}</h4>
           </div>
           <div class="selected-list">
-            ${this._selectedFighters.map(fighter => `
+            ${this._selectedFighters
+              .map(
+                (fighter) => `
               <div class="selected-fighter-chip">
                 <img src="${fighter.image}" alt="${fighter.name}" />
                 <span>${fighter.name}</span>
                 <button class="remove-btn" data-fighter-id="${fighter.id}">✕</button>
               </div>
-            `).join('')}
+            `
+              )
+              .join('')}
           </div>
         `;
 
         // Attach remove buttons
-        displayArea.querySelectorAll('.remove-btn').forEach(btn => {
+        displayArea.querySelectorAll('.remove-btn').forEach((btn) => {
           btn.addEventListener('click', (e) => {
             const fighterId = parseInt(e.target.dataset.fighterId);
             this.removeFighter(fighterId);
@@ -566,11 +581,11 @@ export class FighterGallery extends BaseComponent {
    * Remove a fighter from selection
    */
   removeFighter(fighterId) {
-    this._selectedFighters = this._selectedFighters.filter(f => f.id !== fighterId);
-    
+    this._selectedFighters = this._selectedFighters.filter((f) => f.id !== fighterId);
+
     // Remove highlight from card
     const cards = this.shadowRoot.querySelectorAll('fighter-card');
-    cards.forEach(card => {
+    cards.forEach((card) => {
       if (parseInt(card.getAttribute('fighter-id')) === fighterId) {
         card.classList.remove('selected');
       }

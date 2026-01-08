@@ -3,7 +3,7 @@ import { BaseComponent } from './BaseComponent.js';
 /**
  * FighterCard Web Component
  * Displays a fighter's information in a card format
- * 
+ *
  * Attributes:
  * - fighter-id: Unique ID of the fighter
  * - fighter-name: Name of the fighter
@@ -18,9 +18,15 @@ import { BaseComponent } from './BaseComponent.js';
 export class FighterCard extends BaseComponent {
   static get observedAttributes() {
     return [
-      'fighter-id', 'fighter-name', 'fighter-image', 
-      'fighter-health', 'fighter-strength', 'fighter-class',
-      'fighter-description', 'draggable', 'selectable'
+      'fighter-id',
+      'fighter-name',
+      'fighter-image',
+      'fighter-health',
+      'fighter-strength',
+      'fighter-class',
+      'fighter-description',
+      'draggable',
+      'selectable',
     ];
   }
 
@@ -314,23 +320,23 @@ export class FighterCard extends BaseComponent {
 
   attachEventListeners() {
     const card = this.shadowRoot.querySelector('.fighter-card');
-    
+
     if (this.hasAttribute('selectable')) {
       card.addEventListener('click', () => {
-        this.emit('fighter-selected', { 
+        this.emit('fighter-selected', {
           fighterId: this.getAttribute('fighter-id'),
-          fighter: this._fighter
+          fighter: this._fighter,
         });
       });
     }
 
     if (this.hasAttribute('draggable')) {
       card.draggable = true;
-      
+
       card.addEventListener('dragstart', (_e) => {
-        this.emit('fighter-dragstart', { 
+        this.emit('fighter-dragstart', {
           fighterId: this.getAttribute('fighter-id'),
-          fighter: this._fighter
+          fighter: this._fighter,
         });
       });
     }

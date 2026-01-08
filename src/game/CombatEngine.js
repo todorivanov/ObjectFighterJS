@@ -36,10 +36,10 @@ export class CombatEngine {
 
       const randomEnemy =
         defendingTeam.fighters[Helpers.getRandomNumber(0, defendingTeam.fighters.length - 1)];
-      
+
       const damage = fighter.hit();
       const validDamage = isNaN(damage) ? 0 : Math.max(0, damage);
-      
+
       Logger.log(`${fighter.name} attacked ${randomEnemy.name}.`);
       randomEnemy.takeDamage(validDamage);
 
@@ -54,7 +54,7 @@ export class CombatEngine {
       const consumable = Consumable.getConsumable();
       const randomFighter =
         attackingTeam.fighters[Helpers.getRandomNumber(0, attackingTeam.fighters.length - 1)];
-      
+
       const healAmount = isNaN(consumable.health) ? 0 : Math.max(0, consumable.health);
       randomFighter.health = Math.min(randomFighter.maxHealth, randomFighter.health + healAmount);
 

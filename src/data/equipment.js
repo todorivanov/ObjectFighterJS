@@ -5,7 +5,7 @@
 
 export const EQUIPMENT_DATABASE = {
   // ========== WEAPONS ==========
-  
+
   // Common Weapons
   wooden_sword: {
     id: 'wooden_sword',
@@ -27,7 +27,7 @@ export const EQUIPMENT_DATABASE = {
     description: 'A simple training sword. Better than nothing.',
     icon: '🗡️',
   },
-  
+
   iron_sword: {
     id: 'iron_sword',
     name: 'Iron Sword',
@@ -49,7 +49,7 @@ export const EQUIPMENT_DATABASE = {
     description: 'A sturdy iron blade. Reliable in combat.',
     icon: '⚔️',
   },
-  
+
   steel_axe: {
     id: 'steel_axe',
     name: 'Steel Axe',
@@ -70,7 +70,7 @@ export const EQUIPMENT_DATABASE = {
     description: 'Heavy but devastating. Cleaves through armor.',
     icon: '🪓',
   },
-  
+
   // Rare Weapons
   flame_blade: {
     id: 'flame_blade',
@@ -93,7 +93,7 @@ export const EQUIPMENT_DATABASE = {
     description: 'Enchanted with fire magic. Burns enemies on hit.',
     icon: '🔥',
   },
-  
+
   shadow_dagger: {
     id: 'shadow_dagger',
     name: 'Shadow Dagger',
@@ -115,7 +115,7 @@ export const EQUIPMENT_DATABASE = {
     description: 'Strike from the shadows. High critical chance.',
     icon: '🗡️',
   },
-  
+
   arcane_staff: {
     id: 'arcane_staff',
     name: 'Arcane Staff',
@@ -137,7 +137,7 @@ export const EQUIPMENT_DATABASE = {
     description: 'Channel magical energy. Increases mana regeneration.',
     icon: '🪄',
   },
-  
+
   // Epic Weapons
   dragons_fang: {
     id: 'dragons_fang',
@@ -161,7 +161,7 @@ export const EQUIPMENT_DATABASE = {
     description: 'Forged from a dragon tooth. Legendary power.',
     icon: '🐉',
   },
-  
+
   thunderstrike: {
     id: 'thunderstrike',
     name: 'Thunderstrike',
@@ -183,7 +183,7 @@ export const EQUIPMENT_DATABASE = {
     description: 'Crackles with lightning. Devastating special attacks.',
     icon: '⚡',
   },
-  
+
   // Legendary Weapon
   excalibur: {
     id: 'excalibur',
@@ -208,9 +208,9 @@ export const EQUIPMENT_DATABASE = {
     description: 'The legendary blade of heroes. Unmatched power.',
     icon: '🗡️',
   },
-  
+
   // ========== ARMOR ==========
-  
+
   // Common Armor
   leather_vest: {
     id: 'leather_vest',
@@ -232,7 +232,7 @@ export const EQUIPMENT_DATABASE = {
     description: 'Light armor for beginners. Better than nothing.',
     icon: '🦺',
   },
-  
+
   chainmail: {
     id: 'chainmail',
     name: 'Chainmail Armor',
@@ -253,7 +253,7 @@ export const EQUIPMENT_DATABASE = {
     description: 'Interlocked metal rings. Decent protection.',
     icon: '🛡️',
   },
-  
+
   // Rare Armor
   steel_plate: {
     id: 'steel_plate',
@@ -276,7 +276,7 @@ export const EQUIPMENT_DATABASE = {
     description: 'Heavy plate armor. Excellent defense.',
     icon: '🛡️',
   },
-  
+
   mystic_robes: {
     id: 'mystic_robes',
     name: 'Mystic Robes',
@@ -299,7 +299,7 @@ export const EQUIPMENT_DATABASE = {
     description: 'Enchanted robes. Light but magical.',
     icon: '👘',
   },
-  
+
   // Epic Armor
   titans_guard: {
     id: 'titans_guard',
@@ -323,7 +323,7 @@ export const EQUIPMENT_DATABASE = {
     description: 'Armor of ancient titans. Impenetrable defense.',
     icon: '🛡️',
   },
-  
+
   phoenix_armor: {
     id: 'phoenix_armor',
     name: 'Phoenix Armor',
@@ -345,7 +345,7 @@ export const EQUIPMENT_DATABASE = {
     description: 'Born from phoenix flames. Grants resilience.',
     icon: '🔥',
   },
-  
+
   // Legendary Armor
   aegis_of_legends: {
     id: 'aegis_of_legends',
@@ -368,9 +368,9 @@ export const EQUIPMENT_DATABASE = {
     description: 'The ultimate shield. Protects against all harm.',
     icon: '🛡️',
   },
-  
+
   // ========== ACCESSORIES ==========
-  
+
   // Common Accessories
   bronze_ring: {
     id: 'bronze_ring',
@@ -392,7 +392,7 @@ export const EQUIPMENT_DATABASE = {
     description: 'A simple ring. Provides minor bonuses.',
     icon: '💍',
   },
-  
+
   // Rare Accessories
   amulet_of_power: {
     id: 'amulet_of_power',
@@ -414,7 +414,7 @@ export const EQUIPMENT_DATABASE = {
     description: 'Amplifies your strength. Feel the power!',
     icon: '📿',
   },
-  
+
   mana_crystal: {
     id: 'mana_crystal',
     name: 'Mana Crystal',
@@ -435,7 +435,7 @@ export const EQUIPMENT_DATABASE = {
     description: 'Pure crystallized mana. Endless energy.',
     icon: '💎',
   },
-  
+
   // Epic Accessories
   ring_of_fury: {
     id: 'ring_of_fury',
@@ -458,7 +458,7 @@ export const EQUIPMENT_DATABASE = {
     description: 'Unleash devastating criticals. Pure rage!',
     icon: '💍',
   },
-  
+
   void_pendant: {
     id: 'void_pendant',
     name: 'Void Pendant',
@@ -480,7 +480,7 @@ export const EQUIPMENT_DATABASE = {
     description: 'Touched by the void. Balanced power.',
     icon: '🌀',
   },
-  
+
   // Legendary Accessory
   crown_of_champions: {
     id: 'crown_of_champions',
@@ -518,21 +518,21 @@ export function getEquipmentById(id) {
  * Get all equipment of a specific type
  */
 export function getEquipmentByType(type) {
-  return Object.values(EQUIPMENT_DATABASE).filter(eq => eq.type === type);
+  return Object.values(EQUIPMENT_DATABASE).filter((eq) => eq.type === type);
 }
 
 /**
  * Get all equipment of a specific rarity
  */
 export function getEquipmentByRarity(rarity) {
-  return Object.values(EQUIPMENT_DATABASE).filter(eq => eq.rarity === rarity);
+  return Object.values(EQUIPMENT_DATABASE).filter((eq) => eq.rarity === rarity);
 }
 
 /**
  * Get equipment suitable for player level and class
  */
 export function getAvailableEquipment(level, playerClass) {
-  return Object.values(EQUIPMENT_DATABASE).filter(eq => {
+  return Object.values(EQUIPMENT_DATABASE).filter((eq) => {
     const meetsLevel = eq.requirements.level <= level;
     const meetsClass = !eq.requirements.class || eq.requirements.class.includes(playerClass);
     return meetsLevel && meetsClass;
@@ -546,7 +546,7 @@ export function getRandomEquipmentDrop(playerLevel) {
   // Determine rarity chances based on level
   const roll = Math.random() * 100;
   let rarity;
-  
+
   if (playerLevel >= 15 && roll < 2) {
     rarity = 'legendary'; // 2% at level 15+
   } else if (playerLevel >= 10 && roll < 10) {
@@ -556,18 +556,18 @@ export function getRandomEquipmentDrop(playerLevel) {
   } else {
     rarity = 'common'; // 70% base
   }
-  
+
   // Get equipment of that rarity that player can use
-  const availableByRarity = Object.values(EQUIPMENT_DATABASE).filter(eq => 
-    eq.rarity === rarity && eq.requirements.level <= playerLevel
+  const availableByRarity = Object.values(EQUIPMENT_DATABASE).filter(
+    (eq) => eq.rarity === rarity && eq.requirements.level <= playerLevel
   );
-  
+
   if (availableByRarity.length === 0) {
     // Fallback to common if no equipment available
     const commonItems = getEquipmentByRarity('common');
     return commonItems[Math.floor(Math.random() * commonItems.length)];
   }
-  
+
   return availableByRarity[Math.floor(Math.random() * availableByRarity.length)];
 }
 

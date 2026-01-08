@@ -313,7 +313,7 @@ export const ACHIEVEMENTS = [
   // STORY MODE ACHIEVEMENTS
   {
     id: 'first_mission',
-    name: 'Hero\'s Journey Begins',
+    name: "Hero's Journey Begins",
     description: 'Complete your first story mission',
     icon: '📖',
     category: ACHIEVEMENT_CATEGORIES.STORY,
@@ -583,21 +583,21 @@ export const ACHIEVEMENTS = [
  * Get achievement by ID
  */
 export function getAchievementById(id) {
-  return ACHIEVEMENTS.find(a => a.id === id);
+  return ACHIEVEMENTS.find((a) => a.id === id);
 }
 
 /**
  * Get achievements by category
  */
 export function getAchievementsByCategory(category) {
-  return ACHIEVEMENTS.filter(a => a.category === category);
+  return ACHIEVEMENTS.filter((a) => a.category === category);
 }
 
 /**
  * Get all achievement categories with counts
  */
 export function getAchievementCategoriesWithCounts() {
-  return Object.values(ACHIEVEMENT_CATEGORIES).map(category => ({
+  return Object.values(ACHIEVEMENT_CATEGORIES).map((category) => ({
     id: category,
     name: category.charAt(0).toUpperCase() + category.slice(1),
     achievements: getAchievementsByCategory(category),

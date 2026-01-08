@@ -3,7 +3,7 @@ import { BaseComponent } from './BaseComponent.js';
 /**
  * TitleScreen Web Component
  * Epic game title screen with animated background
- * 
+ *
  * Events:
  * - mode-selected: { mode: 'single' | 'team' }
  * - tournament-selected: User wants to start tournament
@@ -290,8 +290,8 @@ export class TitleScreen extends BaseComponent {
 
   attachEventListeners() {
     const buttons = this.shadowRoot.querySelectorAll('.menu-btn[data-mode]');
-    
-    buttons.forEach(btn => {
+
+    buttons.forEach((btn) => {
       btn.addEventListener('click', () => {
         const mode = btn.dataset.mode;
         this.emit('mode-selected', { mode });

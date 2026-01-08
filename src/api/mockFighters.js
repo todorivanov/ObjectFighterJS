@@ -90,8 +90,7 @@ export function getFighters() {
           health: 275,
           strength: 5,
           image: getAvatarUrl('dimitri'),
-          description:
-            'Defensive specialist who outlasts opponents through superior endurance.',
+          description: 'Defensive specialist who outlasts opponents through superior endurance.',
           class: 'TANK',
         }),
         new Fighter({

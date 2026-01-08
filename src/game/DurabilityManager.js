@@ -19,7 +19,7 @@ export class DurabilityManager {
     const durabilityMap = SaveManager.get('equipmentDurability') || {};
     const brokenItems = [];
 
-    ['weapon', 'armor', 'accessory'].forEach(slot => {
+    ['weapon', 'armor', 'accessory'].forEach((slot) => {
       const equipmentId = equipped[slot];
       if (!equipmentId) return;
 
@@ -27,17 +27,18 @@ export class DurabilityManager {
       if (!equipment || !equipment.durability) return;
 
       // Get current durability or initialize
-      const currentDurability = durabilityMap[equipmentId] !== undefined 
-        ? durabilityMap[equipmentId] 
-        : equipment.durability.max;
+      const currentDurability =
+        durabilityMap[equipmentId] !== undefined
+          ? durabilityMap[equipmentId]
+          : equipment.durability.max;
 
       // Calculate degradation (random within range)
       const degradation = Math.floor(
         equipment.durability.degradationRate * (0.8 + Math.random() * 0.4)
       );
-      
+
       const newDurability = Math.max(0, currentDurability - degradation);
-      
+
       // Update durability
       durabilityMap[equipmentId] = newDurability;
 
@@ -47,7 +48,7 @@ export class DurabilityManager {
         // Unequip broken item
         SaveManager.update(`equipped.${slot}`, null);
         console.log(`💔 ${equipment.name} broke!`);
-        
+
         const message = `
           <div class="item-broken" style="
             background: linear-gradient(135deg, rgba(244, 67, 54, 0.3), rgba(211, 47, 47, 0.4));
@@ -84,10 +85,10 @@ export class DurabilityManager {
    */
   static calculateEffectiveness(durability, maxDurability = 100) {
     const percentage = (durability / maxDurability) * 100;
-    
+
     if (percentage <= 0) return 0; // Broken
     if (percentage <= 25) return 0.75; // -25% effectiveness
-    if (percentage <= 50) return 0.90; // -10% effectiveness
+    if (percentage <= 50) return 0.9; // -10% effectiveness
     return 1.0; // Full effectiveness
   }
 
@@ -99,12 +100,12 @@ export class DurabilityManager {
   static getDurability(equipmentId) {
     const durabilityMap = SaveManager.get('equipmentDurability') || {};
     const equipment = getEquipmentById(equipmentId);
-    
+
     if (!equipment || !equipment.durability) return 100;
-    
+
     // Return stored durability or max if not found
-    return durabilityMap[equipmentId] !== undefined 
-      ? durabilityMap[equipmentId] 
+    return durabilityMap[equipmentId] !== undefined
+      ? durabilityMap[equipmentId]
       : equipment.durability.max;
   }
 
@@ -137,7 +138,7 @@ export class DurabilityManager {
 
     // Calculate repair cost
     const repairCost = this.getRepairCost(equipmentId, finalTarget);
-    
+
     // Check if player can afford
     if (!EconomyManager.canAfford(repairCost)) {
       console.log(`❌ Cannot afford repair. Need ${repairCost} gold.`);
@@ -153,7 +154,7 @@ export class DurabilityManager {
     this.setDurability(equipmentId, finalTarget);
 
     console.log(`🔧 Repaired ${equipment.name} to ${finalTarget}/${maxDurability}`);
-    
+
     const message = `
       <div class="item-repaired" style="
         background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(56, 142, 60, 0.3));
@@ -187,16 +188,16 @@ export class DurabilityManager {
     const currentDurability = this.getDurability(equipmentId);
     const maxDurability = equipment.durability.max;
     const finalTarget = targetDurability || maxDurability;
-    
+
     const durabilityToRestore = finalTarget - currentDurability;
     if (durabilityToRestore <= 0) return 0;
 
     // Base cost per durability point
     const costPerPoint = equipment.durability.repairCostBase / maxDurability;
-    
+
     // Total cost (rounded up)
     const totalCost = Math.ceil(costPerPoint * durabilityToRestore);
-    
+
     return Math.max(1, totalCost); // Minimum 1 gold
   }
 
@@ -208,7 +209,7 @@ export class DurabilityManager {
     const equipped = SaveManager.get('equipped');
     const warnings = [];
 
-    ['weapon', 'armor', 'accessory'].forEach(slot => {
+    ['weapon', 'armor', 'accessory'].forEach((slot) => {
       const equipmentId = equipped[slot];
       if (!equipmentId) return;
 
@@ -226,7 +227,7 @@ export class DurabilityManager {
           durability,
           maxDurability,
           percentage,
-          severity: percentage === 0 ? 'broken' : 'critical'
+          severity: percentage === 0 ? 'broken' : 'critical',
         });
       } else if (percentage <= 50) {
         warnings.push({
@@ -235,7 +236,7 @@ export class DurabilityManager {
           durability,
           maxDurability,
           percentage,
-          severity: 'warning'
+          severity: 'warning',
         });
       }
     });
@@ -251,7 +252,7 @@ export class DurabilityManager {
    */
   static getDurabilityColor(durability, maxDurability = 100) {
     const percentage = (durability / maxDurability) * 100;
-    
+
     if (percentage <= 0) return '#f44336'; // Red - Broken
     if (percentage <= 25) return '#ff5722'; // Deep Orange - Critical
     if (percentage <= 50) return '#ff9800'; // Orange - Warning
@@ -267,7 +268,7 @@ export class DurabilityManager {
    */
   static getDurabilityStatus(durability, maxDurability = 100) {
     const percentage = (durability / maxDurability) * 100;
-    
+
     if (percentage <= 0) return 'Broken';
     if (percentage <= 25) return 'Critical';
     if (percentage <= 50) return 'Damaged';
@@ -284,7 +285,7 @@ export class DurabilityManager {
     if (!equipment || !equipment.durability) return;
 
     const durabilityMap = SaveManager.get('equipmentDurability') || {};
-    
+
     // Only initialize if not already set
     if (durabilityMap[equipmentId] === undefined) {
       durabilityMap[equipmentId] = equipment.durability.max;
@@ -300,12 +301,12 @@ export class DurabilityManager {
     const inventory = SaveManager.get('inventory.equipment') || [];
     const result = {};
 
-    inventory.forEach(equipmentId => {
+    inventory.forEach((equipmentId) => {
       const equipment = getEquipmentById(equipmentId);
       if (equipment && equipment.durability) {
         const current = this.getDurability(equipmentId);
         const max = equipment.durability.max;
-        
+
         result[equipmentId] = {
           current,
           max,

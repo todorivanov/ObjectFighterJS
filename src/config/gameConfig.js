@@ -90,7 +90,7 @@ export const GameConfig = {
     inventorySize: { min: 6, max: 8 },
     legendaryChance: 0.05, // 5% at level 15+
     epicChance: 0.15, // 15% at level 10+
-    rareChance: 0.30, // 30% at level 5+
+    rareChance: 0.3, // 30% at level 5+
   },
 
   // Story Mode

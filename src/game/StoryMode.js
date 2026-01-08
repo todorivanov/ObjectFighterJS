@@ -65,8 +65,8 @@ export class StoryMode {
    */
   static initializeObjectives(mission) {
     const objectives = {};
-    
-    mission.objectives.forEach(obj => {
+
+    mission.objectives.forEach((obj) => {
       objectives[obj.id] = {
         ...obj,
         completed: false,
@@ -90,35 +90,35 @@ export class StoryMode {
       case 'round_complete':
         missionState.roundCount++;
         break;
-      
+
       case 'damage_dealt':
         missionState.damageDealt += data.amount;
         missionState.maxSingleHit = Math.max(missionState.maxSingleHit, data.amount);
         break;
-      
+
       case 'damage_taken':
         missionState.damageTaken += data.amount;
         break;
-      
+
       case 'critical_hit':
         missionState.critsLanded++;
         break;
-      
+
       case 'skill_used':
         missionState.skillsUsed++;
         break;
-      
+
       case 'item_used':
         missionState.itemsUsed++;
         if (data.isHealing) {
           missionState.healingUsed = true;
         }
         break;
-      
+
       case 'defended':
         missionState.defended = true;
         break;
-      
+
       case 'combo':
         missionState.maxCombo = Math.max(missionState.maxCombo, data.combo);
         break;
@@ -147,7 +147,7 @@ export class StoryMode {
       // Mission failed
       console.log('❌ Mission failed');
       SaveManager.update('storyProgress.currentMission', null);
-      
+
       return {
         success: false,
         mission,
@@ -177,7 +177,7 @@ export class StoryMode {
 
     // Unlock new missions/regions
     if (mission.unlocks) {
-      mission.unlocks.forEach(unlock => {
+      mission.unlocks.forEach((unlock) => {
         if (unlock.startsWith('region_')) {
           // Region unlock
           const regionId = unlock.replace('region_', '');
@@ -201,24 +201,24 @@ export class StoryMode {
 
     // Track achievements
     AchievementManager.trackStoryMissionCompleted(mission, starsEarned);
-    
+
     // Check for flawless mission (no damage taken)
     if (missionState.damageTaken === 0) {
       SaveManager.increment('stats.flawlessMissions');
       AchievementManager.trackFlawlessMission();
     }
-    
+
     // Check for fast mission (5 rounds or less)
     if (missionState.roundCount <= 5) {
       SaveManager.increment('stats.fastMissions');
       AchievementManager.trackFastMission();
     }
-    
+
     // Check for perfect missions (3 stars)
     if (starsEarned === 3) {
       SaveManager.increment('stats.perfectMissions');
     }
-    
+
     // Check all achievements after mission completion
     AchievementManager.checkAchievements();
 
@@ -263,10 +263,10 @@ export class StoryMode {
     const objectives = missionState.objectives;
     let starsEarned = 0;
 
-    Object.keys(objectives).forEach(objId => {
+    Object.keys(objectives).forEach((objId) => {
       const obj = objectives[objId];
       const completed = this.evaluateObjective(obj, missionState, playerState);
-      
+
       obj.completed = completed;
 
       if (completed && obj.star) {
@@ -364,7 +364,7 @@ export class StoryMode {
 
     // Equipment rewards (guaranteed drops)
     if (mission.rewards.equipment && mission.rewards.equipment.length > 0) {
-      mission.rewards.equipment.forEach(equipmentId => {
+      mission.rewards.equipment.forEach((equipmentId) => {
         if (EquipmentManager.addToInventory(equipmentId)) {
           DurabilityManager.initializeItemDurability(equipmentId);
           rewards.equipment.push(equipmentId);
@@ -385,9 +385,9 @@ export class StoryMode {
     if (!region) return [];
 
     const completedMissions = SaveManager.get('storyProgress.completedMissions') || [];
-    
+
     // All missions in region are available once region is unlocked
-    return region.missions.filter(missionId => !completedMissions.includes(missionId));
+    return region.missions.filter((missionId) => !completedMissions.includes(missionId));
   }
 
   /**
@@ -416,7 +416,7 @@ export class StoryMode {
    */
   static getTotalProgress() {
     const completedMissions = SaveManager.get('storyProgress.completedMissions') || [];
-    
+
     // Calculate based on completed missions count
     return Math.floor((completedMissions.length / 25) * 100);
   }
@@ -428,10 +428,10 @@ export class StoryMode {
   static getTotalStars() {
     const missionStars = SaveManager.get('storyProgress.missionStars') || {};
     const completedMissions = SaveManager.get('storyProgress.completedMissions') || [];
-    
+
     const earned = Object.values(missionStars).reduce((sum, stars) => sum + stars, 0);
     const total = completedMissions.length * 3; // 3 stars per mission
-    
+
     return { earned, total };
   }
 }

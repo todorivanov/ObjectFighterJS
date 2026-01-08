@@ -3,7 +3,7 @@ import { BaseComponent } from './BaseComponent.js';
 /**
  * TurnIndicator Web Component
  * Shows whose turn it is with animation
- * 
+ *
  * Attributes:
  * - fighter-name: Name to display
  */
@@ -66,7 +66,7 @@ export class TurnIndicator extends BaseComponent {
 
   connectedCallback() {
     super.connectedCallback();
-    
+
     // Auto-remove after 1 second
     setTimeout(() => {
       this.remove();

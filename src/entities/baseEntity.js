@@ -10,19 +10,19 @@ export class BaseEntity {
   constructor(baseEntity) {
     this.id = baseEntity.id;
     this.name = baseEntity.name;
-    
+
     // Ensure health values are valid numbers
     const initialHealth = isNaN(baseEntity.health) ? 100 : Math.max(1, baseEntity.health);
     this.health = initialHealth;
     this.maxHealth = initialHealth;
-    
+
     this.image = baseEntity.image;
-    
+
     // Ensure strength is a valid number
     const initialStrength = isNaN(baseEntity.strength) ? 50 : Math.max(1, baseEntity.strength);
     this.strength = initialStrength;
     this.baseStrength = initialStrength; // Store original strength
-    
+
     this.description = baseEntity.description;
     this.class = baseEntity.class || 'BALANCED';
     this.level = baseEntity.level || 1; // Fighter level
@@ -33,7 +33,7 @@ export class BaseEntity {
     this.statusEffects = []; // Array of active status effects
     this.skills = []; // Class-specific skills
     this.combo = 0; // Combo counter
-    
+
     // Assign skills based on class
     assignSkillsToFighter(this);
   }
@@ -47,7 +47,7 @@ export class BaseEntity {
     if (num < 80) {
       const result = this.normalAttack();
       // normalAttack returns an object { damage, isCritical }, extract just damage
-      return typeof result === 'object' ? (result.damage || 0) : result;
+      return typeof result === 'object' ? result.damage || 0 : result;
     } else {
       return this.specialAttack();
     }
@@ -68,7 +68,7 @@ export class BaseEntity {
       const isCritical = Math.random() < 0.15; // 15% crit chance
       const baseDmg = Math.ceil(this.strength * 0.4 + Helpers.getRandomNumber(0, 40));
       const dmg = isCritical ? Math.ceil(baseDmg * 1.5) : baseDmg;
-      
+
       const critBadge = isCritical ? '<span class="badge bg-danger">CRITICAL!</span> ' : '';
       const attackClass = isCritical ? 'critical-hit' : 'normal-attack';
       const msg = `<div class="attack-div ${attackClass} text-center">⚔️ <strong>${this.name}</strong> landed a ${isCritical ? 'devastating' : 'solid'} hit! ${critBadge}<span class="badge bg-warning">${dmg} damage</span></div>`;
@@ -153,10 +153,10 @@ export class BaseEntity {
    */
   processStatusEffects() {
     const activeEffects = [];
-    
+
     for (const effect of this.statusEffects) {
       effect.apply(this);
-      
+
       if (effect.tick()) {
         activeEffects.push(effect);
       } else {
@@ -166,7 +166,7 @@ export class BaseEntity {
         Logger.log(msg);
       }
     }
-    
+
     this.statusEffects = activeEffects;
   }
 
@@ -185,20 +185,20 @@ export class BaseEntity {
   takeDamage(damage) {
     // Ensure damage is a valid number
     let actualDamage = isNaN(damage) ? 0 : Math.max(0, damage);
-    
+
     if (this.isDefending) {
       actualDamage = Math.ceil(actualDamage * 0.5);
       const msg = `<div class="attack-div text-center" style="background: #d1ecf1;">🛡️ <strong>${this.name}</strong> blocked 50% of the damage!</div>`;
       Logger.log(msg);
       this.isDefending = false; // Defend only lasts one turn
     }
-    
+
     // Ensure health is a valid number before subtracting
     if (isNaN(this.health)) {
       console.error(`${this.name} has NaN health! Resetting to maxHealth.`);
       this.health = this.maxHealth || 100;
     }
-    
+
     this.health = Math.max(0, this.health - actualDamage);
     return actualDamage;
   }
@@ -227,4 +227,3 @@ export class BaseEntity {
     }, 1500);
   }
 }
-

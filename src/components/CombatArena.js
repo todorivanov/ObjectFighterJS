@@ -3,10 +3,10 @@ import { BaseComponent } from './BaseComponent.js';
 /**
  * CombatArena Web Component
  * Modern combat arena with cinematic styling
- * 
+ *
  * Properties:
  * - autoBattle: boolean - Whether auto-battle mode is enabled
- * 
+ *
  * Events:
  * - return-to-menu: User wants to return to main menu
  * - auto-battle-toggle: { enabled: boolean } - Auto battle mode toggled
@@ -456,13 +456,11 @@ export class CombatArena extends BaseComponent {
       autoBattleToggle.addEventListener('click', () => {
         this.autoBattle = !this.autoBattle;
         autoBattleToggle.classList.toggle('active', this.autoBattle);
-        autoBattleToggle.innerHTML = this.autoBattle 
-          ? '🤖 Auto Battle: ON' 
-          : '🤖 Auto Battle: OFF';
-        
+        autoBattleToggle.innerHTML = this.autoBattle ? '🤖 Auto Battle: ON' : '🤖 Auto Battle: OFF';
+
         // Emit event for game to listen to
         this.emit('auto-battle-toggle', { enabled: this.autoBattle });
-        
+
         console.log('Auto Battle:', this.autoBattle ? 'ON' : 'OFF');
       });
     }
@@ -472,18 +470,16 @@ export class CombatArena extends BaseComponent {
       autoScrollToggle.addEventListener('click', () => {
         this.autoScroll = !this.autoScroll;
         autoScrollToggle.classList.toggle('active', this.autoScroll);
-        autoScrollToggle.innerHTML = this.autoScroll 
-          ? '📜 Auto-Scroll: ON' 
-          : '📜 Auto-Scroll: OFF';
-        
+        autoScrollToggle.innerHTML = this.autoScroll ? '📜 Auto-Scroll: ON' : '📜 Auto-Scroll: OFF';
+
         // Save preference
         localStorage.setItem('autoScrollEnabled', this.autoScroll);
-        
+
         // Emit event for Logger to listen to
         this.emit('auto-scroll-toggle', { enabled: this.autoScroll });
-        
+
         console.log('Auto-Scroll:', this.autoScroll ? 'ON' : 'OFF');
-        
+
         // If enabled, scroll to bottom immediately
         if (this.autoScroll) {
           const logContainer = this.shadowRoot.querySelector('.combat-log-container');

@@ -23,7 +23,7 @@ export class AchievementManager {
    */
   static getUnlockedAchievements() {
     const unlocked = SaveManager.get('unlocks.achievements') || [];
-    return unlocked.map(id => getAchievementById(id)).filter(Boolean);
+    return unlocked.map((id) => getAchievementById(id)).filter(Boolean);
   }
 
   /**
@@ -132,7 +132,7 @@ export class AchievementManager {
     const profile = SaveManager.get('profile');
     const unlockedCount = this.getUnlockedAchievements().length;
 
-    ACHIEVEMENTS.forEach(achievement => {
+    ACHIEVEMENTS.forEach((achievement) => {
       if (this.isUnlocked(achievement.id)) {
         return; // Skip already unlocked
       }
@@ -149,7 +149,9 @@ export class AchievementManager {
           break;
 
         case 'winStreak':
-          shouldUnlock = stats.winStreak >= achievement.requirement.target || stats.bestStreak >= achievement.requirement.target;
+          shouldUnlock =
+            stats.winStreak >= achievement.requirement.target ||
+            stats.bestStreak >= achievement.requirement.target;
           break;
 
         case 'skillsUsed':
@@ -168,47 +170,47 @@ export class AchievementManager {
           shouldUnlock = stats.totalDamageDealt >= achievement.requirement.target;
           break;
 
-      case 'equipmentCollected': {
-        const inventorySize = SaveManager.get('inventory.equipment')?.length || 0;
-        shouldUnlock = inventorySize >= achievement.requirement.target;
-        break;
-      }
+        case 'equipmentCollected': {
+          const inventorySize = SaveManager.get('inventory.equipment')?.length || 0;
+          shouldUnlock = inventorySize >= achievement.requirement.target;
+          break;
+        }
 
-      // Story Mode achievements
-      case 'storyMissionsCompleted': {
-        const completedMissions = SaveManager.get('storyProgress.completedMissions')?.length || 0;
-        shouldUnlock = completedMissions >= achievement.requirement.target;
-        break;
-      }
+        // Story Mode achievements
+        case 'storyMissionsCompleted': {
+          const completedMissions = SaveManager.get('storyProgress.completedMissions')?.length || 0;
+          shouldUnlock = completedMissions >= achievement.requirement.target;
+          break;
+        }
 
-      case 'totalStars': {
-        const missionStars = SaveManager.get('storyProgress.missionStars') || {};
-        const totalStars = Object.values(missionStars).reduce((sum, stars) => sum + stars, 0);
-        shouldUnlock = totalStars >= achievement.requirement.target;
-        break;
-      }
+        case 'totalStars': {
+          const missionStars = SaveManager.get('storyProgress.missionStars') || {};
+          const totalStars = Object.values(missionStars).reduce((sum, stars) => sum + stars, 0);
+          shouldUnlock = totalStars >= achievement.requirement.target;
+          break;
+        }
 
-      // Economy achievements
-      case 'marketplacePurchases':
-        shouldUnlock = stats.marketplacePurchases >= achievement.requirement.target;
-        break;
+        // Economy achievements
+        case 'marketplacePurchases':
+          shouldUnlock = stats.marketplacePurchases >= achievement.requirement.target;
+          break;
 
-      case 'marketplaceTransactions': {
-        const purchases = stats.marketplacePurchases || 0;
-        const sales = stats.itemsSold || 0;
-        shouldUnlock = (purchases + sales) >= achievement.requirement.target;
-        break;
-      }
+        case 'marketplaceTransactions': {
+          const purchases = stats.marketplacePurchases || 0;
+          const sales = stats.itemsSold || 0;
+          shouldUnlock = purchases + sales >= achievement.requirement.target;
+          break;
+        }
 
-      case 'itemsRepaired':
-        shouldUnlock = stats.itemsRepaired >= achievement.requirement.target;
-        break;
+        case 'itemsRepaired':
+          shouldUnlock = stats.itemsRepaired >= achievement.requirement.target;
+          break;
 
-      case 'goldBalance': {
-        const currentGold = SaveManager.get('profile.gold') || 0;
-        shouldUnlock = currentGold >= achievement.requirement.target;
-        break;
-      }
+        case 'goldBalance': {
+          const currentGold = SaveManager.get('profile.gold') || 0;
+          shouldUnlock = currentGold >= achievement.requirement.target;
+          break;
+        }
 
         case 'totalGoldSpent':
           shouldUnlock = stats.totalGoldSpent >= achievement.requirement.target;

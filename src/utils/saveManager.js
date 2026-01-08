@@ -63,8 +63,8 @@ export class SaveManager {
       inventory: {
         equipment: [], // Array of equipment IDs with durability
         consumables: {
-          'health_potion': 3,
-          'mana_potion': 3,
+          health_potion: 3,
+          mana_potion: 3,
         },
       },
       equipmentDurability: {}, // Map of equipmentId -> current durability
@@ -114,7 +114,7 @@ export class SaveManager {
           lastPlayedAt: Date.now(),
         },
       };
-      
+
       localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
       console.log('💾 Game saved successfully');
       return true;
@@ -130,14 +130,14 @@ export class SaveManager {
   static load() {
     try {
       const savedData = localStorage.getItem(SAVE_KEY);
-      
+
       if (!savedData) {
         console.log('📂 No save file found, creating new profile');
         return this.getDefaultProfile();
       }
 
       const data = JSON.parse(savedData);
-      
+
       // Version migration if needed
       if (data.version !== SAVE_VERSION) {
         console.log('🔄 Migrating save data to new version');
@@ -157,7 +157,7 @@ export class SaveManager {
    */
   static migrateSaveData(oldData) {
     const newData = this.getDefaultProfile();
-    
+
     // Merge old data with new structure, preserving important fields
     return {
       ...newData,
@@ -193,15 +193,15 @@ export class SaveManager {
    */
   static validateSaveData(data) {
     const defaultData = this.getDefaultProfile();
-    
+
     // Deep merge ensuring all required fields exist
     const validated = {
       version: data.version || defaultData.version,
       profile: { ...defaultData.profile, ...(data.profile || {}) },
       stats: { ...defaultData.stats, ...(data.stats || {}) },
       equipped: { ...defaultData.equipped, ...(data.equipped || {}) },
-      inventory: { 
-        ...defaultData.inventory, 
+      inventory: {
+        ...defaultData.inventory,
         ...(data.inventory || {}),
         equipment: Array.isArray(data.inventory?.equipment) ? data.inventory.equipment : [],
       },
@@ -260,7 +260,7 @@ export class SaveManager {
     const data = this.load();
     const keys = path.split('.');
     let current = data;
-    
+
     // Navigate to the nested property
     for (let i = 0; i < keys.length - 1; i++) {
       if (!current[keys[i]]) {
@@ -268,10 +268,10 @@ export class SaveManager {
       }
       current = current[keys[i]];
     }
-    
+
     // Set the value
     current[keys[keys.length - 1]] = value;
-    
+
     return this.save(data);
   }
 
@@ -282,14 +282,14 @@ export class SaveManager {
     const data = this.load();
     const keys = path.split('.');
     let current = data;
-    
+
     for (const key of keys) {
       if (current[key] === undefined) {
         return null;
       }
       current = current[key];
     }
-    
+
     return current;
   }
 

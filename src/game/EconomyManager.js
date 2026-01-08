@@ -21,12 +21,12 @@ export class EconomyManager {
 
     const currentGold = SaveManager.get('profile.gold') || 0;
     const newGold = currentGold + amount;
-    
+
     SaveManager.update('profile.gold', newGold);
     SaveManager.increment('stats.totalGoldEarned', amount);
 
     console.log(`💰 +${amount} gold earned from ${source} (Total: ${newGold})`);
-    
+
     // Log to combat log
     const message = `
       <div class="gold-award" style="
@@ -60,10 +60,10 @@ export class EconomyManager {
     }
 
     const currentGold = SaveManager.get('profile.gold') || 0;
-    
+
     if (currentGold < amount) {
       console.log(`❌ Insufficient gold. Need ${amount}, have ${currentGold}`);
-      
+
       // Log error message
       const message = `
         <div class="gold-error" style="
@@ -80,7 +80,7 @@ export class EconomyManager {
         </div>
       `;
       Logger.log(message);
-      
+
       return false;
     }
 
@@ -120,7 +120,7 @@ export class EconomyManager {
    */
   static calculateBattleReward(difficulty = 'normal', victory = true, enemyLevel = 1) {
     if (!victory) {
-      return Math.floor(10 + (enemyLevel * 2)); // Small consolation prize
+      return Math.floor(10 + enemyLevel * 2); // Small consolation prize
     }
 
     const baseReward = 30;
@@ -144,7 +144,7 @@ export class EconomyManager {
 
     // Level scaling
     const levelBonus = Math.floor(enemyLevel * 3);
-    
+
     const totalReward = Math.floor((baseReward + levelBonus) * multiplier);
     return Math.max(20, totalReward); // Minimum 20 gold
   }
@@ -173,7 +173,7 @@ export class EconomyManager {
    * @returns {number} - Gold reward
    */
   static calculateStoryReward(missionDifficulty = 1, stars = 1) {
-    const baseReward = 50 + (missionDifficulty * 10);
+    const baseReward = 50 + missionDifficulty * 10;
     const starBonus = stars * 20;
     return baseReward + starBonus;
   }

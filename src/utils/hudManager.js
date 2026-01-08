@@ -32,7 +32,7 @@ export class HUDManager {
     // Find HUD area in combat arena
     const arena = document.querySelector('combat-arena');
     let hudArea = null;
-    
+
     if (arena && arena.shadowRoot) {
       hudArea = arena.shadowRoot.querySelector('#hud-area');
     }
@@ -46,7 +46,7 @@ export class HUDManager {
     const hud = document.createElement('fighter-hud');
     hud.fighter1 = this.fighter1;
     hud.fighter2 = this.fighter2;
-    
+
     hudArea.appendChild(hud);
     this.hudElement = hud;
   }
@@ -56,7 +56,7 @@ export class HUDManager {
    */
   update() {
     if (!this.hudElement || !this.fighter1 || !this.fighter2) return;
-    
+
     // Update fighter data
     this.hudElement.fighter1 = this.fighter1;
     this.hudElement.fighter2 = this.fighter2;
@@ -88,18 +88,18 @@ export class HUDManager {
       this.hudElement.remove();
       this.hudElement = null;
     }
-    
+
     // Show fighter selection view and hide combat view
     const selectionView = document.querySelector('.fighter-selection-view');
     const combatView = document.querySelector('.combat-view');
-    
+
     if (selectionView) {
       selectionView.style.display = 'flex';
     }
     if (combatView) {
       combatView.style.display = 'none';
     }
-    
+
     this.fighter1 = null;
     this.fighter2 = null;
   }

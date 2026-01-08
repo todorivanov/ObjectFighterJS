@@ -15,7 +15,7 @@
   --log-bg: #f8f9fa;
   --intro-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --intro-text: #ffffff;
-  
+
   /* Animation durations */
   --transition-speed: 0.3s;
   --animation-speed: 0.6s;
@@ -36,7 +36,8 @@ body.dark-mode {
   --intro-text: #ffffff;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -45,13 +46,16 @@ html, body {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: var(--container-bg);
   color: var(--text-color);
-  transition: background var(--transition-speed) ease, color var(--transition-speed) ease;
+  transition:
+    background var(--transition-speed) ease,
+    color var(--transition-speed) ease;
 }
 
 /* Dark Mode Toggle */
@@ -209,7 +213,9 @@ body {
 
 .stat-bar-fill {
   height: 100%;
-  transition: width 0.5s ease, background-color 0.3s ease;
+  transition:
+    width 0.5s ease,
+    background-color 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -241,8 +247,13 @@ body {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 .stat-value {
@@ -305,7 +316,8 @@ body {
 }
 
 @keyframes titleBounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -449,21 +461,35 @@ body {
 .normal-attack {
   background-color: #fff3cd;
   border-left-color: #ffc107;
-  animation: slideInLeft 0.4s ease, pulseOnce 0.6s ease;
+  animation:
+    slideInLeft 0.4s ease,
+    pulseOnce 0.6s ease;
 }
 
 .attack-div.critical-hit {
   background: linear-gradient(135deg, #ffebcd 0%, #ff6b6b 100%);
   border-left-color: #ff0000 !important;
   box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
-  animation: criticalShake 0.5s ease, slideInLeft 0.4s ease, pulseOnce 0.6s ease;
+  animation:
+    criticalShake 0.5s ease,
+    slideInLeft 0.4s ease,
+    pulseOnce 0.6s ease;
 }
 
 @keyframes criticalShake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-8px); }
-  50% { transform: translateX(8px); }
-  75% { transform: translateX(-4px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-8px);
+  }
+  50% {
+    transform: translateX(8px);
+  }
+  75% {
+    transform: translateX(-4px);
+  }
 }
 
 .dark-mode .normal-attack {
@@ -475,7 +501,9 @@ body {
   background-color: #f8d7da;
   border-left-color: #dc3545;
   font-weight: bold;
-  animation: slideInLeft 0.4s ease, shakeAttack 0.5s ease;
+  animation:
+    slideInLeft 0.4s ease,
+    shakeAttack 0.5s ease;
 }
 
 .dark-mode .special-attack {
@@ -486,7 +514,9 @@ body {
 .missed-attack {
   background-color: #d1ecf1;
   border-left-color: #17a2b8;
-  animation: slideInLeft 0.4s ease, fadeQuick 0.8s ease;
+  animation:
+    slideInLeft 0.4s ease,
+    fadeQuick 0.8s ease;
   opacity: 0.7;
 }
 
@@ -501,7 +531,9 @@ body {
   padding: 10px;
   margin: 5px 0;
   border-radius: 5px;
-  animation: slideInLeft 0.4s ease, glowGreen 1s ease;
+  animation:
+    slideInLeft 0.4s ease,
+    glowGreen 1s ease;
 }
 
 .dark-mode .consumable {
@@ -510,7 +542,9 @@ body {
 }
 
 .event-announcement {
-  animation: slideInFromTop 0.6s ease, flashWarning 1.5s ease;
+  animation:
+    slideInFromTop 0.6s ease,
+    flashWarning 1.5s ease;
 }
 
 .intro-div,
@@ -550,29 +584,62 @@ body {
 }
 
 @keyframes shakeAttack {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
-  20%, 40%, 60%, 80% { transform: translateX(3px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-3px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(3px);
+  }
 }
 
 @keyframes pulseOnce {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
 }
 
 @keyframes fadeQuick {
-  0% { opacity: 1; }
-  100% { opacity: 0.7; }
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.7;
+  }
 }
 
 @keyframes glowGreen {
-  0%, 100% { box-shadow: none; }
-  50% { box-shadow: 0 0 15px rgba(40, 167, 69, 0.6); }
+  0%,
+  100% {
+    box-shadow: none;
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(40, 167, 69, 0.6);
+  }
 }
 
 @keyframes flashWarning {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
 
 @keyframes zoomIn {
@@ -681,16 +748,36 @@ body {
 }
 
 /* Stagger animation for fighter cards */
-.details-holder:nth-child(1) { animation-delay: 0.1s; }
-.details-holder:nth-child(2) { animation-delay: 0.2s; }
-.details-holder:nth-child(3) { animation-delay: 0.3s; }
-.details-holder:nth-child(4) { animation-delay: 0.4s; }
-.details-holder:nth-child(5) { animation-delay: 0.5s; }
-.details-holder:nth-child(6) { animation-delay: 0.6s; }
-.details-holder:nth-child(7) { animation-delay: 0.7s; }
-.details-holder:nth-child(8) { animation-delay: 0.8s; }
-.details-holder:nth-child(9) { animation-delay: 0.9s; }
-.details-holder:nth-child(10) { animation-delay: 1.0s; }
+.details-holder:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.details-holder:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.details-holder:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.details-holder:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.details-holder:nth-child(5) {
+  animation-delay: 0.5s;
+}
+.details-holder:nth-child(6) {
+  animation-delay: 0.6s;
+}
+.details-holder:nth-child(7) {
+  animation-delay: 0.7s;
+}
+.details-holder:nth-child(8) {
+  animation-delay: 0.8s;
+}
+.details-holder:nth-child(9) {
+  animation-delay: 0.9s;
+}
+.details-holder:nth-child(10) {
+  animation-delay: 1s;
+}
 
 /* Team holders in combat log */
 .team-holder {
@@ -721,7 +808,9 @@ body {
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.3);
   transform: translate(-50%, -50%);
-  transition: width 0.6s ease, height 0.6s ease;
+  transition:
+    width 0.6s ease,
+    height 0.6s ease;
   z-index: -1;
 }
 
@@ -749,7 +838,8 @@ body {
 }
 
 @keyframes buttonPulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
   }
   50% {
@@ -758,7 +848,8 @@ body {
 }
 
 @keyframes successGlow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
   }
   50% {
@@ -772,8 +863,12 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Responsive Design */
@@ -841,7 +936,9 @@ body {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .skeleton-loading {
@@ -852,8 +949,12 @@ body {
 }
 
 @keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* Scrollbar Styling */
@@ -909,9 +1010,15 @@ body {
 }
 
 @keyframes badgePop {
-  0% { transform: scale(0); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* Action Selection UI */
@@ -1169,7 +1276,7 @@ body {
   font-size: 48px;
   font-weight: bold;
   color: #ffc107;
-  text-shadow: 
+  text-shadow:
     2px 2px 0 #000,
     -2px -2px 0 #000,
     2px -2px 0 #000,
@@ -1197,7 +1304,7 @@ body {
 .damage-float.critical {
   font-size: 32px;
   color: #ff0000;
-  text-shadow: 
+  text-shadow:
     0 0 10px #ff0000,
     0 0 20px #ff0000,
     2px 2px 0 #000;
@@ -1225,7 +1332,12 @@ body {
 
 /* Override Bootstrap container max-width for large monitors */
 @media (min-width: 1400px) {
-  .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+  .container,
+  .container-lg,
+  .container-md,
+  .container-sm,
+  .container-xl,
+  .container-xxl {
     max-width: 100% !important;
     padding-left: 30px;
     padding-right: 30px;
@@ -1234,28 +1346,33 @@ body {
 
 /* Ultra-wide monitors (1920px+) - Enhanced layout */
 @media (min-width: 1920px) {
-  .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+  .container,
+  .container-lg,
+  .container-md,
+  .container-sm,
+  .container-xl,
+  .container-xxl {
     max-width: 100% !important;
     padding-left: 50px;
     padding-right: 50px;
   }
-  
+
   /* More fighters per row on large screens */
   .fighter-grid {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
     gap: 25px !important;
   }
-  
+
   /* Larger fighter cards for better visibility */
   .fighter-stat-card {
     min-width: 400px;
   }
-  
+
   /* Wider combat log for readability */
   #log {
     max-width: 1800px !important;
   }
-  
+
   .combat-log-wrapper {
     padding-left: 40px;
     padding-right: 40px;
@@ -1268,16 +1385,16 @@ body {
     padding-left: 80px;
     padding-right: 80px;
   }
-  
+
   .fighter-grid {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
     gap: 30px !important;
   }
-  
+
   .fighter-stat-card {
     min-width: 450px;
   }
-  
+
   #log {
     max-width: 2200px !important;
   }

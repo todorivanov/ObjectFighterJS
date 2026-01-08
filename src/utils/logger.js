@@ -21,7 +21,7 @@ export class Logger {
 
   static setLogHolder(el) {
     logElement = typeof el === 'string' ? document.querySelector(el) : el;
-    
+
     // If not found in main document, check inside combat-arena shadow DOM
     if (!logElement) {
       const arena = document.querySelector('combat-arena');
@@ -29,7 +29,7 @@ export class Logger {
         logElement = arena.shadowRoot.querySelector('#log');
       }
     }
-    
+
     console.log('Logger initialized:', logElement ? 'Found log element' : 'Log element not found');
   }
 
@@ -42,7 +42,7 @@ export class Logger {
         logElement = arena.shadowRoot.querySelector('#log');
         console.log('🔍 Found log element in arena shadow DOM');
       }
-      
+
       // Fallback to regular document query
       if (!logElement) {
         logElement = document.querySelector('#log');
@@ -51,16 +51,16 @@ export class Logger {
         }
       }
     }
-    
+
     if (logElement) {
       logElement.insertAdjacentHTML('beforeend', message);
-      
+
       // Auto-scroll to bottom only if enabled
       if (autoScrollEnabled) {
         // Find container in shadow DOM
         const arena = document.querySelector('combat-arena');
         const container = arena?.shadowRoot?.querySelector('.combat-log-container');
-        
+
         if (container) {
           // Scroll container to bottom
           requestAnimationFrame(() => {

@@ -3,7 +3,7 @@ import { BaseComponent } from './BaseComponent.js';
 /**
  * TournamentBracket Web Component
  * Displays tournament bracket and opponent selection
- * 
+ *
  * Events:
  * - tournament-start: Tournament ready to begin
  * - back-to-menu: User wants to return to main menu
@@ -465,7 +465,7 @@ export class TournamentBracket extends BaseComponent {
             Selected: ${this._selectedOpponents.length}/4
           </div>
           <div class="opponent-grid">
-            ${this._fighters.map(fighter => this.renderOpponentCard(fighter)).join('')}
+            ${this._fighters.map((fighter) => this.renderOpponentCard(fighter)).join('')}
           </div>
         </div>
 
@@ -484,7 +484,7 @@ export class TournamentBracket extends BaseComponent {
   }
 
   renderOpponentCard(fighter) {
-    const isSelected = this._selectedOpponents.some(f => f.id === fighter.id);
+    const isSelected = this._selectedOpponents.some((f) => f.id === fighter.id);
 
     return `
       <div class="opponent-card ${isSelected ? 'selected' : ''}" data-fighter-id="${fighter.id}">
@@ -572,7 +572,7 @@ export class TournamentBracket extends BaseComponent {
 
     // Difficulty buttons
     const difficultyBtns = this.shadowRoot.querySelectorAll('.difficulty-btn');
-    difficultyBtns.forEach(btn => {
+    difficultyBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         this._difficulty = btn.dataset.difficulty;
         this.updateDifficultyUI();
@@ -581,7 +581,7 @@ export class TournamentBracket extends BaseComponent {
 
     // Opponent cards
     const opponentCards = this.shadowRoot.querySelectorAll('.opponent-card');
-    opponentCards.forEach(card => {
+    opponentCards.forEach((card) => {
       card.addEventListener('click', () => {
         const fighterId = parseInt(card.dataset.fighterId);
         this.toggleOpponent(fighterId);
@@ -603,11 +603,11 @@ export class TournamentBracket extends BaseComponent {
   }
 
   toggleOpponent(fighterId) {
-    const fighter = this._fighters.find(f => f.id === fighterId);
+    const fighter = this._fighters.find((f) => f.id === fighterId);
     if (!fighter) return;
 
-    const index = this._selectedOpponents.findIndex(f => f.id === fighterId);
-    
+    const index = this._selectedOpponents.findIndex((f) => f.id === fighterId);
+
     if (index !== -1) {
       // Deselect
       this._selectedOpponents.splice(index, 1);
@@ -627,7 +627,7 @@ export class TournamentBracket extends BaseComponent {
   updateDifficultyUI() {
     // Update active state on difficulty buttons
     const difficultyBtns = this.shadowRoot.querySelectorAll('.difficulty-btn');
-    difficultyBtns.forEach(btn => {
+    difficultyBtns.forEach((btn) => {
       if (btn.dataset.difficulty === this._difficulty) {
         btn.classList.add('active');
       } else {
@@ -669,9 +669,11 @@ export class TournamentBracket extends BaseComponent {
 
   updateSelectionUI(toggledFighterId) {
     // Update the card's selected state
-    const card = this.shadowRoot.querySelector(`.opponent-card[data-fighter-id="${toggledFighterId}"]`);
+    const card = this.shadowRoot.querySelector(
+      `.opponent-card[data-fighter-id="${toggledFighterId}"]`
+    );
     if (card) {
-      const isSelected = this._selectedOpponents.some(f => f.id === toggledFighterId);
+      const isSelected = this._selectedOpponents.some((f) => f.id === toggledFighterId);
       if (isSelected) {
         card.classList.add('selected');
       } else {
@@ -721,7 +723,7 @@ export class TournamentBracket extends BaseComponent {
 
   getBracketPreviewContent() {
     const [op1, op2, op3, op4] = this._selectedOpponents;
-    
+
     return `
       <div class="bracket-title">Tournament Bracket</div>
       <div class="bracket-rounds">

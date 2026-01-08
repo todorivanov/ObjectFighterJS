@@ -3,7 +3,7 @@ import { BaseComponent } from './BaseComponent.js';
 /**
  * ComboIndicator Web Component
  * Shows combo counter with animation
- * 
+ *
  * Attributes:
  * - combo-count: Number to display
  */
@@ -64,7 +64,7 @@ export class ComboIndicator extends BaseComponent {
 
   connectedCallback() {
     super.connectedCallback();
-    
+
     // Auto-remove after 1.5 seconds
     setTimeout(() => {
       this.remove();

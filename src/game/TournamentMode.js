@@ -39,7 +39,7 @@ export class TournamentMode {
 
     console.log('🏆 Tournament Started!');
     console.log(`📋 Difficulty: ${difficulty}`);
-    console.log(`👥 Opponents: ${opponents.map(f => f.name).join(', ')}`);
+    console.log(`👥 Opponents: ${opponents.map((f) => f.name).join(', ')}`);
 
     // Apply difficulty modifiers to opponents
     this.applyDifficultyModifiers();
@@ -66,7 +66,7 @@ export class TournamentMode {
           Win 3 battles to claim the championship! 🏅
         </div>
         <div style="font-size: 14px; color: #ffb; margin-top: 10px;">
-          Opponents: ${opponents.map(f => f.name).join(' • ')}
+          Opponents: ${opponents.map((f) => f.name).join(' • ')}
         </div>
       </div>
     `;
@@ -88,13 +88,15 @@ export class TournamentMode {
 
     const mod = modifiers[this.difficulty] || modifiers.normal;
 
-    this.opponents.forEach(opponent => {
+    this.opponents.forEach((opponent) => {
       opponent.health = Math.floor(opponent.health * mod.hp);
       opponent.maxHealth = Math.floor(opponent.maxHealth * mod.hp);
       opponent.strength = Math.floor(opponent.strength * mod.str);
     });
 
-    console.log(`⚡ Applied ${this.difficulty} difficulty modifiers: +${Math.floor((mod.hp - 1) * 100)}% HP, +${Math.floor((mod.str - 1) * 100)}% STR`);
+    console.log(
+      `⚡ Applied ${this.difficulty} difficulty modifiers: +${Math.floor((mod.hp - 1) * 100)}% HP, +${Math.floor((mod.str - 1) * 100)}% STR`
+    );
   }
 
   /**
@@ -292,10 +294,10 @@ export class TournamentMode {
    */
   getChampionshipRewards() {
     const rewards = [];
-    
+
     // Base rewards
     rewards.push('🎁 <strong>+300 XP</strong>');
-    
+
     // Difficulty bonuses
     if (this.difficulty === 'hard') {
       rewards.push('💎 <strong>+150 Bonus XP</strong> (Hard)');
@@ -306,9 +308,9 @@ export class TournamentMode {
     } else {
       rewards.push('⚔️ <strong>Guaranteed Rare Equipment</strong>');
     }
-    
+
     rewards.push('🏆 <strong>Champion Title</strong>');
-    
+
     return rewards.join('<br>');
   }
 
@@ -318,20 +320,20 @@ export class TournamentMode {
   awardChampionshipRewards() {
     // Base XP
     let totalXP = 300;
-    
+
     // Difficulty bonus
     if (this.difficulty === 'hard') {
       totalXP += 150;
     } else if (this.difficulty === 'nightmare') {
       totalXP += 300;
     }
-    
+
     LevelingSystem.awardXP(totalXP, 'Tournament Championship');
-    
+
     // Guaranteed equipment drop based on difficulty
-    const minRarity = this.difficulty === 'nightmare' ? 'legendary' : 
-                      this.difficulty === 'hard' ? 'epic' : 'rare';
-    
+    const minRarity =
+      this.difficulty === 'nightmare' ? 'legendary' : this.difficulty === 'hard' ? 'epic' : 'rare';
+
     this.awardGuaranteedEquipment(minRarity);
   }
 
@@ -342,10 +344,10 @@ export class TournamentMode {
     // This is a simplified version - in a full implementation,
     // you'd filter equipment by rarity and award a specific piece
     console.log(`🎁 Awarding guaranteed ${minRarity}+ equipment`);
-    
+
     // For now, just trigger multiple drops with higher chances for better items
     const dropAttempts = minRarity === 'legendary' ? 3 : minRarity === 'epic' ? 2 : 1;
-    
+
     for (let i = 0; i < dropAttempts; i++) {
       EquipmentManager.awardRandomDrop();
     }

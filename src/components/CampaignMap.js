@@ -1,5 +1,10 @@
 import { BaseComponent } from './BaseComponent.js';
-import { STORY_REGIONS, getRegionsInOrder, isRegionUnlocked, getRegionCompletion } from '../data/storyRegions.js';
+import {
+  STORY_REGIONS,
+  getRegionsInOrder,
+  isRegionUnlocked,
+  getRegionCompletion,
+} from '../data/storyRegions.js';
 import { getMissionsByRegion, getMissionById } from '../data/storyMissions.js';
 import { StoryMode } from '../game/StoryMode.js';
 import { SaveManager } from '../utils/saveManager.js';
@@ -7,7 +12,7 @@ import { SaveManager } from '../utils/saveManager.js';
 /**
  * CampaignMap Web Component
  * Displays story regions and missions with progression
- * 
+ *
  * Events:
  * - mission-selected: { missionId } - User selected a mission
  * - close: User wants to exit campaign map
@@ -271,7 +276,7 @@ export class CampaignMap extends BaseComponent {
 
         <div class="content">
           <div class="regions-list">
-            ${regions.map(regionId => this.renderRegion(regionId, storyProgress)).join('')}
+            ${regions.map((regionId) => this.renderRegion(regionId, storyProgress)).join('')}
           </div>
 
           <div class="missions-area" id="missions-area">
@@ -303,7 +308,7 @@ export class CampaignMap extends BaseComponent {
 
   renderMissions(regionId, storyProgress) {
     const missions = getMissionsByRegion(regionId);
-    
+
     if (missions.length === 0) {
       return `
         <div class="empty-state">
@@ -315,7 +320,7 @@ export class CampaignMap extends BaseComponent {
 
     return `
       <div class="missions-grid">
-        ${missions.map(missionId => this.renderMission(missionId, storyProgress)).join('')}
+        ${missions.map((missionId) => this.renderMission(missionId, storyProgress)).join('')}
       </div>
     `;
   }
@@ -324,7 +329,7 @@ export class CampaignMap extends BaseComponent {
     const mission = getMissionById(missionId);
     const completed = StoryMode.isMissionCompleted(missionId);
     const stars = StoryMode.getMissionStars(missionId);
-    
+
     let difficultyClass = 'easy';
     if (mission.difficulty > 7) difficultyClass = 'hard';
     else if (mission.difficulty > 11) difficultyClass = 'extreme';
@@ -369,7 +374,7 @@ export class CampaignMap extends BaseComponent {
     });
 
     // Region selection
-    this.shadowRoot.querySelectorAll('.region-card').forEach(card => {
+    this.shadowRoot.querySelectorAll('.region-card').forEach((card) => {
       card.addEventListener('click', () => {
         const regionId = card.dataset.region;
         this.selectedRegion = regionId;
@@ -378,7 +383,7 @@ export class CampaignMap extends BaseComponent {
     });
 
     // Mission selection
-    this.shadowRoot.querySelectorAll('.mission-card').forEach(card => {
+    this.shadowRoot.querySelectorAll('.mission-card').forEach((card) => {
       card.addEventListener('click', () => {
         const missionId = card.dataset.mission;
         this.emit('mission-selected', { missionId });

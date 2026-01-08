@@ -3,12 +3,12 @@ import { BaseComponent } from './BaseComponent.js';
 /**
  * VictoryScreen Web Component
  * Epic victory/defeat celebration screen
- * 
+ *
  * Attributes:
  * - winner-name: Name of the winner
  * - winner-image: Image URL
  * - winner-class: Fighter class
- * 
+ *
  * Events:
  * - play-again: User wants to play again
  * - main-menu: User wants to return to main menu
@@ -366,8 +366,8 @@ export class VictoryScreen extends BaseComponent {
 
   attachEventListeners() {
     const buttons = this.shadowRoot.querySelectorAll('.victory-btn');
-    
-    buttons.forEach(btn => {
+
+    buttons.forEach((btn) => {
       btn.addEventListener('click', () => {
         const action = btn.dataset.action;
         this.emit(action);

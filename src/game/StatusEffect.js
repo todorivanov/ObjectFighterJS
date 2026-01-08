@@ -24,7 +24,7 @@ export class StatusEffect {
    * @param {Object} fighter - Target fighter
    */
   apply(fighter) {
-    switch(this.name) {
+    switch (this.name) {
       case 'strength_boost':
         fighter.strength += this.value;
         break;
@@ -50,7 +50,7 @@ export class StatusEffect {
    * @param {Object} fighter - Target fighter
    */
   remove(fighter) {
-    switch(this.name) {
+    switch (this.name) {
       case 'strength_boost':
         fighter.strength -= this.value;
         break;
@@ -71,7 +71,7 @@ export const STATUS_EFFECTS = {
     duration: 3,
     value: 20,
     icon: '💪',
-    description: '+20 Strength for 3 turns'
+    description: '+20 Strength for 3 turns',
   },
   STRENGTH_DEBUFF: {
     name: 'strength_debuff',
@@ -79,7 +79,7 @@ export const STATUS_EFFECTS = {
     duration: 3,
     value: 15,
     icon: '🥴',
-    description: '-15 Strength for 3 turns'
+    description: '-15 Strength for 3 turns',
   },
   REGENERATION: {
     name: 'regeneration',
@@ -87,7 +87,7 @@ export const STATUS_EFFECTS = {
     duration: 5,
     value: 15,
     icon: '💚',
-    description: '+15 HP per turn for 5 turns'
+    description: '+15 HP per turn for 5 turns',
   },
   POISON: {
     name: 'poison',
@@ -95,7 +95,7 @@ export const STATUS_EFFECTS = {
     duration: 4,
     value: 10,
     icon: '☠️',
-    description: '-10 HP per turn for 4 turns'
+    description: '-10 HP per turn for 4 turns',
   },
   MANA_REGEN: {
     name: 'mana_regen',
@@ -103,8 +103,8 @@ export const STATUS_EFFECTS = {
     duration: 3,
     value: 20,
     icon: '✨',
-    description: '+20 MP per turn for 3 turns'
-  }
+    description: '+20 MP per turn for 3 turns',
+  },
 };
 
 /**
@@ -113,7 +113,7 @@ export const STATUS_EFFECTS = {
 export function createStatusEffect(effectKey) {
   const template = STATUS_EFFECTS[effectKey];
   if (!template) return null;
-  
+
   return new StatusEffect(
     template.name,
     template.type,

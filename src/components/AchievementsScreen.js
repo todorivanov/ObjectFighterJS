@@ -1,11 +1,15 @@
 import { BaseComponent } from './BaseComponent.js';
 import { AchievementManager } from '../game/AchievementManager.js';
-import { ACHIEVEMENTS, ACHIEVEMENT_CATEGORIES, getAchievementsByCategory } from '../data/achievements.js';
+import {
+  ACHIEVEMENTS,
+  ACHIEVEMENT_CATEGORIES,
+  getAchievementsByCategory,
+} from '../data/achievements.js';
 
 /**
  * AchievementsScreen Web Component
  * Displays all achievements with progress tracking
- * 
+ *
  * Events:
  * - back-to-menu: User wants to return to main menu
  */
@@ -313,7 +317,7 @@ export class AchievementsScreen extends BaseComponent {
 
   template() {
     const stats = AchievementManager.getStatistics();
-    
+
     // Filter achievements by category
     let filteredAchievements = ACHIEVEMENTS;
     if (this.selectedCategory !== 'all') {
@@ -363,7 +367,7 @@ export class AchievementsScreen extends BaseComponent {
 
         <!-- Achievements Grid -->
         <div class="achievements-grid">
-          ${filteredAchievements.map(achievement => this.renderAchievementCard(achievement)).join('')}
+          ${filteredAchievements.map((achievement) => this.renderAchievementCard(achievement)).join('')}
         </div>
       </div>
     `;
@@ -385,7 +389,9 @@ export class AchievementsScreen extends BaseComponent {
         <div class="achievement-description">${achievement.description}</div>
         <div class="achievement-reward">🎁 Reward: ${achievement.reward.xp} XP</div>
 
-        ${!isUnlocked && progress && progress.target > 1 ? `
+        ${
+          !isUnlocked && progress && progress.target > 1
+            ? `
           <div class="achievement-progress">
             <div class="progress-label">
               <span>Progress</span>
@@ -397,7 +403,9 @@ export class AchievementsScreen extends BaseComponent {
               </div>
             </div>
           </div>
-        ` : ''}
+        `
+            : ''
+        }
       </div>
     `;
   }
@@ -413,7 +421,7 @@ export class AchievementsScreen extends BaseComponent {
 
     // Category buttons
     const categoryBtns = this.shadowRoot.querySelectorAll('.category-btn');
-    categoryBtns.forEach(btn => {
+    categoryBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         this.selectedCategory = btn.dataset.category;
         this.render();

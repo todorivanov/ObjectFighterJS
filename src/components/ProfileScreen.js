@@ -8,7 +8,7 @@ import { RARITY_COLORS, RARITY_NAMES } from '../data/equipment.js';
 /**
  * ProfileScreen Web Component
  * Displays player profile, stats, level, progress, and equipment
- * 
+ *
  * Events:
  * - back-to-menu: User wants to return to main menu
  */
@@ -32,7 +32,7 @@ export class ProfileScreen extends BaseComponent {
   getOverallProgress() {
     // Calculate overall game completion percentage
     const { stats, profile, storyProgress } = this.profileData;
-    
+
     let totalProgress = 0;
     let maxProgress = 0;
 
@@ -41,7 +41,7 @@ export class ProfileScreen extends BaseComponent {
     maxProgress += 20;
 
     // Story missions (out of 25)
-    totalProgress += (storyProgress.completedMissions?.length || 0);
+    totalProgress += storyProgress.completedMissions?.length || 0;
     maxProgress += 25;
 
     // Achievements (out of total)
@@ -347,9 +347,10 @@ export class ProfileScreen extends BaseComponent {
     const { profile, stats } = this.profileData;
     const xpProgress = LevelingSystem.getXPProgress();
     const xpForNext = LevelingSystem.getXPForNextLevel();
-    const winRate = stats.totalFightsPlayed > 0
-      ? ((stats.totalWins / stats.totalFightsPlayed) * 100).toFixed(1)
-      : 0;
+    const winRate =
+      stats.totalFightsPlayed > 0
+        ? ((stats.totalWins / stats.totalFightsPlayed) * 100).toFixed(1)
+        : 0;
 
     return `
       <div class="profile-container">
@@ -644,7 +645,9 @@ export class ProfileScreen extends BaseComponent {
     const totalStats = EquipmentManager.getEquippedStats();
 
     return `
-      ${Object.values(totalStats).some(v => v > 0) ? `
+      ${
+        Object.values(totalStats).some((v) => v > 0)
+          ? `
         <div class="profile-card">
           <h2 class="card-title">
             <span class="card-icon">💪</span>
@@ -657,7 +660,9 @@ export class ProfileScreen extends BaseComponent {
           ${totalStats.critDamage > 0 ? `<div class="stat-row"><span class="stat-label">Crit Damage</span><span class="stat-value highlight">+${totalStats.critDamage}%</span></div>` : ''}
           ${totalStats.manaRegen > 0 ? `<div class="stat-row"><span class="stat-label">Mana Regen</span><span class="stat-value highlight">+${totalStats.manaRegen}</span></div>` : ''}
         </div>
-      ` : ''}
+      `
+          : ''
+      }
 
       <div class="profile-grid">
         ${this.renderEquipmentSlot('weapon', '⚔️', equipped.weapon)}
@@ -666,17 +671,21 @@ export class ProfileScreen extends BaseComponent {
       </div>
 
       <h2 style="font-size: 24px; color: #ffa726; margin: 30px 0 20px 0;">📦 Inventory (${inventory.length}/20)</h2>
-      ${inventory.length > 0 ? `
+      ${
+        inventory.length > 0
+          ? `
         <div class="profile-grid">
-          ${inventory.map(item => this.renderInventoryItem(item)).join('')}
+          ${inventory.map((item) => this.renderInventoryItem(item)).join('')}
         </div>
-      ` : `
+      `
+          : `
         <div class="profile-card" style="text-align: center; padding: 60px;">
           <div style="font-size: 48px; margin-bottom: 15px;">📦</div>
           <div style="color: #7e57c2;">No items in inventory</div>
           <div style="color: #7e57c2; font-size: 14px; margin-top: 10px;">Win battles to earn equipment!</div>
         </div>
-      `}
+      `
+      }
     `;
   }
 
@@ -695,17 +704,19 @@ export class ProfileScreen extends BaseComponent {
       `;
     }
 
-    const statsHtml = Object.entries(item.stats).map(([stat, value]) => {
-      const statNames = {
-        strength: 'STR',
-        health: 'HP',
-        defense: 'DEF',
-        critChance: 'Crit%',
-        critDamage: 'Crit Dmg',
-        manaRegen: 'Mana+',
-      };
-      return `<span style="background: rgba(255, 167, 38, 0.2); border: 1px solid #ffa726; border-radius: 8px; padding: 4px 10px; font-size: 12px; color: #ffa726; font-weight: 600; display: inline-block; margin: 4px;">+${value} ${statNames[stat]}</span>`;
-    }).join('');
+    const statsHtml = Object.entries(item.stats)
+      .map(([stat, value]) => {
+        const statNames = {
+          strength: 'STR',
+          health: 'HP',
+          defense: 'DEF',
+          critChance: 'Crit%',
+          critDamage: 'Crit Dmg',
+          manaRegen: 'Mana+',
+        };
+        return `<span style="background: rgba(255, 167, 38, 0.2); border: 1px solid #ffa726; border-radius: 8px; padding: 4px 10px; font-size: 12px; color: #ffa726; font-weight: 600; display: inline-block; margin: 4px;">+${value} ${statNames[stat]}</span>`;
+      })
+      .join('');
 
     return `
       <div class="profile-card" style="border: 2px solid ${RARITY_COLORS[item.rarity]};">
@@ -728,22 +739,24 @@ export class ProfileScreen extends BaseComponent {
   renderInventoryItem(item) {
     const playerLevel = SaveManager.get('profile.level');
     const playerClass = SaveManager.get('profile.character.class');
-    
+
     const meetsLevel = item.requirements.level <= playerLevel;
     const meetsClass = !item.requirements.class || item.requirements.class.includes(playerClass);
     const canEquip = meetsLevel && meetsClass;
 
-    const statsHtml = Object.entries(item.stats).map(([stat, value]) => {
-      const statNames = {
-        strength: 'STR',
-        health: 'HP',
-        defense: 'DEF',
-        critChance: 'Crit%',
-        critDamage: 'Crit Dmg',
-        manaRegen: 'Mana+',
-      };
-      return `<span style="background: rgba(255, 167, 38, 0.2); border: 1px solid #ffa726; border-radius: 8px; padding: 4px 10px; font-size: 12px; color: #ffa726; font-weight: 600; display: inline-block; margin: 4px;">+${value} ${statNames[stat]}</span>`;
-    }).join('');
+    const statsHtml = Object.entries(item.stats)
+      .map(([stat, value]) => {
+        const statNames = {
+          strength: 'STR',
+          health: 'HP',
+          defense: 'DEF',
+          critChance: 'Crit%',
+          critDamage: 'Crit Dmg',
+          manaRegen: 'Mana+',
+        };
+        return `<span style="background: rgba(255, 167, 38, 0.2); border: 1px solid #ffa726; border-radius: 8px; padding: 4px 10px; font-size: 12px; color: #ffa726; font-weight: 600; display: inline-block; margin: 4px;">+${value} ${statNames[stat]}</span>`;
+      })
+      .join('');
 
     return `
       <div class="profile-card" style="border: 2px solid ${RARITY_COLORS[item.rarity]}; cursor: pointer;">
@@ -762,11 +775,15 @@ export class ProfileScreen extends BaseComponent {
           <div style="color: ${meetsLevel ? '#00e676' : '#ff1744'};">
             Level ${item.requirements.level} ${meetsLevel ? '✓' : '✗'}
           </div>
-          ${item.requirements.class ? `
+          ${
+            item.requirements.class
+              ? `
             <div style="color: ${meetsClass ? '#00e676' : '#ff1744'};">
               ${item.requirements.class.join(', ')} ${meetsClass ? '✓' : '✗'}
             </div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
         <button class="reset-btn" data-equip="${item.id}" ${!canEquip ? 'disabled' : ''} style="width: 100%; background: ${canEquip ? 'linear-gradient(135deg, #00e676 0%, #00c853 100%)' : 'rgba(0, 0, 0, 0.3)'}; opacity: ${canEquip ? '1' : '0.5'};">
           Equip
@@ -785,7 +802,7 @@ export class ProfileScreen extends BaseComponent {
 
     // Tab switching
     const tabBtns = this.shadowRoot.querySelectorAll('.tab-btn');
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         this.currentTab = btn.dataset.tab;
         this.updateTabUI();
@@ -796,7 +813,11 @@ export class ProfileScreen extends BaseComponent {
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
         if (confirm('⚠️ Are you sure you want to reset ALL progress? This cannot be undone!')) {
-          if (confirm('This will delete your level, XP, stats, and equipment. Are you ABSOLUTELY sure?')) {
+          if (
+            confirm(
+              'This will delete your level, XP, stats, and equipment. Are you ABSOLUTELY sure?'
+            )
+          ) {
             SaveManager.deleteSave();
             alert('✅ Progress reset! Reloading page...');
             window.location.reload();
@@ -807,11 +828,12 @@ export class ProfileScreen extends BaseComponent {
 
     // Equipment actions
     const unequipBtns = this.shadowRoot.querySelectorAll('[data-unequip]');
-    unequipBtns.forEach(btn => {
+    unequipBtns.forEach((btn) => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const slot = btn.dataset.unequip;
-        if (slot && slot !== '') { // Check if it's not the reset button
+        if (slot && slot !== '') {
+          // Check if it's not the reset button
           EquipmentManager.unequipItem(slot);
           this.render();
         }
@@ -819,7 +841,7 @@ export class ProfileScreen extends BaseComponent {
     });
 
     const equipBtns = this.shadowRoot.querySelectorAll('[data-equip]');
-    equipBtns.forEach(btn => {
+    equipBtns.forEach((btn) => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const equipmentId = btn.dataset.equip;
@@ -833,7 +855,7 @@ export class ProfileScreen extends BaseComponent {
   updateTabUI() {
     // Update tab buttons
     const tabBtns = this.shadowRoot.querySelectorAll('.tab-btn');
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       if (btn.dataset.tab === this.currentTab) {
         btn.classList.add('active');
       } else {
@@ -843,7 +865,7 @@ export class ProfileScreen extends BaseComponent {
 
     // Update tab content
     const tabContents = this.shadowRoot.querySelectorAll('.tab-content');
-    tabContents.forEach(content => {
+    tabContents.forEach((content) => {
       if (content.id === `${this.currentTab}-tab`) {
         content.classList.add('active');
       } else {

@@ -1,4 +1,4 @@
-import { BaseEntity } from "./baseEntity.js";
+import { BaseEntity } from './baseEntity.js';
 
 /**
  * Fighter - Represents a combat fighter with unique abilities
@@ -30,17 +30,17 @@ export class Fighter extends BaseEntity {
    */
   getDamageModifier() {
     let modifier = 1.0;
-    
+
     // Effectiveness based on HP
     modifier *= this.getEffectiveness();
-    
+
     // Class-based modifiers
     if (this.class === 'BRAWLER') {
       modifier *= 1.1; // Brawlers deal 10% more damage
     } else if (this.class === 'TANK') {
       modifier *= 0.8; // Tanks deal less damage but have more HP
     }
-    
+
     return modifier;
   }
 
@@ -50,17 +50,17 @@ export class Fighter extends BaseEntity {
    */
   getDefenseRating() {
     let defense = this.baseDefense || 0;
-    
+
     // Class bonuses
     if (this.class === 'TANK') {
       defense += 10;
     }
-    
+
     // Defending stance bonus
     if (this.isDefending) {
       defense += 20;
     }
-    
+
     return defense;
   }
 

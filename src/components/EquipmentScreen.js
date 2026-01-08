@@ -6,7 +6,7 @@ import { RARITY_COLORS, RARITY_NAMES } from '../data/equipment.js';
 /**
  * EquipmentScreen Web Component
  * Displays equipped items and inventory management
- * 
+ *
  * Events:
  * - back-to-menu: User wants to return to main menu
  */
@@ -401,7 +401,7 @@ export class EquipmentScreen extends BaseComponent {
     // Filter inventory by selected tab
     let filteredInventory = inventory;
     if (this.selectedTab !== 'all') {
-      filteredInventory = inventory.filter(item => item.type === this.selectedTab);
+      filteredInventory = inventory.filter((item) => item.type === this.selectedTab);
     }
 
     return `
@@ -413,49 +413,77 @@ export class EquipmentScreen extends BaseComponent {
         </div>
 
         <!-- Total Stats Summary -->
-        ${Object.values(totalStats).some(v => v > 0) ? `
+        ${
+          Object.values(totalStats).some((v) => v > 0)
+            ? `
           <div class="stats-summary">
             <div class="stats-summary-title">💪 Total Equipment Bonuses</div>
             <div class="stats-grid">
-              ${totalStats.strength > 0 ? `
+              ${
+                totalStats.strength > 0
+                  ? `
                 <div class="stat-display">
                   <div class="stat-value">+${totalStats.strength}</div>
                   <div class="stat-label">Strength</div>
                 </div>
-              ` : ''}
-              ${totalStats.health > 0 ? `
+              `
+                  : ''
+              }
+              ${
+                totalStats.health > 0
+                  ? `
                 <div class="stat-display">
                   <div class="stat-value">+${totalStats.health}</div>
                   <div class="stat-label">Health</div>
                 </div>
-              ` : ''}
-              ${totalStats.defense > 0 ? `
+              `
+                  : ''
+              }
+              ${
+                totalStats.defense > 0
+                  ? `
                 <div class="stat-display">
                   <div class="stat-value">+${totalStats.defense}</div>
                   <div class="stat-label">Defense</div>
                 </div>
-              ` : ''}
-              ${totalStats.critChance > 0 ? `
+              `
+                  : ''
+              }
+              ${
+                totalStats.critChance > 0
+                  ? `
                 <div class="stat-display">
                   <div class="stat-value">+${totalStats.critChance}%</div>
                   <div class="stat-label">Crit Chance</div>
                 </div>
-              ` : ''}
-              ${totalStats.critDamage > 0 ? `
+              `
+                  : ''
+              }
+              ${
+                totalStats.critDamage > 0
+                  ? `
                 <div class="stat-display">
                   <div class="stat-value">+${totalStats.critDamage}%</div>
                   <div class="stat-label">Crit Damage</div>
                 </div>
-              ` : ''}
-              ${totalStats.manaRegen > 0 ? `
+              `
+                  : ''
+              }
+              ${
+                totalStats.manaRegen > 0
+                  ? `
                 <div class="stat-display">
                   <div class="stat-value">+${totalStats.manaRegen}</div>
                   <div class="stat-label">Mana Regen</div>
                 </div>
-              ` : ''}
+              `
+                  : ''
+              }
             </div>
           </div>
-        ` : ''}
+        `
+            : ''
+        }
 
         <!-- Equipped Items -->
         <div class="equipped-section">
@@ -492,17 +520,21 @@ export class EquipmentScreen extends BaseComponent {
             </button>
           </div>
 
-          ${filteredInventory.length > 0 ? `
+          ${
+            filteredInventory.length > 0
+              ? `
             <div class="inventory-grid">
-              ${filteredInventory.map(item => this.renderInventoryItem(item)).join('')}
+              ${filteredInventory.map((item) => this.renderInventoryItem(item)).join('')}
             </div>
-          ` : `
+          `
+              : `
             <div class="empty-inventory">
               <div class="empty-inventory-icon">📦</div>
               <div>No ${this.selectedTab === 'all' ? '' : this.selectedTab} items in inventory</div>
               <div style="margin-top: 10px; font-size: 14px;">Win battles to earn equipment!</div>
             </div>
-          `}
+          `
+          }
         </div>
       </div>
     `;
@@ -523,17 +555,19 @@ export class EquipmentScreen extends BaseComponent {
       `;
     }
 
-    const statsHtml = Object.entries(item.stats).map(([stat, value]) => {
-      const statNames = {
-        strength: 'STR',
-        health: 'HP',
-        defense: 'DEF',
-        critChance: 'Crit%',
-        critDamage: 'Crit Dmg',
-        manaRegen: 'Mana+',
-      };
-      return `<span class="stat-badge">+${value} ${statNames[stat]}</span>`;
-    }).join('');
+    const statsHtml = Object.entries(item.stats)
+      .map(([stat, value]) => {
+        const statNames = {
+          strength: 'STR',
+          health: 'HP',
+          defense: 'DEF',
+          critChance: 'Crit%',
+          critDamage: 'Crit Dmg',
+          manaRegen: 'Mana+',
+        };
+        return `<span class="stat-badge">+${value} ${statNames[stat]}</span>`;
+      })
+      .join('');
 
     return `
       <div class="equipment-slot">
@@ -556,22 +590,24 @@ export class EquipmentScreen extends BaseComponent {
   renderInventoryItem(item) {
     const playerLevel = SaveManager.get('profile.level');
     const playerClass = SaveManager.get('profile.character.class');
-    
+
     const meetsLevel = item.requirements.level <= playerLevel;
     const meetsClass = !item.requirements.class || item.requirements.class.includes(playerClass);
     const canEquip = meetsLevel && meetsClass;
 
-    const statsHtml = Object.entries(item.stats).map(([stat, value]) => {
-      const statNames = {
-        strength: 'STR',
-        health: 'HP',
-        defense: 'DEF',
-        critChance: 'Crit%',
-        critDamage: 'Crit Dmg',
-        manaRegen: 'Mana+',
-      };
-      return `<span class="stat-badge">+${value} ${statNames[stat]}</span>`;
-    }).join('');
+    const statsHtml = Object.entries(item.stats)
+      .map(([stat, value]) => {
+        const statNames = {
+          strength: 'STR',
+          health: 'HP',
+          defense: 'DEF',
+          critChance: 'Crit%',
+          critDamage: 'Crit Dmg',
+          manaRegen: 'Mana+',
+        };
+        return `<span class="stat-badge">+${value} ${statNames[stat]}</span>`;
+      })
+      .join('');
 
     return `
       <div class="inventory-item ${item.rarity}" data-item-id="${item.id}">
@@ -590,11 +626,15 @@ export class EquipmentScreen extends BaseComponent {
           <div class="${meetsLevel ? 'requirement-met' : 'requirement-not-met'}">
             Level ${item.requirements.level} ${meetsLevel ? '✓' : '✗'}
           </div>
-          ${item.requirements.class ? `
+          ${
+            item.requirements.class
+              ? `
             <div class="${meetsClass ? 'requirement-met' : 'requirement-not-met'}">
               ${item.requirements.class.join(', ')} ${meetsClass ? '✓' : '✗'}
             </div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
         <button class="equip-btn" data-equip-id="${item.id}" ${!canEquip ? 'disabled' : ''}>
           Equip
@@ -614,7 +654,7 @@ export class EquipmentScreen extends BaseComponent {
 
     // Tab filters
     const tabBtns = this.shadowRoot.querySelectorAll('.tab-btn');
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         this.selectedTab = btn.dataset.tab;
         this.render();
@@ -623,7 +663,7 @@ export class EquipmentScreen extends BaseComponent {
 
     // Unequip buttons
     const unequipBtns = this.shadowRoot.querySelectorAll('.unequip-btn');
-    unequipBtns.forEach(btn => {
+    unequipBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const slot = btn.dataset.slot;
         EquipmentManager.unequipItem(slot);
@@ -633,7 +673,7 @@ export class EquipmentScreen extends BaseComponent {
 
     // Equip buttons
     const equipBtns = this.shadowRoot.querySelectorAll('.equip-btn');
-    equipBtns.forEach(btn => {
+    equipBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const equipmentId = btn.dataset.equipId;
         if (EquipmentManager.equipItem(equipmentId)) {

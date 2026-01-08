@@ -36,7 +36,7 @@ const appState = {
   fighters: [],
   selectedFighters: [],
   tournamentActive: false,
-  
+
   reset() {
     this.currentScreen = 'title';
     this.gameMode = null;
@@ -50,11 +50,11 @@ const appState = {
  */
 function initApp() {
   console.log('🎮 Object Fighter v3.0.0 - Initializing...');
-  
+
   // Initialize save system
   const saveData = SaveManager.load();
   console.log(`💾 Save data loaded. Player Level: ${saveData.profile.level}`);
-  
+
   // Check if character has been created
   if (!saveData.profile.characterCreated) {
     console.log('🆕 New player detected - showing character creation');
@@ -64,12 +64,12 @@ function initApp() {
     initSoundToggle();
     return;
   }
-  
+
   // Load fighters data
   getFighters().then((fighters) => {
     appState.fighters = fighters;
     console.log(`✅ Loaded ${fighters.length} fighters`);
-    
+
     // Show title screen
     showTitleScreen();
   });
@@ -90,7 +90,7 @@ function showCharacterCreation() {
   charCreation.addEventListener('character-created', (e) => {
     console.log('✅ Character created:', e.detail);
     soundManager.init();
-    
+
     // Reload app after character creation
     getFighters().then((fighters) => {
       appState.fighters = fighters;
@@ -143,7 +143,7 @@ function showTitleScreen() {
 
   root.appendChild(titleScreen);
   appState.currentScreen = 'title';
-  
+
   // Add Profile, Achievements, and Settings buttons to title screen
   addProfileButton();
   addAchievementsButton();
@@ -331,7 +331,7 @@ function startStoryMission(missionId) {
 
   // Create the enemy fighter from mission data
   let enemyFighter;
-  
+
   if (mission.type === 'survival' && mission.waves) {
     // For survival missions, start with the first wave
     const firstWave = mission.waves[0];
@@ -364,7 +364,7 @@ function startStoryMission(missionId) {
 
   // Create combat arena component
   const arena = document.createElement('combat-arena');
-  
+
   arena.addEventListener('return-to-menu', () => {
     Game.stopGame();
     appState.reset();
@@ -391,7 +391,7 @@ function startStoryMission(missionId) {
         Logger.setLogHolder(logElement);
         Logger.setAutoScroll(arena.autoScroll);
         console.log('✅ Logger initialized for story mission combat');
-        
+
         // Log mission start message
         if (mission.dialogue?.before) {
           const message = `
@@ -448,7 +448,7 @@ function showMissionResults(missionResult) {
         </div>
       </div>
     `);
-    
+
     // Add a button to return to campaign map (instead of auto-redirect)
     Logger.log(`
       <div style="margin-top: 20px; text-align: center;">
@@ -470,7 +470,7 @@ function showMissionResults(missionResult) {
         </div>
       </div>
     `);
-    
+
     // Add event listener to the button
     setTimeout(() => {
       const returnBtn = document.querySelector('#return-to-map-btn-failed');
@@ -495,9 +495,11 @@ function showMissionResults(missionResult) {
   // Show detailed rewards breakdown
   const rewards = missionResult.rewards;
   if (rewards) {
-    let rewardsHTML = '<div style="margin-top: 20px; padding: 15px; background: rgba(76, 175, 80, 0.2); border-radius: 10px; border: 2px solid #4caf50;">';
-    rewardsHTML += '<div style="font-size: 20px; font-weight: 700; color: #66bb6a; margin-bottom: 10px;">🎁 Rewards Earned:</div>';
-    
+    let rewardsHTML =
+      '<div style="margin-top: 20px; padding: 15px; background: rgba(76, 175, 80, 0.2); border-radius: 10px; border: 2px solid #4caf50;">';
+    rewardsHTML +=
+      '<div style="font-size: 20px; font-weight: 700; color: #66bb6a; margin-bottom: 10px;">🎁 Rewards Earned:</div>';
+
     if (rewards.gold) {
       rewardsHTML += `<div style="color: #ffc107; font-size: 18px; margin: 5px 0;">💰 ${rewards.gold} Gold</div>`;
     }
@@ -507,22 +509,24 @@ function showMissionResults(missionResult) {
     if (rewards.equipment && rewards.equipment.length > 0) {
       rewardsHTML += `<div style="color: #ba68c8; font-size: 18px; margin: 5px 0;">🎁 ${rewards.equipment.length} Equipment Item(s)</div>`;
     }
-    
+
     rewardsHTML += '</div>';
     Logger.log(rewardsHTML);
   }
 
   // Show objectives completion
   if (missionResult.objectives) {
-    let objectivesHTML = '<div style="margin-top: 15px; padding: 15px; background: rgba(106, 66, 194, 0.2); border-radius: 10px; border: 2px solid #6a42c2;">';
-    objectivesHTML += '<div style="font-size: 18px; font-weight: 700; color: #b39ddb; margin-bottom: 10px;">📋 Objectives:</div>';
-    
-    Object.values(missionResult.objectives).forEach(obj => {
+    let objectivesHTML =
+      '<div style="margin-top: 15px; padding: 15px; background: rgba(106, 66, 194, 0.2); border-radius: 10px; border: 2px solid #6a42c2;">';
+    objectivesHTML +=
+      '<div style="font-size: 18px; font-weight: 700; color: #b39ddb; margin-bottom: 10px;">📋 Objectives:</div>';
+
+    Object.values(missionResult.objectives).forEach((obj) => {
       const icon = obj.completed ? '✅' : '❌';
       const color = obj.completed ? '#66bb6a' : '#ef5350';
       objectivesHTML += `<div style="color: ${color}; font-size: 14px; margin: 5px 0;">${icon} ${obj.description}</div>`;
     });
-    
+
     objectivesHTML += '</div>';
     Logger.log(objectivesHTML);
   }
@@ -825,11 +829,11 @@ function showOpponentSelection() {
     // Get player's character
     const saveData = SaveManager.load();
     const playerCharacter = createPlayerFighter(saveData.profile.character);
-    
+
     // Get opponent and apply difficulty modifiers
     const opponent = e.detail.fighters[0];
     DifficultyManager.applyDifficultyModifiers(opponent, false); // false = isEnemy
-    
+
     // Start battle: Player vs Opponent
     startBattle([playerCharacter, opponent]);
   });
@@ -857,21 +861,23 @@ function createPlayerFighter(characterData) {
     description: characterData.description,
     class: characterData.class,
   });
-  
+
   // Mark as player character
   fighter.isPlayer = true;
-  
+
   // Apply level bonuses (modifies fighter in place)
   LevelingSystem.applyLevelBonuses(fighter);
-  
+
   // Apply equipment bonuses (modifies fighter in place)
   EquipmentManager.applyEquipmentBonuses(fighter);
-  
+
   // Apply difficulty modifiers (modifies fighter in place)
   DifficultyManager.applyDifficultyModifiers(fighter, true); // true = isPlayer
-  
-  console.log(`⚔️ Player Character: ${fighter.name} (Lvl ${SaveManager.get('profile.level')}, ${DifficultyManager.formatDifficultyDisplay()}) - HP: ${fighter.health}, STR: ${fighter.strength}`);
-  
+
+  console.log(
+    `⚔️ Player Character: ${fighter.name} (Lvl ${SaveManager.get('profile.level')}, ${DifficultyManager.formatDifficultyDisplay()}) - HP: ${fighter.health}, STR: ${fighter.strength}`
+  );
+
   return fighter;
 }
 
@@ -886,7 +892,7 @@ function startBattle(fighters, tournamentInfo = null) {
 
   // Create combat arena component
   const arena = document.createElement('combat-arena');
-  
+
   arena.addEventListener('return-to-menu', () => {
     Game.stopGame();
     appState.reset();
@@ -948,7 +954,10 @@ function startBattle(fighters, tournamentInfo = null) {
       }
 
       // Start game based on mode
-      if ((appState.gameMode === 'single' || appState.gameMode === 'tournament') && fighters.length >= 2) {
+      if (
+        (appState.gameMode === 'single' || appState.gameMode === 'tournament') &&
+        fighters.length >= 2
+      ) {
         console.log('🎮 Starting single fight:', fighters[0].name, 'vs', fighters[1].name);
         Game.startGame(fighters[0], fighters[1]);
       } else if (appState.gameMode === 'team') {
@@ -956,8 +965,8 @@ function startBattle(fighters, tournamentInfo = null) {
         const team1 = new Team('Team One', fighters.slice(0, Math.floor(fighters.length / 2)));
         const team2 = new Team('Team Two', fighters.slice(Math.floor(fighters.length / 2)));
         console.log('🎮 Starting team match:', team1.name, 'vs', team2.name);
-        console.log('Team 1 fighters:', team1.fighters.map(f => f.name).join(', '));
-        console.log('Team 2 fighters:', team2.fighters.map(f => f.name).join(', '));
+        console.log('Team 1 fighters:', team1.fighters.map((f) => f.name).join(', '));
+        console.log('Team 2 fighters:', team2.fighters.map((f) => f.name).join(', '));
         Game.startTeamMatch(team1, team2);
       }
     });
@@ -978,7 +987,7 @@ export function showVictoryScreen(winner) {
     // Check if the player won
     if (winner.isPlayer) {
       const result = tournamentMode.recordVictory();
-      
+
       if (result.tournamentComplete) {
         // Tournament complete! Show victory screen
         setTimeout(() => {
@@ -994,7 +1003,7 @@ export function showVictoryScreen(winner) {
       // Player lost - tournament over
       tournamentMode.recordDefeat();
       appState.tournamentActive = false;
-      
+
       // Show regular victory screen for opponent
       setTimeout(() => {
         showRegularVictoryScreen(winner);
@@ -1019,7 +1028,7 @@ function showRegularVictoryScreen(winner) {
   victoryScreen.addEventListener('play-again', () => {
     victoryScreen.remove();
     appState.selectedFighters = [];
-    
+
     if (appState.gameMode === 'tournament') {
       showTournamentBracketScreen();
     } else {

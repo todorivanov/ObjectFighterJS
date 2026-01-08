@@ -22,12 +22,12 @@ export class EquipmentManager {
     // Check if player meets requirements
     const playerLevel = SaveManager.get('profile.level');
     const playerClass = SaveManager.get('profile.character.class');
-    
+
     if (equipment.requirements.level > playerLevel) {
       console.log(`❌ Level ${equipment.requirements.level} required (you are ${playerLevel})`);
       return false;
     }
-    
+
     if (equipment.requirements.class && !equipment.requirements.class.includes(playerClass)) {
       console.log(`❌ Class requirement not met: ${equipment.requirements.class.join(', ')}`);
       return false;
@@ -42,7 +42,7 @@ export class EquipmentManager {
     // Equip new item
     SaveManager.update(`equipped.${equipment.type}`, equipmentId);
     console.log(`⚔️ Equipped: ${equipment.name}`);
-    
+
     return true;
   }
 
@@ -60,7 +60,7 @@ export class EquipmentManager {
     // Remove from equipped slot
     SaveManager.update(`equipped.${slot}`, null);
     console.log(`🔓 Unequipped ${slot}`);
-    
+
     return true;
   }
 
@@ -76,7 +76,7 @@ export class EquipmentManager {
     }
 
     const inventory = SaveManager.get('inventory.equipment') || [];
-    
+
     // Check inventory limit (20 items)
     if (inventory.length >= 20) {
       console.log('⚠️ Inventory full! Sell or discard items.');
@@ -85,7 +85,7 @@ export class EquipmentManager {
 
     inventory.push(equipmentId);
     SaveManager.update('inventory.equipment', inventory);
-    
+
     console.log(`📦 Added to inventory: ${equipment.name}`);
     return true;
   }
@@ -98,14 +98,14 @@ export class EquipmentManager {
   static removeFromInventory(equipmentId) {
     const inventory = SaveManager.get('inventory.equipment') || [];
     const index = inventory.indexOf(equipmentId);
-    
+
     if (index === -1) {
       return false;
     }
 
     inventory.splice(index, 1);
     SaveManager.update('inventory.equipment', inventory);
-    
+
     return true;
   }
 
@@ -128,7 +128,7 @@ export class EquipmentManager {
     if (equipped.weapon) {
       const weapon = getEquipmentById(equipped.weapon);
       if (weapon) {
-        Object.keys(weapon.stats).forEach(stat => {
+        Object.keys(weapon.stats).forEach((stat) => {
           stats[stat] = (stats[stat] || 0) + weapon.stats[stat];
         });
       }
@@ -138,7 +138,7 @@ export class EquipmentManager {
     if (equipped.armor) {
       const armor = getEquipmentById(equipped.armor);
       if (armor) {
-        Object.keys(armor.stats).forEach(stat => {
+        Object.keys(armor.stats).forEach((stat) => {
           stats[stat] = (stats[stat] || 0) + armor.stats[stat];
         });
       }
@@ -148,7 +148,7 @@ export class EquipmentManager {
     if (equipped.accessory) {
       const accessory = getEquipmentById(equipped.accessory);
       if (accessory) {
-        Object.keys(accessory.stats).forEach(stat => {
+        Object.keys(accessory.stats).forEach((stat) => {
           stats[stat] = (stats[stat] || 0) + accessory.stats[stat];
         });
       }
@@ -164,7 +164,7 @@ export class EquipmentManager {
    */
   static applyEquipmentBonuses(fighter) {
     const stats = this.getEquippedStats();
-    
+
     // Apply bonuses directly to the fighter object (mutate in place)
     fighter.health = fighter.health + stats.health;
     fighter.maxHealth = fighter.maxHealth + stats.health;
@@ -191,7 +191,7 @@ export class EquipmentManager {
   static awardRandomDrop() {
     const playerLevel = SaveManager.get('profile.level');
     const drop = getRandomEquipmentDrop(playerLevel);
-    
+
     if (this.addToInventory(drop.id)) {
       // Track legendary collection achievement
       if (drop.rarity === 'legendary') {
@@ -207,7 +207,7 @@ export class EquipmentManager {
         epic: '#9c27b0',
         legendary: '#ff9800',
       };
-      
+
       const message = `
         <div class="loot-drop" style="
           background: linear-gradient(135deg, rgba(0,0,0,0.8), rgba(26,13,46,0.9));
@@ -234,9 +234,9 @@ export class EquipmentManager {
           </div>
         </div>
       `;
-      
+
       Logger.log(message);
-      
+
       // Add CSS animation if not present
       if (!document.getElementById('loot-animations')) {
         const style = document.createElement('style');
@@ -250,10 +250,10 @@ export class EquipmentManager {
         `;
         document.head.appendChild(style);
       }
-      
+
       return drop;
     }
-    
+
     return null;
   }
 
@@ -263,7 +263,7 @@ export class EquipmentManager {
    */
   static getInventoryItems() {
     const inventory = SaveManager.get('inventory.equipment') || [];
-    return inventory.map(id => getEquipmentById(id)).filter(eq => eq !== null);
+    return inventory.map((id) => getEquipmentById(id)).filter((eq) => eq !== null);
   }
 
   /**
@@ -292,18 +292,18 @@ export class EquipmentManager {
 
     const playerLevel = SaveManager.get('profile.level');
     const playerClass = SaveManager.get('profile.character.class');
-    
+
     if (equipment.requirements.level > playerLevel) {
-      return { 
-        canEquip: false, 
-        reason: `Level ${equipment.requirements.level} required (you are ${playerLevel})` 
+      return {
+        canEquip: false,
+        reason: `Level ${equipment.requirements.level} required (you are ${playerLevel})`,
       };
     }
-    
+
     if (equipment.requirements.class && !equipment.requirements.class.includes(playerClass)) {
-      return { 
-        canEquip: false, 
-        reason: `Class requirement: ${equipment.requirements.class.join(', ')}` 
+      return {
+        canEquip: false,
+        reason: `Class requirement: ${equipment.requirements.class.join(', ')}`,
       };
     }
 
