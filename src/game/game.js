@@ -1,228 +1,530 @@
-import {Referee} from "../entities/referee";
-import {Helpers} from "../utils/helpers";
-import {Logger} from "../utils/logger";
-import Consumable from "./consumables";
-import {getFighters} from "../api/mockFighters";
-import GameEvent from "./GameEvent";
+import { Referee } from '../entities/referee.js';
+import { Helpers } from '../utils/helpers.js';
+import { Logger } from '../utils/logger.js';
+import { getFighters } from '../api/mockFighters.js';
+import { GameStateManager } from './GameStateManager.js';
+import { EventManager } from './EventManager.js';
+import { CombatEngine } from './CombatEngine.js';
+import { hudManager } from '../utils/hudManager.js';
+import { TurnManager } from './TurnManager.js';
+import { soundManager } from '../utils/soundManager.js';
+import { SaveManager } from '../utils/saveManager.js';
+import { LevelingSystem } from './LevelingSystem.js';
+import { EquipmentManager } from './EquipmentManager.js';
+import { DifficultyManager } from './DifficultyManager.js';
 
-const roundInterval = 1500;
-let intervalId;
-let event;
-let selectedTeam;
+const ROUND_INTERVAL = 1500;
+const AI_TURN_DELAY = 1200;
+
+// Game instance state manager
+let gameState = null;
+let autoBattleEnabled = false;
 
 export default class Game {
-    static startGame(firstFighter, secondFighter) {
-        Logger.clearLog();
-        Referee.introduceFighters(firstFighter, secondFighter);
+  /**
+   * Enable or disable auto-battle mode
+   * @param {boolean} enabled
+   */
+  static setAutoBattle(enabled) {
+    autoBattleEnabled = enabled;
+    console.log('🤖 Auto Battle:', enabled ? 'ENABLED' : 'DISABLED');
+    
+    // Log to combat log
+    const message = enabled 
+      ? '<div class="attack-div text-center" style="background: rgba(0, 230, 118, 0.2); border-left-color: #00e676;">🤖 <strong>Auto Battle ENABLED</strong> - AI will control both fighters</div>'
+      : '<div class="attack-div text-center" style="background: rgba(255, 167, 38, 0.2); border-left-color: #ffa726;">🎮 <strong>Auto Battle DISABLED</strong> - Manual control resumed</div>';
+    
+    Logger.log(message);
+    soundManager.play('event');
+  }
+  /**
+   * Start a 1v1 fighter match with turn-based combat
+   * @param {Object} firstFighter - First fighter (player)
+   * @param {Object} secondFighter - Second fighter (enemy)
+   */
+  static startGame(firstFighter, secondFighter) {
+    // Initialize clean state
+    this.stopGame();
+    gameState = new GameStateManager();
+    const turnManager = new TurnManager();
 
-        clearInterval(intervalId);
-        intervalId = setInterval(() => {
-            Referee.showRoundNumber();
-            const number = Helpers.getRandomNumber(0, 201);
-            if(number > 90 && number < 110 && !event) {
-                event = GameEvent.generateEvent();
-                event.logEvent();
-                if(event.isGlobal) {
-                    event.effect([firstFighter, secondFighter]);
-                } else if(event.isTeamEvent) {
-                    if(!selectedTeam) {
-                        selectedTeam = Helpers.getRandomNumber(1,2);
-                    }
+    Logger.clearLog();
+    Referee.introduceFighters(firstFighter, secondFighter);
+    
+    // Initialize HUD
+    hudManager.initSingleFight(firstFighter, secondFighter);
 
-                    selectedTeam === 1 ? event.effect([firstFighter]) : event.effect([secondFighter])
-                }
+    let roundCount = 0;
 
-                event.roundsLeft -=1;
-            }
+    // Main turn-based game loop
+    const processTurn = () => {
+      if (turnManager.isPaused) {
+        setTimeout(processTurn, 100);
+        return;
+      }
 
-            if(event && event.roundsLeft > 0) {
-                if(event.isGlobal) {
-                    event.effect([firstFighter, secondFighter]);
-                } else if(event.isTeamEvent) {
-                    if(!selectedTeam) {
-                        selectedTeam = Helpers.getRandomNumber(1,2);
-                    }
+      // Start new round every 2 turns
+      if (turnManager.turnNumber % 2 === 0) {
+        roundCount++;
+        hudManager.setRound(roundCount);
+        Referee.showRoundNumber();
 
-                    selectedTeam === 1 ? event.effect([firstFighter]) : event.effect([secondFighter])
-                }
+        // Regenerate mana for both fighters
+        firstFighter.regenerateMana();
+        secondFighter.regenerateMana();
+        hudManager.update();
+      }
 
-                event.roundsLeft -=1;
-            }
+      turnManager.startTurn();
 
-            if(event && event.roundsLeft === 0) {
-                event = undefined;
-                selectedTeam = undefined;
-            }
+      // Show turn indicator
+      this.showTurnIndicator(turnManager.isPlayerTurn() ? firstFighter.name : secondFighter.name);
 
+      if (turnManager.isPlayerTurn()) {
+        // Process status effects at turn start
+        firstFighter.processStatusEffects();
+        firstFighter.tickSkillCooldowns();
+        hudManager.update();
 
-            if (number > 100) {
-                secondFighter.health -= firstFighter.hit();
+        // Check if auto-battle is enabled
+        if (autoBattleEnabled) {
+          // Auto-battle: AI chooses action for player
+          setTimeout(() => {
+            const aiActionData = this.chooseAIAction(firstFighter);
+            this.executeAction(firstFighter, secondFighter, aiActionData, turnManager, processTurn);
+          }, AI_TURN_DELAY);
+        } else {
+          // Manual: Player's turn - wait for input using Web Component
+          const actionSelection = document.createElement('action-selection');
+          actionSelection.fighter = firstFighter;
+          actionSelection.addEventListener('action-selected', (e) => {
+            this.executeAction(firstFighter, secondFighter, e.detail, turnManager, processTurn);
+          });
+          document.body.appendChild(actionSelection);
+        }
+      } else {
+        // Process status effects at turn start
+        secondFighter.processStatusEffects();
+        secondFighter.tickSkillCooldowns();
+        hudManager.update();
 
-                if (number > 149 && number < 160) {
-                    const consumable = Consumable.getConsumable();
-                    firstFighter.health += consumable.health;
-                    const msg = `<div class="consumable text-center">${firstFighter.name} consumed ${consumable.name} which gave gim ${consumable.health} HP.</div>`;
-                    Logger.log(msg);
-                }
-            } else {
-                firstFighter.health -= secondFighter.hit();
+        // Enemy AI turn
+        setTimeout(() => {
+          const aiActionData = this.chooseAIAction(secondFighter);
+          this.executeAction(secondFighter, firstFighter, aiActionData, turnManager, processTurn);
+        }, AI_TURN_DELAY);
+      }
+    };
 
-                if (number > 49 && number < 60) {
-                    const consumable = Consumable.getConsumable();
-                    secondFighter.health += consumable.health;
-                    const msg = `<div class="consumable text-center">${secondFighter.name} consumed ${consumable.name} which gave gim ${consumable.health} HP.</div>`;
-                    Logger.log(msg);
-                }
-            }
+    // Start first turn
+    processTurn();
+  }
 
-            Referee.roundSummary(firstFighter, secondFighter);
+  /**
+   * Execute an action (player or AI)
+   */
+  static executeAction(attacker, defender, actionData, turnManager, callback) {
+    const action = actionData.action || actionData;
 
-            if (firstFighter.health <= 0) {
-                Referee.declareWinner(secondFighter);
-                clearInterval(intervalId);
-            }
-
-            if (secondFighter.health <= 0) {
-                Referee.declareWinner(firstFighter);
-                clearInterval(intervalId)
-            }
-
-        }, roundInterval);
+    // Handle surrender
+    if (action === 'surrender') {
+      Logger.log(`<div class="attack-div text-center" style="background: #f8d7da; border-left-color: #ff1744;">🏳️ <strong>${attacker.name}</strong> has surrendered!</div>`);
+      
+      // Remove action selection
+      document.querySelectorAll('action-selection').forEach(el => el.remove());
+      
+      // Declare opponent as winner
+      setTimeout(() => {
+      Referee.declareWinner(defender);
+      hudManager.showWinner(defender);
+      
+      // Track loss from surrender
+      SaveManager.increment('stats.totalLosses');
+      SaveManager.increment('stats.totalFightsPlayed');
+      SaveManager.update('stats.winStreak', 0); // Reset streak
+      
+      // Small XP for attempt
+      LevelingSystem.awardXP(25, 'Battle Participation');
+        
+      // Show victory screen for opponent
+      setTimeout(() => {
+        if (window.showVictoryScreen) {
+          window.showVictoryScreen(defender);
+        }
+      }, 2000);
+      }, 1000);
+      return;
     }
 
-    static startTeamMatch(teamOne, teamTwo) {
-        Logger.clearLog();
-        Referee.introduceTeams(teamOne, teamTwo);
-
-        clearInterval(intervalId);
-
-        intervalId = setInterval(() => {
-            Referee.showRoundNumber();
-            const number = Helpers.getRandomNumber(0, 1001);
-
-
-            if(number > 470 && number < 530 && !event) {
-                event = GameEvent.generateEvent();
-                event.logEvent();
-                if(event.isGlobal) {
-                    event.effect(teamOne.fighters);
-                    event.effect(teamTwo.fighters);
-                } else if(event.isTeamEvent) {
-                    if(!selectedTeam) {
-                        selectedTeam = Helpers.getRandomNumber(1,2);
-                    }
-
-                    selectedTeam === 1 ? event.effect(teamOne.fighters) : event.effect(teamTwo.fighters)
-                }
-
-                event.roundsLeft -=1;
+    switch(action) {
+      case 'attack':
+        const attackResult = attacker.normalAttack();
+        const actualDmg = defender.takeDamage(attackResult.damage);
+        
+        // Track player stats
+        if (attacker.isPlayer) {
+          SaveManager.increment('stats.totalDamageDealt', actualDmg);
+          if (attackResult.isCritical) {
+            SaveManager.increment('stats.criticalHits');
+          }
+        }
+        if (defender.isPlayer) {
+          SaveManager.increment('stats.totalDamageTaken', actualDmg);
+        }
+        
+        // Increase combo on successful attack
+        attacker.combo++;
+        if (attacker.combo >= 3) {
+          this.showComboIndicator(attacker.combo);
+          const bonusDmg = Math.ceil(actualDmg * 0.2);
+          defender.health -= bonusDmg;
+          Logger.log(`<div class="attack-div text-center" style="background: #fff3cd;">🔥 <strong>COMBO x${attacker.combo}!</strong> <span class="badge bg-warning">+${bonusDmg} bonus damage</span></div>`);
+        }
+        break;
+      
+      case 'defend':
+        attacker.defend();
+        attacker.combo = 0; // Reset combo on defend
+        break;
+      
+      case 'skill':
+        const skillIndex = actionData.skillIndex;
+        if (skillIndex !== undefined && attacker.skills[skillIndex]) {
+          const skill = attacker.skills[skillIndex];
+          const success = skill.use(attacker, defender);
+          if (success) {
+            if (attacker.isPlayer) {
+              SaveManager.increment('stats.skillsUsed');
             }
-
-            if(event && event.roundsLeft > 0) {
-                if(event.isGlobal) {
-                    event.effect(teamOne.fighters);
-                    event.effect(teamTwo.fighters);
-                } else if(event.isTeamEvent) {
-                    if(!selectedTeam) {
-                        selectedTeam = Helpers.getRandomNumber(1,2);
-                    }
-
-                    selectedTeam === 1 ? event.effect(teamOne.fighters) : event.effect(teamTwo.fighters)
-                }
-
-                event.roundsLeft -=1;
-            }
-
-            if(event && event.roundsLeft === 0) {
-                event = undefined;
-                selectedTeam = undefined;
-            }
-
-            if (number < 500) {
-                for(let i=0; i<teamOne.fighters.length; i++) {
-                    let fighter = teamOne.fighters[i];
-
-                    let randomEnemy = teamTwo.fighters[Helpers.getRandomNumber(0, teamTwo.fighters.length - 1)];
-                    Logger.log(`${fighter.name} attacked ${randomEnemy.name}.`);
-                    randomEnemy.health -= fighter.hit();
-
-                    if (randomEnemy.health <= 0) { // remove dead fighter
-                        let index = teamTwo.fighters.map(f => {
-                            return f.id
-                        }).indexOf(randomEnemy.id);
-                        teamTwo.fighters.splice(index, 1);
-                    }
-
-                    if (teamTwo.fighters.length === 0) break;
-                }
-
-                let specialAttack = Helpers.getRandomNumber(0, 100);
-                if (specialAttack > 60 && specialAttack < 80) {
-                    const consumable = Consumable.getConsumable();
-                    let randomFighter = teamOne.fighters[Helpers.getRandomNumber(0, teamOne.fighters.length - 1)];
-                    randomFighter.health += consumable.health;
-
-                    const msg = `<div class="consumable text-center">${randomFighter.name} consumed ${consumable.name} which gave gim ${consumable.health} HP.</div>`;
-                    Logger.log(msg);
-                }
-            } else {
-                for(let i=0; i<teamTwo.fighters.length; i++) {
-                    let fighter = teamTwo.fighters[i];
-
-                    let randomEnemy = teamOne.fighters[Helpers.getRandomNumber(0, teamOne.fighters.length - 1)];
-                    Logger.log(`${fighter.name} attacked ${randomEnemy.name}.`);
-                    randomEnemy.health -= fighter.hit();
-
-                    if (randomEnemy.health <= 0) { // remove dead fighter
-                        let index = teamOne.fighters.map(f => {
-                            return f.id
-                        }).indexOf(randomEnemy.id);
-                        teamOne.fighters.splice(index, 1);
-                    }
-
-                    if (teamOne.fighters.length === 0) break;
-                }
-
-                let specialAttack = Helpers.getRandomNumber(0, 100);
-                if (specialAttack > 60 && specialAttack < 80) {
-                    const consumable = Consumable.getConsumable();
-                    let randomFighter = teamTwo.fighters[Helpers.getRandomNumber(0, teamTwo.fighters.length - 1)];
-                    randomFighter.health += consumable.health;
-
-                    const msg = `<div class="consumable text-center">${randomFighter.name} consumed ${consumable.name} which gave gim ${consumable.health} HP.</div>`;
-                    Logger.log(msg);
-                }
-            }
-
-            Referee.matchRoundSummary(teamOne, teamTwo);
-
-            if (teamOne.fighters.length === 0) {
-                Referee.declareWinningTeam(teamTwo);
-                clearInterval(intervalId);
-            }
-
-            if (teamTwo.fighters.length === 0) {
-                Referee.declareWinningTeam(teamOne);
-                clearInterval(intervalId)
-            }
-        }, roundInterval);
+            attacker.combo = 0; // Reset combo on skill use
+          }
+        }
+        break;
+      
+      case 'item':
+        attacker.useItem();
+        if (attacker.isPlayer) {
+          SaveManager.increment('stats.itemsUsed');
+        }
+        attacker.combo = 0; // Reset combo on item use
+        break;
     }
 
-    static stopGame() {
-        Logger.clearLog();
-        clearInterval(intervalId);
-        Referee.clearRoundNumber();
+    // Defender's combo resets when taking damage
+    if (action === 'attack' || action === 'skill') {
+      defender.combo = 0;
     }
 
-    static logFighters() {
-        return new Promise((resolve) => {
-            getFighters().then((fighters) => {
-                fighters.forEach(fighter => {
-                    Logger.logFighter(fighter, '#choose-fighter');
-                });
+    // Update HUD
+    hudManager.update();
 
-                resolve(fighters);
-            });
+    // Check victory condition
+    const result = CombatEngine.checkVictoryCondition(attacker, defender, false);
+    if (result) {
+      Referee.declareWinner(result.winner);
+      hudManager.showWinner(result.winner);
+      // Remove any existing action-selection components
+      document.querySelectorAll('action-selection').forEach(el => el.remove());
+      
+      // Award XP and track stats based on winner
+      const playerWon = result.winner.isPlayer;
+      SaveManager.increment('stats.totalFightsPlayed');
+      
+      if (playerWon) {
+        const xpReward = 100; // Base XP for single fight victory
+        SaveManager.increment('stats.totalWins');
+        SaveManager.increment('stats.winStreak');
+        const bestStreak = SaveManager.get('stats.bestStreak') || 0;
+        if (SaveManager.get('stats.winStreak') > bestStreak) {
+          SaveManager.update('stats.bestStreak', SaveManager.get('stats.winStreak'));
+        }
+        LevelingSystem.awardXP(xpReward, 'Victory in Single Combat');
+        
+        // Award random equipment drop (difficulty-based chance)
+        const dropRate = DifficultyManager.getEquipmentDropRate();
+        if (Math.random() < dropRate) {
+          setTimeout(() => {
+            EquipmentManager.awardRandomDrop();
+          }, 1000);
+        }
+      } else {
+        // Player lost
+        SaveManager.increment('stats.totalLosses');
+        SaveManager.update('stats.winStreak', 0); // Reset streak
+        LevelingSystem.awardXP(50, 'Battle Participation'); // Consolation XP
+      }
+      
+      // Show victory screen after delay
+      setTimeout(() => {
+        if (window.showVictoryScreen) {
+          window.showVictoryScreen(result.winner);
+        }
+      }, 2000);
+      return;
+    }
+
+    // Next turn
+    turnManager.nextTurn();
+    setTimeout(callback, 800);
+  }
+
+  /**
+   * AI decision making
+   */
+  static chooseAIAction(fighter) {
+    const healthPercent = (fighter.health / fighter.maxHealth) * 100;
+    const manaPercent = (fighter.mana / fighter.maxMana) * 100;
+
+    // Low health - heal or defend
+    if (healthPercent < 30) {
+      if (fighter.health < fighter.maxHealth && Math.random() < 0.6) {
+        return { action: 'item' };
+      }
+      return { action: 'defend' };
+    }
+
+    // Try to use a ready skill
+    const readySkills = fighter.skills
+      .map((skill, index) => ({ skill, index }))
+      .filter(({ skill }) => skill.isReady() && fighter.mana >= skill.manaCost);
+
+    if (readySkills.length > 0 && manaPercent > 30 && Math.random() < 0.5) {
+      const chosen = readySkills[Math.floor(Math.random() * readySkills.length)];
+      return { action: 'skill', skillIndex: chosen.index };
+    }
+
+    // Medium health - sometimes defend
+    if (healthPercent < 60 && Math.random() < 0.3) {
+      return { action: 'defend' };
+    }
+
+    // Default - attack
+    return { action: 'attack' };
+  }
+
+  /**
+   * Show turn indicator overlay using Web Component
+   */
+  static showTurnIndicator(fighterName) {
+    // Remove existing indicators
+    document.querySelectorAll('turn-indicator').forEach(el => el.remove());
+
+    const indicator = document.createElement('turn-indicator');
+    indicator.setAttribute('fighter-name', fighterName);
+    document.body.appendChild(indicator);
+  }
+
+  /**
+   * Show combo counter using Web Component
+   */
+  static showComboIndicator(comboCount) {
+    // Remove existing indicators
+    document.querySelectorAll('combo-indicator').forEach(el => el.remove());
+
+    const indicator = document.createElement('combo-indicator');
+    indicator.setAttribute('combo-count', comboCount);
+    document.body.appendChild(indicator);
+  }
+
+  /**
+   * Start a team vs team match
+   * @param {Team} teamOne - First team
+   * @param {Team} teamTwo - Second team
+   */
+  static startTeamMatch(teamOne, teamTwo) {
+    // Initialize clean state
+    this.stopGame();
+    gameState = new GameStateManager();
+
+    Logger.clearLog();
+    
+    // Create team summary display
+    this.displayTeamSummary(teamOne, teamTwo);
+    
+    Referee.introduceTeams(teamOne, teamTwo);
+
+    let roundCount = 0;
+    const intervalId = setInterval(() => {
+      roundCount++;
+      
+      // Show round number
+      const roundMsg = `<div class="round-announcement" style="background: linear-gradient(135deg, #6a42c2, #ffa726); color: white; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; border-radius: 12px; margin: 15px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">⚔️ ROUND ${roundCount} ⚔️</div>`;
+      Logger.log(roundMsg);
+      
+      const randomNumber = Helpers.getRandomNumber(0, 1001);
+
+      // Process random events (higher threshold for team matches)
+      EventManager.processRoundEvent(
+        gameState,
+        teamOne.fighters,
+        teamTwo.fighters,
+        randomNumber,
+        { min: 470, max: 530 }
+      );
+
+      // Process team combat
+      if (randomNumber < 500) {
+        CombatEngine.processTeamCombat(teamOne, teamTwo);
+      } else {
+        CombatEngine.processTeamCombat(teamTwo, teamOne);
+      }
+
+      // Display round summary with health bars
+      this.displayTeamHealthSummary(teamOne, teamTwo);
+
+      // Check victory condition
+      const result = CombatEngine.checkVictoryCondition(teamOne, teamTwo, true);
+      if (result) {
+        Referee.declareWinningTeam(result.winner);
+        gameState.stop();
+        
+        // Award XP for team victory (more than single fight)
+        const xpReward = 150; // Higher XP for team matches
+        SaveManager.increment('stats.totalWins');
+        SaveManager.increment('stats.totalFightsPlayed');
+        SaveManager.increment('stats.winStreak');
+        const bestStreak = SaveManager.get('stats.bestStreak') || 0;
+        if (SaveManager.get('stats.winStreak') > bestStreak) {
+          SaveManager.update('stats.bestStreak', SaveManager.get('stats.winStreak'));
+        }
+        LevelingSystem.awardXP(xpReward, 'Victory in Team Battle');
+        
+        // Show victory screen
+        setTimeout(() => {
+          if (window.showVictoryScreen) {
+            // For team match, show first fighter of winning team
+            const winningFighter = result.winner.fighters[0];
+            window.showVictoryScreen(winningFighter);
+          }
+        }, 2000);
+      }
+    }, ROUND_INTERVAL);
+
+    gameState.setIntervalId(intervalId);
+  }
+
+  /**
+   * Display team summary at start
+   */
+  static displayTeamSummary(teamOne, teamTwo) {
+    const team1List = teamOne.fighters.map(f => `<span style="color: #00e676;">⚔️ ${f.name}</span>`).join(', ');
+    const team2List = teamTwo.fighters.map(f => `<span style="color: #ffa726;">⚔️ ${f.name}</span>`).join(', ');
+    
+    const summaryMsg = `
+      <div style="background: linear-gradient(145deg, rgba(42, 26, 71, 0.8), rgba(26, 13, 46, 0.9)); border: 2px solid rgba(106, 66, 194, 0.5); border-radius: 16px; padding: 25px; margin: 20px 0; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
+        <h3 style="text-align: center; color: #ffa726; font-size: 28px; margin: 0 0 20px 0; text-transform: uppercase;">⚔️ Team Battle ⚔️</h3>
+        <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center;">
+          <div style="text-align: right;">
+            <h4 style="color: #00e676; font-size: 20px; margin: 0 0 10px 0;">💚 ${teamOne.name}</h4>
+            <div style="color: white; line-height: 1.6;">${team1List}</div>
+          </div>
+          <div style="font-size: 40px; color: #ffa726;">VS</div>
+          <div style="text-align: left;">
+            <h4 style="color: #ffa726; font-size: 20px; margin: 0 0 10px 0;">🧡 ${teamTwo.name}</h4>
+            <div style="color: white; line-height: 1.6;">${team2List}</div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    Logger.log(summaryMsg);
+  }
+
+  /**
+   * Display team health summary
+   */
+  static displayTeamHealthSummary(teamOne, teamTwo) {
+    const team1Fighters = teamOne.fighters.map(f => {
+      // Ensure health values are valid numbers
+      const currentHealth = isNaN(f.health) ? 0 : Math.max(0, Math.round(f.health));
+      const maxHealth = isNaN(f.maxHealth) || f.maxHealth === 0 ? 100 : f.maxHealth;
+      const healthPercent = Math.max(0, Math.min(100, (currentHealth / maxHealth) * 100));
+      const healthColor = healthPercent > 60 ? '#00e676' : healthPercent > 30 ? '#ffc107' : '#ff1744';
+      const status = currentHealth > 0 ? '💚' : '💀';
+      
+      return `
+        <div style="margin: 5px 0;">
+          ${status} <strong>${f.name}</strong>: 
+          <span style="color: ${healthColor};">${currentHealth} HP</span>
+        </div>
+      `;
+    }).join('');
+
+    const team2Fighters = teamTwo.fighters.map(f => {
+      // Ensure health values are valid numbers
+      const currentHealth = isNaN(f.health) ? 0 : Math.max(0, Math.round(f.health));
+      const maxHealth = isNaN(f.maxHealth) || f.maxHealth === 0 ? 100 : f.maxHealth;
+      const healthPercent = Math.max(0, Math.min(100, (currentHealth / maxHealth) * 100));
+      const healthColor = healthPercent > 60 ? '#00e676' : healthPercent > 30 ? '#ffc107' : '#ff1744';
+      const status = currentHealth > 0 ? '🧡' : '💀';
+      
+      return `
+        <div style="margin: 5px 0;">
+          ${status} <strong>${f.name}</strong>: 
+          <span style="color: ${healthColor};">${currentHealth} HP</span>
+        </div>
+      `;
+    }).join('');
+
+    const summaryMsg = `
+      <div style="background: rgba(0, 0, 0, 0.3); border-radius: 12px; padding: 20px; margin: 15px 0; border-left: 4px solid #6a42c2;">
+        <h4 style="text-align: center; color: #b39ddb; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 2px;">📊 Team Status</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div>
+            <h5 style="color: #00e676; margin: 0 0 10px 0;">💚 ${teamOne.name}</h5>
+            ${team1Fighters}
+          </div>
+          <div>
+            <h5 style="color: #ffa726; margin: 0 0 10px 0;">🧡 ${teamTwo.name}</h5>
+            ${team2Fighters}
+          </div>
+        </div>
+      </div>
+    `;
+    
+    Logger.log(summaryMsg);
+  }
+
+  /**
+   * Stop the current game and clean up resources
+   */
+  static stopGame() {
+    if (gameState) {
+      gameState.stop();
+    }
+    Referee.clearRoundNumber();
+    hudManager.remove();
+    
+    // Remove any Web Components
+    document.querySelectorAll('action-selection').forEach(el => el.remove());
+    document.querySelectorAll('turn-indicator').forEach(el => el.remove());
+    document.querySelectorAll('combo-indicator').forEach(el => el.remove());
+    
+    // Reset views
+    const selectionView = document.querySelector('.fighter-selection-view');
+    const combatView = document.querySelector('.combat-view');
+    
+    if (selectionView) {
+      selectionView.style.display = 'flex';
+    }
+    if (combatView) {
+      combatView.style.display = 'none';
+    }
+  }
+
+  /**
+   * Load and display all available fighters
+   * @returns {Promise<Array>} Promise resolving to fighters array
+   */
+  static logFighters() {
+    return new Promise((resolve) => {
+      getFighters().then((fighters) => {
+        fighters.forEach((fighter) => {
+          Logger.logFighter(fighter, '#choose-fighter');
         });
-    }
+
+        resolve(fighters);
+      });
+    });
+  }
 }
