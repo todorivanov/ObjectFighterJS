@@ -52,7 +52,9 @@
     "check": "npm run lint && npm run format:check",
     "prepare": "npm run check"
   },
-  "dependencies": {},
+  "dependencies": {
+    "bootstrap": "5.3.8"
+  },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
     "eslint": "^9.15.0",
