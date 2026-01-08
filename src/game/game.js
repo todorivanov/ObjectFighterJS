@@ -15,6 +15,7 @@ import { DifficultyManager } from './DifficultyManager.js';
 import { EconomyManager } from './EconomyManager.js';
 import { DurabilityManager } from './DurabilityManager.js';
 import { StoryMode } from './StoryMode.js';
+import { createAI, simpleFallbackAI } from '../ai/AIManager.js';
 
 const ROUND_INTERVAL = 1500;
 const AI_TURN_DELAY = 1200;
@@ -25,6 +26,7 @@ let autoBattleEnabled = false;
 let currentStoryMission = null; // Track if we're in a story mission
 let currentPlayerFighter = null; // Track player fighter
 let currentEnemyFighter = null; // Track enemy fighter
+let aiManagers = {}; // Track AI managers for fighters
 
 export default class Game {
   /**
@@ -68,6 +70,20 @@ export default class Game {
       }
     } else {
       currentStoryMission = null;
+    }
+
+    // Initialize AI managers for fighters
+    const difficulty = SaveManager.get('settings.difficulty') || 'normal';
+    
+    // Create AI for player (only used in auto-battle)
+    if (!firstFighter.isPlayer || autoBattleEnabled) {
+      aiManagers[firstFighter.id] = createAI(firstFighter, difficulty);
+    }
+    
+    // Create AI for opponent
+    if (!secondFighter.isPlayer) {
+      aiManagers[secondFighter.id] = createAI(secondFighter, difficulty);
+      console.log('🤖 Enemy AI Personality:', aiManagers[secondFighter.id].getPersonalityInfo());
     }
 
     Logger.clearLog();
@@ -117,7 +133,7 @@ export default class Game {
         if (autoBattleEnabled) {
           // Auto-battle: AI chooses action for player
           setTimeout(() => {
-            const aiActionData = this.chooseAIAction(firstFighter);
+            const aiActionData = this.chooseAIAction(firstFighter, secondFighter);
             this.executeAction(firstFighter, secondFighter, aiActionData, turnManager, processTurn);
           }, AI_TURN_DELAY);
         } else {
@@ -137,7 +153,7 @@ export default class Game {
 
         // Enemy AI turn
         setTimeout(() => {
-          const aiActionData = this.chooseAIAction(secondFighter);
+          const aiActionData = this.chooseAIAction(secondFighter, firstFighter);
           this.executeAction(secondFighter, firstFighter, aiActionData, turnManager, processTurn);
         }, AI_TURN_DELAY);
       }
@@ -638,6 +654,9 @@ export default class Game {
     currentPlayerFighter = null;
     currentEnemyFighter = null;
     currentStoryMission = null;
+    
+    // Clear AI managers
+    aiManagers = {};
 
     // Remove any Web Components
     document.querySelectorAll('action-selection').forEach((el) => el.remove());
