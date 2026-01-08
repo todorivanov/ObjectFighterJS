@@ -19,18 +19,36 @@ Drag & drop multiple fighters into two teams and witness an epic team battle.
 - **Miss Chance**: 10% chance to miss any attack
 
 ### Dynamic Events
-Random events can occur during battles:
-- **Earthquake**: Damages all fighters (-100 HP)
-- **Full Moon**: Wild animals attack one team (-50% HP)
-- **Poisoned Food**: Continuous damage over 5 rounds (-20 HP/round)
+**6 random events** can shake up any battle:
+- 🌍 **Earthquake**: Global damage (-100 HP)
+- 🌕 **Full Moon**: Wild beasts attack one team (-50% HP)
+- ☠️ **Poisoned Food**: 5 rounds of poison damage (-20 HP/round)
+- ⚡ **Lightning Storm**: 2 rounds of electric damage (-50 HP/round)
+- 🔥 **Fire Eruption**: 3 rounds of burning (-30 HP/round)
+- ❄️ **Blizzard**: 4 rounds of freezing damage (-15 HP/round)
 
 ### Fighters
-Choose from 5 unique fighters with different stats:
-- **Gosho**: Well-balanced fighter (1000 HP, 10 STR)
-- **Ivan**: High damage, low health (800 HP, 20 STR)
-- **Petar**: Balanced with slight offense (900 HP, 11 STR)
-- **Jivko**: Tank with massive HP (2000 HP, 4 STR)
-- **Bobba**: Durable with decent stats (1500 HP, 6 STR)
+Choose from **10 unique fighters** across 5 different classes:
+
+**🔴 Glass Cannon** - High damage, low HP
+- **Ivan**: 800 HP, 20 STR - Devastating attacks, fragile defense
+- **Viktor**: 850 HP, 18 STR - Aggressive striker
+
+**🟢 Balanced** - Equal offense and defense
+- **Gosho**: 1000 HP, 10 STR - Perfect for beginners
+- **Marina**: 1100 HP, 9 STR - Tactical and consistent
+
+**🔵 Tank** - Massive HP, weak attacks
+- **Jivko**: 2000 HP, 4 STR - Impenetrable defense
+- **Dimitri**: 1800 HP, 5 STR - Superior endurance
+
+**🟡 Bruiser** - High HP, moderate damage
+- **Bobba**: 1500 HP, 6 STR - Reliable in long fights
+- **Nikolai**: 1200 HP, 8 STR - Relentless pressure
+
+**🟠 Warrior** - Offensive focus
+- **Petar**: 900 HP, 11 STR - Power and survivability
+- **Svetlana**: 950 HP, 13 STR - Versatile combatant
 
 ## 🚀 Quick Start
 
@@ -81,26 +99,28 @@ npm run preview
 ## 📚 Documentation
 
 - **[Migration Guide](MIGRATION_GUIDE.md)**: Upgrading from v1.0 to v2.0
-- **[Phase 1.1 Complete](PHASE_1.1_COMPLETE.md)**: Modernization details
+- **[Phase 1.1 Complete](PHASE_1.1_COMPLETE.md)**: Core dependencies upgrade
+- **[Phase 1.2 Complete](PHASE_1.2_COMPLETE.md)**: Architecture refactoring  
+- **[Phase 2 Complete](PHASE_2_COMPLETE.md)**: Bug fixes & content expansion
 
-## 🔄 Recent Updates (v2.0)
+## 🔄 Recent Updates
 
-### Performance
-- **17x faster** dev server startup (10s → 0.57s)
-- **10x faster** production builds
-- Instant hot module replacement
+### v2.1.0 - Phase 2 Complete (Jan 8, 2026)
+- ✅ **10 fighters** with working avatars (was 5 with broken images)
+- ✅ **6 random events** (doubled from 3)
+- ✅ **Visual health bars** with color indicators
+- ✅ **Emoji-rich combat log** for better UX
+- ✅ **Fighter classes** (Tank, Glass Cannon, Balanced, etc.)
+- ✅ **Epic announcements** with styled messages
+- ✅ **Game config file** for easy balance tuning
 
-### Code Quality
-- Migrated from jQuery to vanilla JavaScript
-- Updated from Webpack 3 to Vite 5
-- Added ESLint and Prettier
-- Zero build warnings or errors
-
-### UI/UX
-- Modern gradient design
-- Responsive layout (mobile-friendly)
-- Smooth animations and transitions
-- Auto-scrolling combat log
+### v2.0.0 - Phase 1 Complete (Jan 8, 2026)
+- ⚡ **17x faster** dev server (Webpack → Vite)
+- 🗑️ **Removed jQuery** (vanilla JS)
+- 🏗️ **Clean architecture** (eliminated global state)
+- 📉 **50% less code duplication**
+- 🎨 **Bootstrap 5** with modern responsive design
+- 🔍 **ESLint + Prettier** for code quality
 
 ## 📦 Project Structure
 
@@ -142,6 +162,6 @@ Todor Ivanov
 
 ---
 
-**Version**: 2.0.0  
+**Version**: 2.1.0  
 **Status**: Active Development  
-**Next Phase**: Architecture Refactoring + Gameplay Enhancements
+**Next Phase**: Gameplay Enhancements (Player Control, Skills, Status Effects)
