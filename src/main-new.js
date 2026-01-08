@@ -22,6 +22,7 @@ import { EquipmentManager } from './game/EquipmentManager.js';
 import { tournamentMode } from './game/TournamentMode.js';
 import { AchievementManager } from './game/AchievementManager.js';
 import { DifficultyManager } from './game/DifficultyManager.js';
+import { getMissionById } from './data/storyMissions.js';
 
 // Make bootstrap available globally if needed
 window.bootstrap = bootstrap;
@@ -365,15 +366,147 @@ function showMissionBriefing(missionId) {
   });
 
   briefing.addEventListener('start-mission', (e) => {
-    // TODO: Start the story mission
-    console.log('Starting mission:', e.detail.missionId);
+    const missionId = e.detail.missionId;
+    console.log('Starting mission:', missionId);
     soundManager.play('event');
-    // For now, just go back to campaign map
-    // This will need to be connected to the combat system
-    showCampaignMapScreen();
+    startStoryMission(missionId);
   });
 
   root.appendChild(briefing);
+}
+
+/**
+ * Start a story mission with combat
+ */
+function startStoryMission(missionId) {
+  const mission = getMissionById(missionId);
+  if (!mission) {
+    console.error('Mission not found:', missionId);
+    return;
+  }
+
+  // Create the player fighter
+  const playerData = SaveManager.load();
+  const playerFighter = new Fighter({
+    name: playerData.profile.name,
+    class: playerData.profile.class,
+    level: playerData.profile.level,
+    health: playerData.profile.maxHealth,
+    isPlayer: true,
+  });
+
+  // Apply player's equipped items
+  EquipmentManager.applyEquipment(playerFighter);
+
+  // Create the enemy fighter from mission data
+  let enemyFighter;
+  
+  if (mission.type === 'survival' && mission.waves) {
+    // For survival missions, start with the first wave
+    const firstWave = mission.waves[0];
+    enemyFighter = new Fighter({
+      name: firstWave.name,
+      class: firstWave.class,
+      level: firstWave.level,
+      health: firstWave.health,
+      strength: firstWave.strength,
+      isPlayer: false,
+    });
+  } else if (mission.enemy) {
+    // Standard or boss mission
+    enemyFighter = new Fighter({
+      name: mission.enemy.name,
+      class: mission.enemy.class,
+      level: mission.enemy.level,
+      health: mission.enemy.health,
+      strength: mission.enemy.strength,
+      isPlayer: false,
+    });
+  } else {
+    console.error('No enemy configuration found for mission:', missionId);
+    return;
+  }
+
+  // Show combat screen
+  showCombatScreen();
+  
+  // Start the game with the mission ID
+  Game.startGame(playerFighter, enemyFighter, missionId);
+}
+
+/**
+ * Show mission results screen
+ */
+function showMissionResults(missionResult) {
+  if (!missionResult || !missionResult.success) {
+    // Mission failed - show failure screen
+    Logger.log(`
+      <div class="mission-failed" style="
+        background: linear-gradient(135deg, rgba(244, 67, 54, 0.3), rgba(211, 47, 47, 0.4));
+        border: 3px solid #f44336;
+        border-radius: 15px;
+        padding: 30px;
+        margin: 20px 0;
+        text-align: center;
+      ">
+        <div style="font-size: 64px; margin-bottom: 15px;">💔</div>
+        <div style="font-size: 32px; font-weight: 900; color: #ef5350; margin-bottom: 15px;">MISSION FAILED</div>
+        <div style="color: #ffcdd2; font-size: 18px; margin-bottom: 15px;">
+          ${missionResult ? missionResult.mission.name : 'Unknown Mission'}
+        </div>
+        <div style="color: #ffcdd2; font-size: 16px;">
+          Don't give up! Try again with better equipment or skills.
+        </div>
+      </div>
+    `);
+    
+    // Return to campaign map after delay
+    setTimeout(() => {
+      showCampaignMapScreen();
+    }, 3000);
+    return;
+  }
+
+  // Mission succeeded - show results in logger (already done in StoryMode.completeMission)
+  // Show detailed rewards breakdown
+  const rewards = missionResult.rewards;
+  if (rewards) {
+    let rewardsHTML = '<div style="margin-top: 20px; padding: 15px; background: rgba(76, 175, 80, 0.2); border-radius: 10px; border: 2px solid #4caf50;">';
+    rewardsHTML += '<div style="font-size: 20px; font-weight: 700; color: #66bb6a; margin-bottom: 10px;">🎁 Rewards Earned:</div>';
+    
+    if (rewards.gold) {
+      rewardsHTML += `<div style="color: #ffc107; font-size: 18px; margin: 5px 0;">💰 ${rewards.gold} Gold</div>`;
+    }
+    if (rewards.xp) {
+      rewardsHTML += `<div style="color: #42a5f5; font-size: 18px; margin: 5px 0;">✨ ${rewards.xp} XP</div>`;
+    }
+    if (rewards.equipment && rewards.equipment.length > 0) {
+      rewardsHTML += `<div style="color: #ba68c8; font-size: 18px; margin: 5px 0;">🎁 ${rewards.equipment.length} Equipment Item(s)</div>`;
+    }
+    
+    rewardsHTML += '</div>';
+    Logger.log(rewardsHTML);
+  }
+
+  // Show objectives completion
+  if (missionResult.objectives) {
+    let objectivesHTML = '<div style="margin-top: 15px; padding: 15px; background: rgba(106, 66, 194, 0.2); border-radius: 10px; border: 2px solid #6a42c2;">';
+    objectivesHTML += '<div style="font-size: 18px; font-weight: 700; color: #b39ddb; margin-bottom: 10px;">📋 Objectives:</div>';
+    
+    Object.values(missionResult.objectives).forEach(obj => {
+      const icon = obj.completed ? '✅' : '❌';
+      const color = obj.completed ? '#66bb6a' : '#ef5350';
+      objectivesHTML += `<div style="color: ${color}; font-size: 14px; margin: 5px 0;">${icon} ${obj.description}</div>`;
+    });
+    
+    objectivesHTML += '</div>';
+    Logger.log(objectivesHTML);
+  }
+
+  // Return to campaign map after delay
+  setTimeout(() => {
+    showCampaignMapScreen();
+  }, 5000);
 }
 
 /**
@@ -982,6 +1115,9 @@ if (document.readyState === 'loading') {
 
 // Export for game to show victory screen
 window.showVictoryScreen = showVictoryScreen;
+
+// Export for game to show mission results
+window.showMissionResults = showMissionResults;
 
 // Export AchievementManager globally for equipment tracking
 window.AchievementManager = AchievementManager;

@@ -14,6 +14,7 @@ import { EquipmentManager } from './EquipmentManager.js';
 import { DifficultyManager } from './DifficultyManager.js';
 import { EconomyManager } from './EconomyManager.js';
 import { DurabilityManager } from './DurabilityManager.js';
+import { StoryMode } from './StoryMode.js';
 
 const ROUND_INTERVAL = 1500;
 const AI_TURN_DELAY = 1200;
@@ -21,6 +22,7 @@ const AI_TURN_DELAY = 1200;
 // Game instance state manager
 let gameState = null;
 let autoBattleEnabled = false;
+let currentStoryMission = null; // Track if we're in a story mission
 
 export default class Game {
   /**
@@ -43,12 +45,24 @@ export default class Game {
    * Start a 1v1 fighter match with turn-based combat
    * @param {Object} firstFighter - First fighter (player)
    * @param {Object} secondFighter - Second fighter (enemy)
+   * @param {string} missionId - Optional story mission ID
    */
-  static startGame(firstFighter, secondFighter) {
+  static startGame(firstFighter, secondFighter, missionId = null) {
     // Initialize clean state
     this.stopGame();
     gameState = new GameStateManager();
     const turnManager = new TurnManager();
+    
+    // Initialize story mission tracking if provided
+    if (missionId) {
+      currentStoryMission = StoryMode.startMission(missionId);
+      if (!currentStoryMission) {
+        Logger.log('<div class="error-message">❌ Failed to start mission</div>');
+        return;
+      }
+    } else {
+      currentStoryMission = null;
+    }
 
     Logger.clearLog();
     Referee.introduceFighters(firstFighter, secondFighter);
@@ -70,6 +84,11 @@ export default class Game {
         roundCount++;
         hudManager.setRound(roundCount);
         Referee.showRoundNumber();
+
+        // Track round completion for story mode
+        if (currentStoryMission) {
+          StoryMode.trackMissionEvent('round_complete');
+        }
 
         // Regenerate mana for both fighters
         firstFighter.regenerateMana();
@@ -169,9 +188,22 @@ export default class Game {
           if (attackResult.isCritical) {
             SaveManager.increment('stats.criticalHits');
           }
+          
+          // Track story mode events
+          if (currentStoryMission) {
+            StoryMode.trackMissionEvent('damage_dealt', { amount: actualDmg });
+            if (attackResult.isCritical) {
+              StoryMode.trackMissionEvent('critical_hit');
+            }
+          }
         }
         if (defender.isPlayer) {
           SaveManager.increment('stats.totalDamageTaken', actualDmg);
+          
+          // Track story mode events
+          if (currentStoryMission) {
+            StoryMode.trackMissionEvent('damage_taken', { amount: actualDmg });
+          }
         }
         
         // Increase combo on successful attack
@@ -181,12 +213,22 @@ export default class Game {
           const bonusDmg = Math.ceil(actualDmg * 0.2);
           defender.health -= bonusDmg;
           Logger.log(`<div class="attack-div text-center" style="background: #fff3cd;">🔥 <strong>COMBO x${attacker.combo}!</strong> <span class="badge bg-warning">+${bonusDmg} bonus damage</span></div>`);
+          
+          // Track combo for story mode
+          if (currentStoryMission && attacker.isPlayer) {
+            StoryMode.trackMissionEvent('combo', { combo: attacker.combo });
+          }
         }
         break;
       
       case 'defend':
         attacker.defend();
         attacker.combo = 0; // Reset combo on defend
+        
+        // Track defend for story mode
+        if (currentStoryMission && attacker.isPlayer) {
+          StoryMode.trackMissionEvent('defended');
+        }
         break;
       
       case 'skill':
@@ -197,6 +239,11 @@ export default class Game {
           if (success) {
             if (attacker.isPlayer) {
               SaveManager.increment('stats.skillsUsed');
+              
+              // Track skill use for story mode
+              if (currentStoryMission) {
+                StoryMode.trackMissionEvent('skill_used');
+              }
             }
             attacker.combo = 0; // Reset combo on skill use
           }
@@ -204,9 +251,16 @@ export default class Game {
         break;
       
       case 'item':
+        const previousHealth = attacker.health;
         attacker.useItem();
         if (attacker.isPlayer) {
           SaveManager.increment('stats.itemsUsed');
+          
+          // Track item use for story mode
+          if (currentStoryMission) {
+            const isHealing = attacker.health > previousHealth;
+            StoryMode.trackMissionEvent('item_used', { isHealing });
+          }
         }
         attacker.combo = 0; // Reset combo on item use
         break;
@@ -230,6 +284,33 @@ export default class Game {
       
       // Award XP and track stats based on winner
       const playerWon = result.winner.isPlayer;
+      
+      // Handle story mission completion
+      if (currentStoryMission) {
+        const playerState = {
+          currentHP: result.winner.isPlayer ? result.winner.health : result.loser.health,
+          maxHP: result.winner.isPlayer ? result.winner.maxHealth : result.loser.maxHealth,
+        };
+        
+        const missionResult = StoryMode.completeMission(playerWon, playerState);
+        
+        // Apply durability loss after story mission
+        DurabilityManager.applyBattleWear();
+        
+        // Show mission results screen after delay
+        setTimeout(() => {
+          if (window.showMissionResults) {
+            window.showMissionResults(missionResult);
+          } else if (window.showVictoryScreen) {
+            window.showVictoryScreen(result.winner);
+          }
+        }, 2000);
+        
+        currentStoryMission = null;
+        return;
+      }
+      
+      // Normal combat (non-story mode)
       SaveManager.increment('stats.totalFightsPlayed');
       
       if (playerWon) {

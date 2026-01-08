@@ -119,7 +119,7 @@ export const STORY_MISSIONS = {
       { id: 'win', description: 'Survive all waves', type: 'win', required: true },
       { id: 'health', description: 'Finish with 70% HP', type: 'health_percent', value: 70, star: true },
       { id: 'efficient', description: 'Win within 12 rounds total', type: 'rounds', value: 12, star: true },
-    },
+    ],
     rewards: {
       gold: 120,
       xp: 300,
@@ -151,7 +151,7 @@ export const STORY_MISSIONS = {
       { id: 'win', description: 'Defeat the Bandit King', type: 'win', required: true },
       { id: 'no_healing', description: 'Win without healing items', type: 'no_healing', star: true },
       { id: 'dominant', description: 'Win with 50% HP remaining', type: 'health_percent', value: 50, star: true },
-    },
+    ],
     rewards: {
       gold: 200,
       xp: 500,
@@ -183,7 +183,7 @@ export const STORY_MISSIONS = {
       { id: 'win', description: 'Defeat the Forest Guardian', type: 'win', required: true },
       { id: 'skills', description: 'Use 3 different skills', type: 'skills_variety', value: 3, star: true },
       { id: 'fast', description: 'Win within 8 rounds', type: 'rounds', value: 8, star: true },
-    },
+    ],
     rewards: {
       gold: 150,
       xp: 400,
@@ -212,7 +212,7 @@ export const STORY_MISSIONS = {
       { id: 'win', description: 'Defeat all corrupted beasts', type: 'win', required: true },
       { id: 'combo_master', description: 'Build a 5-hit combo', type: 'combo', value: 5, star: true },
       { id: 'damage', description: 'Deal 2000+ total damage', type: 'damage_dealt', value: 2000, star: true },
-    },
+    ],
     rewards: {
       gold: 180,
       xp: 500,
@@ -244,7 +244,7 @@ export const STORY_MISSIONS = {
       { id: 'win', description: 'Defeat Treelord Oakenheart', type: 'win', required: true },
       { id: 'flawless', description: 'Take less than 100 damage', type: 'damage_taken', value: 100, star: true },
       { id: 'power', description: 'Deal 500+ damage in one hit', type: 'single_hit', value: 500, star: true },
-    },
+    ],
     rewards: {
       gold: 250,
       xp: 700,
@@ -276,7 +276,7 @@ export const STORY_MISSIONS = {
       { id: 'win', description: 'Defeat the Mountain Warrior', type: 'win', required: true },
       { id: 'crits', description: 'Land 3 critical hits', type: 'crits', value: 3, star: true },
       { id: 'efficient', description: 'Win within 10 rounds', type: 'rounds', value: 10, star: true },
-    },
+    ],
     rewards: {
       gold: 160,
       xp: 420,
@@ -305,7 +305,7 @@ export const STORY_MISSIONS = {
       { id: 'win', description: 'Survive the avalanche', type: 'win', required: true },
       { id: 'skills_master', description: 'Use skills 5 times', type: 'skills_used', value: 5, star: true },
       { id: 'health', description: 'Finish with 60% HP', type: 'health_percent', value: 60, star: true },
-    },
+    ],
     rewards: {
       gold: 190,
       xp: 520,
@@ -337,7 +337,7 @@ export const STORY_MISSIONS = {
       { id: 'win', description: 'Defeat Frost Giant Bjorn', type: 'win', required: true },
       { id: 'no_defend', description: 'Win without defending', type: 'no_defend', star: true },
       { id: 'combo', description: 'Build a 4-hit combo', type: 'combo', value: 4, star: true },
-    },
+    ],
     rewards: {
       gold: 260,
       xp: 720,
@@ -369,7 +369,7 @@ export const STORY_MISSIONS = {
       { id: 'win', description: 'Defeat the Shadow Assassin', type: 'win', required: true },
       { id: 'fast', description: 'Win within 7 rounds', type: 'rounds', value: 7, star: true },
       { id: 'no_items', description: 'Win without items', type: 'no_items', star: true },
-    },
+    ],
     rewards: {
       gold: 220,
       xp: 650,
@@ -398,7 +398,7 @@ export const STORY_MISSIONS = {
       { id: 'win', description: 'Defeat the shadow legion', type: 'win', required: true },
       { id: 'perfect', description: 'Finish with 80% HP', type: 'health_percent', value: 80, star: true },
       { id: 'damage', description: 'Deal 3000+ total damage', type: 'damage_dealt', value: 3000, star: true },
-    },
+    ],
     rewards: {
       gold: 280,
       xp: 800,
@@ -430,7 +430,7 @@ export const STORY_MISSIONS = {
       { id: 'win', description: 'Defeat the Dark Champion', type: 'win', required: true },
       { id: 'legendary', description: 'Win with 40% HP remaining', type: 'health_percent', value: 40, star: true },
       { id: 'power', description: 'Deal 600+ damage in one hit', type: 'single_hit', value: 600, star: true },
-    },
+    ],
     rewards: {
       gold: 400,
       xp: 1000,
@@ -462,7 +462,7 @@ export const STORY_MISSIONS = {
       { id: 'win', description: 'Defeat Champion Theron', type: 'win', required: true },
       { id: 'crits', description: 'Land 5 critical hits', type: 'crits', value: 5, star: true },
       { id: 'combo', description: 'Build a 6-hit combo', type: 'combo', value: 6, star: true },
-    },
+    ],
     rewards: {
       gold: 350,
       xp: 900,
@@ -491,7 +491,7 @@ export const STORY_MISSIONS = {
       { id: 'win', description: 'Defeat all three legends', type: 'win', required: true },
       { id: 'flawless', description: 'Take less than 200 damage total', type: 'damage_taken', value: 200, star: true },
       { id: 'efficient', description: 'Win within 15 rounds total', type: 'rounds', value: 15, star: true },
-    },
+    ],
     rewards: {
       gold: 450,
       xp: 1200,
@@ -522,7 +522,7 @@ export const STORY_MISSIONS = {
       { id: 'win', description: 'Defeat the Arena Master', type: 'win', required: true },
       { id: 'master', description: 'Win with 50% HP remaining', type: 'health_percent', value: 50, star: true },
       { id: 'legend', description: 'Complete in under 10 rounds', type: 'rounds', value: 10, star: true },
-    },
+    ],
     rewards: {
       gold: 600,
       xp: 1500,
@@ -542,7 +542,7 @@ export function getMissionById(id) {
  * Get all missions for a region
  */
 export function getMissionsByRegion(regionId) {
-  return Object.values(STORY_MISSIONS).filter(m => m.region === regionId);
+  return Object.values(STORY_MISSIONS).filter(m => m.region === regionId).map(m => m.id);
 }
 
 /**
