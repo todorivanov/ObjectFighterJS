@@ -12,6 +12,7 @@ import './components/index.js';
 // Import game modules
 import Game from './game/game.js';
 import { Team } from './entities/team.js';
+import { Fighter } from './entities/fighter.js';
 import { soundManager } from './utils/soundManager.js';
 import { getFighters } from './api/mockFighters.js';
 import { Logger } from './utils/logger.js';
@@ -47,6 +48,16 @@ function initApp() {
   const saveData = SaveManager.load();
   console.log(`💾 Save data loaded. Player Level: ${saveData.profile.level}`);
   
+  // Check if character has been created
+  if (!saveData.profile.characterCreated) {
+    console.log('🆕 New player detected - showing character creation');
+    showCharacterCreation();
+    // Initialize toggles after character creation
+    initDarkModeToggle();
+    initSoundToggle();
+    return;
+  }
+  
   // Load fighters data
   getFighters().then((fighters) => {
     appState.fighters = fighters;
@@ -62,6 +73,29 @@ function initApp() {
 }
 
 /**
+ * Show character creation screen
+ */
+function showCharacterCreation() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  const charCreation = document.createElement('character-creation');
+  charCreation.addEventListener('character-created', (e) => {
+    console.log('✅ Character created:', e.detail);
+    soundManager.init();
+    
+    // Reload app after character creation
+    getFighters().then((fighters) => {
+      appState.fighters = fighters;
+      showTitleScreen();
+    });
+  });
+
+  root.appendChild(charCreation);
+  appState.currentScreen = 'character-creation';
+}
+
+/**
  * Show title screen
  */
 function showTitleScreen() {
@@ -73,7 +107,7 @@ function showTitleScreen() {
     soundManager.init();
     appState.gameMode = e.detail.mode;
     appState.currentScreen = 'gallery';
-    showFighterGallery();
+    showOpponentSelection();
   });
 
   root.appendChild(titleScreen);
@@ -153,7 +187,69 @@ function addProfileButton() {
 }
 
 /**
- * Show fighter gallery
+ * Show opponent selection (player character is already determined)
+ */
+function showOpponentSelection() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  const gallery = document.createElement('fighter-gallery');
+  gallery.fighters = appState.fighters;
+  gallery.mode = 'opponent'; // Special mode for opponent selection
+  gallery.playerMode = true; // Flag to show it's opponent selection
+
+  gallery.addEventListener('fighter-selected', (e) => {
+    console.log('Opponent selected:', e.detail.fighter.name);
+    appState.selectedFighters.push(e.detail.fighter);
+  });
+
+  gallery.addEventListener('selection-complete', (e) => {
+    console.log('Opponent chosen:', e.detail);
+    // Get player's character
+    const saveData = SaveManager.load();
+    const playerCharacter = createPlayerFighter(saveData.profile.character);
+    
+    // Start battle: Player vs Opponent
+    startBattle([playerCharacter, e.detail.fighters[0]]);
+  });
+
+  gallery.addEventListener('back-to-menu', () => {
+    appState.reset();
+    showTitleScreen();
+  });
+
+  root.appendChild(gallery);
+  appState.currentScreen = 'opponent-selection';
+}
+
+/**
+ * Create player fighter from character data with level bonuses
+ */
+function createPlayerFighter(characterData) {
+  // Create base fighter
+  const fighter = new Fighter({
+    id: 0, // Player ID
+    name: characterData.name,
+    health: characterData.health,
+    strength: characterData.strength,
+    image: characterData.image,
+    description: characterData.description,
+    class: characterData.class,
+  });
+  
+  // Mark as player character
+  fighter.isPlayer = true;
+  
+  // Apply level bonuses
+  const leveledFighter = LevelingSystem.applyLevelBonuses(fighter);
+  
+  console.log(`⚔️ Player Character: ${leveledFighter.name} (Lvl ${SaveManager.get('profile.level')}) - HP: ${leveledFighter.health}, STR: ${leveledFighter.strength}`);
+  
+  return leveledFighter;
+}
+
+/**
+ * Show fighter gallery (LEGACY - for team matches if needed)
  */
 function showFighterGallery() {
   const root = document.getElementById('root');

@@ -304,9 +304,21 @@ export class FighterGallery extends BaseComponent {
 
   template() {
     const classes = ['ALL', 'TANK', 'BALANCED', 'AGILE', 'MAGE', 'HYBRID', 'ASSASSIN', 'BRAWLER'];
-    const modeText = this._mode === 'single' ? 'Choose 2 Fighters' : 'Build Your Teams';
+    
+    // Determine mode text based on selection type
+    let modeText, needsCount;
+    if (this._mode === 'opponent') {
+      modeText = '⚔️ Choose Your Opponent ⚔️';
+      needsCount = 1;
+    } else if (this._mode === 'single') {
+      modeText = 'Choose 2 Fighters';
+      needsCount = 2;
+    } else {
+      modeText = 'Build Your Teams';
+      needsCount = 4;
+    }
+    
     const selectionCount = this._selectedFighters.length;
-    const needsCount = this._mode === 'single' ? 2 : 4;
 
     return `
       <div class="gallery-container">
@@ -314,7 +326,7 @@ export class FighterGallery extends BaseComponent {
 
         <div class="gallery-header">
           <h2 class="gallery-title">${modeText}</h2>
-          <p class="gallery-subtitle">Select your warriors</p>
+          <p class="gallery-subtitle">${this._mode === 'opponent' ? 'Who will you face in battle?' : 'Select your warriors'}</p>
         </div>
 
         <div class="filter-bar">
@@ -411,6 +423,21 @@ export class FighterGallery extends BaseComponent {
       return; // Already selected, ignore
     }
 
+    // For opponent mode, only allow one selection
+    if (this._mode === 'opponent' && this._selectedFighters.length >= 1) {
+      // Remove previous selection
+      const previousFighter = this._selectedFighters[0];
+      this._selectedFighters = [];
+      
+      // Remove highlight from previous card
+      const cards = this.shadowRoot.querySelectorAll('fighter-card');
+      cards.forEach(card => {
+        if (parseInt(card.getAttribute('fighter-id')) === previousFighter.id) {
+          card.classList.remove('selected');
+        }
+      });
+    }
+
     this._selectedFighters.push(fighter);
     this.emit('fighter-selected', { 
       fighter, 
@@ -425,7 +452,16 @@ export class FighterGallery extends BaseComponent {
    * Update selection status without re-rendering everything
    */
   updateSelectionStatus() {
-    const needsCount = this._mode === 'single' ? 2 : 4;
+    // Determine needed count based on mode
+    let needsCount;
+    if (this._mode === 'opponent') {
+      needsCount = 1;
+    } else if (this._mode === 'single') {
+      needsCount = 2;
+    } else {
+      needsCount = 4;
+    }
+    
     const selectionCount = this._selectedFighters.length;
 
     // Update or create selection status
@@ -475,9 +511,19 @@ export class FighterGallery extends BaseComponent {
 
     if (displayArea) {
       if (this._selectedFighters.length > 0) {
+        // Determine needed count for display
+        let maxCount;
+        if (this._mode === 'opponent') {
+          maxCount = '1';
+        } else if (this._mode === 'single') {
+          maxCount = '2';
+        } else {
+          maxCount = '4';
+        }
+        
         displayArea.innerHTML = `
           <div class="selected-header">
-            <h4>Selected: ${this._selectedFighters.length}/${this._mode === 'single' ? '2' : '4'}</h4>
+            <h4>Selected: ${this._selectedFighters.length}/${maxCount}</h4>
           </div>
           <div class="selected-list">
             ${this._selectedFighters.map(fighter => `

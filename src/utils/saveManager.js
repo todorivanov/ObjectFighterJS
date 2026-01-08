@@ -21,6 +21,8 @@ export class SaveManager {
         xpToNextLevel: 100,
         createdAt: Date.now(),
         lastPlayedAt: Date.now(),
+        characterCreated: false,
+        character: null, // Player's custom character
       },
       stats: {
         totalWins: 0,

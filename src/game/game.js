@@ -159,6 +159,17 @@ export default class Game {
         const attackResult = attacker.normalAttack();
         const actualDmg = defender.takeDamage(attackResult.damage);
         
+        // Track player stats
+        if (attacker.isPlayer) {
+          SaveManager.increment('stats.totalDamageDealt', actualDmg);
+          if (attackResult.isCritical) {
+            SaveManager.increment('stats.criticalHits');
+          }
+        }
+        if (defender.isPlayer) {
+          SaveManager.increment('stats.totalDamageTaken', actualDmg);
+        }
+        
         // Increase combo on successful attack
         attacker.combo++;
         if (attacker.combo >= 3) {
@@ -180,6 +191,9 @@ export default class Game {
           const skill = attacker.skills[skillIndex];
           const success = skill.use(attacker, defender);
           if (success) {
+            if (attacker.isPlayer) {
+              SaveManager.increment('stats.skillsUsed');
+            }
             attacker.combo = 0; // Reset combo on skill use
           }
         }
@@ -187,6 +201,9 @@ export default class Game {
       
       case 'item':
         attacker.useItem();
+        if (attacker.isPlayer) {
+          SaveManager.increment('stats.itemsUsed');
+        }
         attacker.combo = 0; // Reset combo on item use
         break;
     }
@@ -207,16 +224,25 @@ export default class Game {
       // Remove any existing action-selection components
       document.querySelectorAll('action-selection').forEach(el => el.remove());
       
-      // Award XP for victory
-      const xpReward = 100; // Base XP for single fight victory
-      SaveManager.increment('stats.totalWins');
+      // Award XP and track stats based on winner
+      const playerWon = result.winner.isPlayer;
       SaveManager.increment('stats.totalFightsPlayed');
-      SaveManager.increment('stats.winStreak');
-      const bestStreak = SaveManager.get('stats.bestStreak') || 0;
-      if (SaveManager.get('stats.winStreak') > bestStreak) {
-        SaveManager.update('stats.bestStreak', SaveManager.get('stats.winStreak'));
+      
+      if (playerWon) {
+        const xpReward = 100; // Base XP for single fight victory
+        SaveManager.increment('stats.totalWins');
+        SaveManager.increment('stats.winStreak');
+        const bestStreak = SaveManager.get('stats.bestStreak') || 0;
+        if (SaveManager.get('stats.winStreak') > bestStreak) {
+          SaveManager.update('stats.bestStreak', SaveManager.get('stats.winStreak'));
+        }
+        LevelingSystem.awardXP(xpReward, 'Victory in Single Combat');
+      } else {
+        // Player lost
+        SaveManager.increment('stats.totalLosses');
+        SaveManager.update('stats.winStreak', 0); // Reset streak
+        LevelingSystem.awardXP(50, 'Battle Participation'); // Consolation XP
       }
-      LevelingSystem.awardXP(xpReward, 'Victory in Single Combat');
       
       // Show victory screen after delay
       setTimeout(() => {
