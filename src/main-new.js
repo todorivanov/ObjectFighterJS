@@ -78,9 +78,8 @@ function initApp() {
     router.navigate(initialPath, {}, true); // true = replace (don't add to history)
   });
 
-  // Initialize dark mode and sound toggles
-  initDarkModeToggle();
-  initSoundToggle();
+  // Initialize navigation components (declarative)
+  initNavigationComponents();
 }
 
 /**
@@ -132,6 +131,31 @@ function initializeRouter() {
   });
 
   console.log('🧭 Router initialized with', routes.length, 'routes');
+}
+
+/**
+ * Initialize navigation components (declarative Web Components)
+ */
+function initNavigationComponents() {
+  // Remove any existing navigation components
+  const existingNav = document.querySelector('navigation-bar');
+  const existingTheme = document.querySelector('theme-toggle');
+  const existingSound = document.querySelector('sound-toggle');
+
+  if (existingNav) existingNav.remove();
+  if (existingTheme) existingTheme.remove();
+  if (existingSound) existingSound.remove();
+
+  // Add new declarative components
+  const navBar = document.createElement('navigation-bar');
+  const themeToggle = document.createElement('theme-toggle');
+  const soundToggle = document.createElement('sound-toggle');
+
+  document.body.appendChild(navBar);
+  document.body.appendChild(themeToggle);
+  document.body.appendChild(soundToggle);
+
+  console.log('✅ Navigation components initialized');
 }
 
 /**
@@ -199,10 +223,7 @@ function showTitleScreen() {
   root.appendChild(titleScreen);
   appState.currentScreen = 'title';
 
-  // Add Profile, Achievements, and Settings buttons to title screen
-  addProfileButton();
-  addAchievementsButton();
-  addSettingsButton();
+  // Navigation bar is now persistent across all screens (declarative components)
 }
 
 /**
@@ -220,58 +241,6 @@ function showProfileScreen() {
 
   root.appendChild(profileScreen);
   appState.currentScreen = 'profile';
-}
-
-/**
- * Add profile button overlay
- */
-function addProfileButton() {
-  // Remove existing profile button if any
-  const existingBtn = document.getElementById('profile-overlay-btn');
-  if (existingBtn) {
-    existingBtn.remove();
-  }
-
-  const profileBtn = document.createElement('button');
-  profileBtn.id = 'profile-overlay-btn';
-  profileBtn.innerHTML = '👤 Profile';
-  profileBtn.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 550px;
-    width: auto;
-    padding: 12px 24px;
-    border-radius: 8px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    background: rgba(26, 13, 46, 0.8);
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    z-index: 10000;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-    font-family: 'Press Start 2P', cursive;
-  `;
-
-  profileBtn.addEventListener('click', () => {
-    soundManager.play('event');
-    router.navigate(RoutePaths.PROFILE);
-  });
-
-  profileBtn.addEventListener('mouseenter', () => {
-    profileBtn.style.background = 'rgba(255, 167, 38, 0.3)';
-    profileBtn.style.borderColor = '#ffa726';
-    profileBtn.style.transform = 'translateY(-2px)';
-  });
-
-  profileBtn.addEventListener('mouseleave', () => {
-    profileBtn.style.background = 'rgba(26, 13, 46, 0.8)';
-    profileBtn.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-    profileBtn.style.transform = 'translateY(0)';
-  });
-
-  document.body.appendChild(profileBtn);
 }
 
 /**
@@ -662,58 +631,6 @@ function showAchievementsScreen() {
 }
 
 /**
- * Add achievements button overlay
- */
-function addAchievementsButton() {
-  // Remove existing achievements button if any
-  const existingBtn = document.getElementById('achievements-overlay-btn');
-  if (existingBtn) {
-    existingBtn.remove();
-  }
-
-  const achievementsBtn = document.createElement('button');
-  achievementsBtn.id = 'achievements-overlay-btn';
-  achievementsBtn.innerHTML = '🏅 Achievements';
-  achievementsBtn.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 310px;
-    width: auto;
-    padding: 12px 24px;
-    border-radius: 8px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    background: rgba(26, 13, 46, 0.8);
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    z-index: 10000;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-    font-family: 'Press Start 2P', cursive;
-  `;
-
-  achievementsBtn.addEventListener('click', () => {
-    soundManager.play('event');
-    router.navigate(RoutePaths.ACHIEVEMENTS);
-  });
-
-  achievementsBtn.addEventListener('mouseenter', () => {
-    achievementsBtn.style.background = 'rgba(255, 215, 0, 0.3)';
-    achievementsBtn.style.borderColor = 'gold';
-    achievementsBtn.style.transform = 'translateY(-2px)';
-  });
-
-  achievementsBtn.addEventListener('mouseleave', () => {
-    achievementsBtn.style.background = 'rgba(26, 13, 46, 0.8)';
-    achievementsBtn.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-    achievementsBtn.style.transform = 'translateY(0)';
-  });
-
-  document.body.appendChild(achievementsBtn);
-}
-
-/**
  * Show settings screen
  */
 function showSettingsScreen() {
@@ -728,59 +645,6 @@ function showSettingsScreen() {
 
   root.appendChild(settingsScreen);
   appState.currentScreen = 'settings';
-}
-
-/**
- * Add settings button overlay (gear icon next to theme toggle)
- */
-function addSettingsButton() {
-  // Remove existing settings button if any
-  const existingBtn = document.getElementById('settings-overlay-btn');
-  if (existingBtn) {
-    existingBtn.remove();
-  }
-
-  const settingsBtn = document.createElement('button');
-  settingsBtn.id = 'settings-overlay-btn';
-  settingsBtn.innerHTML = '⚙️';
-  settingsBtn.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 140px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    background: rgba(26, 13, 46, 0.8);
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 10000;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  `;
-
-  settingsBtn.addEventListener('click', () => {
-    soundManager.play('event');
-    router.navigate(RoutePaths.SETTINGS);
-  });
-
-  settingsBtn.addEventListener('mouseenter', () => {
-    settingsBtn.style.background = 'rgba(255, 167, 38, 0.3)';
-    settingsBtn.style.borderColor = '#ffa726';
-    settingsBtn.style.transform = 'translateY(-2px) rotate(90deg)';
-  });
-
-  settingsBtn.addEventListener('mouseleave', () => {
-    settingsBtn.style.background = 'rgba(26, 13, 46, 0.8)';
-    settingsBtn.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-    settingsBtn.style.transform = 'translateY(0) rotate(0deg)';
-  });
-
-  document.body.appendChild(settingsBtn);
 }
 
 /**
@@ -1136,79 +1000,6 @@ function showTournamentVictoryScreen() {
   });
 
   document.body.appendChild(victoryScreen);
-}
-
-/**
- * Initialize dark mode toggle
- */
-function initDarkModeToggle() {
-  const darkMode = localStorage.getItem('darkMode') === 'true';
-  if (darkMode) {
-    document.body.classList.add('dark-mode');
-  }
-
-  const toggle = document.createElement('button');
-  toggle.className = 'toggle-btn theme-toggle';
-  toggle.innerHTML = darkMode ? '☀️' : '🌙';
-  toggle.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 80px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    background: rgba(26, 13, 46, 0.8);
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 10000;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-  `;
-
-  toggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    localStorage.setItem('darkMode', isDark);
-    toggle.innerHTML = isDark ? '☀️' : '🌙';
-  });
-
-  document.body.appendChild(toggle);
-}
-
-/**
- * Initialize sound toggle
- */
-function initSoundToggle() {
-  const soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
-
-  const toggle = document.createElement('button');
-  toggle.className = 'toggle-btn sound-toggle';
-  toggle.innerHTML = soundEnabled ? '🔊' : '🔇';
-  toggle.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    background: rgba(26, 13, 46, 0.8);
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 10000;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-  `;
-
-  toggle.addEventListener('click', () => {
-    const enabled = soundManager.toggle();
-    toggle.innerHTML = enabled ? '🔊' : '🔇';
-  });
-
-  document.body.appendChild(toggle);
 }
 
 // Start the app when DOM is ready
