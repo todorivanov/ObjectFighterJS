@@ -183,7 +183,7 @@ export default class Game {
             processTurn
           );
         });
-        
+
         // Append to action-area in combat arena if available, otherwise body
         const arena = document.querySelector('combat-arena');
         const actionArea = arena?.shadowRoot?.querySelector('#action-area');
