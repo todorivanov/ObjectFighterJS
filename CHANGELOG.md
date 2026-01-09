@@ -5,6 +5,139 @@ All notable changes to Legends of the Arena will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.6.0] - 2026-01-09
+
+### Added - Performance Optimization System ⚡
+- **Lazy Loading System**:
+  - Dynamic module loading on demand
+  - Async image asset loading with caching
+  - Batch loading for multiple resources
+  - Preload queue with priority support
+  - Lazy Web Component registration
+  - Intersection Observer integration for viewport-based loading
+  - Resource cache with statistics
+- **Object Pooling System**:
+  - Generic object pool implementation
+  - Pool manager for multiple pools
+  - Pre-configured pools (vectors, particles, damage numbers, events)
+  - Automatic object recycling
+  - Pool statistics and monitoring
+  - Batch acquire/release operations
+  - Dynamic pool resizing
+- **Performance Monitoring**:
+  - Real-time FPS tracking
+  - Frame time measurement
+  - Memory usage monitoring (if available)
+  - Custom performance marks and measures
+  - Function profiling (sync and async)
+  - Performance timers
+  - Metric history tracking (60 samples)
+  - Performance status levels (good/warning/critical)
+  - Average/min/max calculations
+  - Performance summary logging
+
+### Added - New Files
+- `src/utils/LazyLoader.js`: Dynamic resource loading system
+- `src/utils/ObjectPool.js`: Object pooling and recycling system
+- `src/utils/PerformanceMonitor.js`: Performance tracking and profiling
+- `src/components/PerformanceMonitorUI.js`: Visual performance metrics display
+- `docs/PERFORMANCE_OPTIMIZATION.md`: Comprehensive performance guide
+
+### Added - Performance UI
+- Real-time FPS counter (top-left corner)
+- Frame time display
+- Memory usage display
+- Expandable detailed view:
+  - Object pool utilization
+  - Lazy loader statistics
+  - Average performance metrics
+- Click to expand/collapse
+- Color-coded status indicators
+
+### Technical Features
+- **Lazy Loading**:
+  - Module caching
+  - Parallel batch loading
+  - Idle-time preloading
+  - Load event observers
+  - Cache management
+- **Object Pooling**:
+  - Factory pattern
+  - Custom reset functions
+  - Size limits
+  - Utilization tracking
+  - Memory-efficient reuse
+- **Performance Monitoring**:
+  - RAF-based monitoring loop
+  - Performance API integration
+  - Memory API support (Chrome/Edge)
+  - Metric thresholds
+  - Historical data
+  - Status-based warnings
+
+### Pre-configured Object Pools
+- `vector2d`: 2D vector objects (20/100)
+- `damageNumber`: Floating damage text (15/50)
+- `particle`: Visual effect particles (50/200)
+- `event`: Event objects (10/50)
+
+### Performance Thresholds
+- **FPS**: Good ≥55, Warning 40-54, Critical <40
+- **Frame Time**: Good ≤16ms, Warning 17-25ms, Critical >25ms
+- **Memory**: Warning >80%, Critical >95%
+
+### API Additions
+```javascript
+// Lazy Loading
+lazyLoader.loadModule(path)
+lazyLoader.loadImage(path)
+lazyLoader.loadBatch(paths, type)
+lazyLoader.preload(paths, type, priority)
+lazyLoader.loadComponent(tagName, modulePath)
+lazyLoader.observeElement(element, callback)
+
+// Object Pooling
+poolManager.createPool(name, factory, reset, initial, max)
+poolManager.acquire(poolName)
+poolManager.release(poolName, obj)
+poolManager.getAllStats()
+
+// Performance Monitoring
+performanceMonitor.mark(name)
+performanceMonitor.measure(name, start, end)
+performanceMonitor.startTimer(name)
+performanceMonitor.endTimer(name)
+performanceMonitor.profile(name, fn)
+performanceMonitor.profileAsync(name, fn)
+performanceMonitor.getMetrics()
+performanceMonitor.getStatus()
+```
+
+### Integration
+- Performance monitor UI integrated into main app
+- Automatic monitoring on game start
+- Available globally via singleton patterns
+- Zero-config default setup
+
+### Benefits
+- **Faster Initial Load**: Lazy loading reduces bundle size
+- **Lower Memory Usage**: Object pooling reduces allocations
+- **Reduced GC Pressure**: Object reuse minimizes garbage collection
+- **Better Performance**: Real-time monitoring enables optimization
+- **Improved UX**: Smoother gameplay with higher FPS
+- **Developer Tools**: Profiling and debugging capabilities
+
+### Documentation
+- Complete performance optimization guide
+- Usage examples for all systems
+- Best practices and patterns
+- Integration examples
+- Troubleshooting guide
+- API reference
+
+### Version
+- Version bumped from 4.5.0 to 4.6.0
+
 ## [4.5.0] - 2026-01-09
 
 ### Added - Comprehensive Testing Framework 🧪

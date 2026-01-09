@@ -113,6 +113,39 @@
 
 ---
 
+## ⚡ Performance Optimization
+
+Built-in performance optimization with real-time monitoring:
+
+**Features**:
+- **Lazy Loading** - Load resources on demand, faster initial load
+- **Object Pooling** - Reuse objects, reduced GC pressure
+- **Performance Monitor** - Real-time FPS, memory, and metrics tracking
+- **Visual UI** - Always-visible performance metrics (top-left corner)
+
+**Performance Metrics**:
+- FPS counter with history
+- Frame time tracking
+- Memory usage monitoring
+- Object pool utilization
+- Lazy loader statistics
+
+**Developer Tools**:
+```javascript
+import { profile, performanceMonitor } from './utils/PerformanceMonitor.js';
+
+// Profile any function
+const result = profile('heavyWork', () => doWork());
+
+// Get metrics
+const metrics = performanceMonitor.getMetrics();
+console.log(`FPS: ${metrics.fps}`);
+```
+
+See [Performance Guide](docs/PERFORMANCE_OPTIMIZATION.md) for complete documentation.
+
+---
+
 ## 🧪 Testing
 
 The project includes comprehensive testing with **49+ test cases**:

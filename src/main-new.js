@@ -153,12 +153,15 @@ function initNavigationComponents() {
   const navBar = document.createElement('navigation-bar');
   const themeToggle = document.createElement('theme-toggle');
   const soundToggle = document.createElement('sound-toggle');
+  const perfMonitor = document.createElement('performance-monitor-ui');
 
   document.body.appendChild(navBar);
   document.body.appendChild(themeToggle);
   document.body.appendChild(soundToggle);
+  document.body.appendChild(perfMonitor);
 
   console.log('✅ Navigation components initialized');
+  console.log('⚡ Performance monitoring active');
 }
 
 /**
