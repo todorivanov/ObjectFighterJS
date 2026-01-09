@@ -25,10 +25,10 @@ jobs:
         run: npm ci
       
       - name: Run ESLint
-        run: npm run lint || true
+        run: npm run lint -- --max-warnings=-1
       
       - name: Check code formatting
-        run: npm run format:check || true
+        run: npm run format:check
 
   test:
     name: Unit Tests
