@@ -5,6 +5,130 @@ All notable changes to Legends of the Arena will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.7.0] - 2026-01-09
+
+### Added - Enhanced Status Effect System 🎯
+- **17 Status Effects** (9 new + 8 enhanced existing):
+  - **New Effects**:
+    - Bleed 🩸 - DOT that stacks with actions
+    - Frozen ❄️ - Speed reduction, vulnerable to shatter
+    - Shock ⚡ - Lightning DOT with chaining
+    - Curse 🌑 - Reduces healing received
+    - Bless ✨ - Increases damage dealt
+    - Weakness 😰 - Reduces all stats
+    - Haste 💨 - Increases action speed
+    - Slow 🐌 - Decreases action speed
+    - Shield 🔰 - Absorbs damage
+    - Reflect 🪞 - Reflects damage back
+    - Vulnerable 💔 - Increases damage taken
+    - Fortify ⛰️ - Reduces damage taken (stackable)
+    - Enrage 😡 - High damage, low defense trade-off
+    - Silence 🔇 - Prevents skill usage
+    - Clarity 🧠 - Reduces mana costs
+    - Thorns 🌹 - Returns damage when hit (stackable)
+  - **Enhanced Existing**:
+    - Poison, Burn, Regeneration now stackable
+    - Defense Boost, Strength Boost with tags
+    - Stun with proper CC category
+
+- **Interaction Matrix** (11 interactions):
+  - Fire vs Ice (Burn/Frozen cancel each other)
+  - Poison vs Regeneration (partial cancellation)
+  - Shock + Wet (amplified damage)
+  - Curse vs Healing (reduces effectiveness)
+  - Curse vs Bless (mutual cancellation)
+  - Haste vs Slow (mutual cancellation)
+  - Vulnerable vs Fortify (partial cancellation)
+  - Bleed + Actions (stacking mechanic)
+  - Frozen + Heavy Damage (shatter combo)
+  - Shield vs Vulnerable (protection)
+  - Enrage vs Weakness (partial overcome)
+
+- **Enhanced Status Effect Class**:
+  - Stacking system (max stacks per effect)
+  - Effect categories (BUFF, DEBUFF, DOT, HOT, CC, MODIFIER)
+  - Tag system for filtering and querying
+  - Custom callbacks (onApply, onRemove, onStack)
+  - Metadata support for complex effects
+  - Dispel protection flags
+
+- **Status Effect Manager**:
+  - Centralized effect management
+  - Automatic interaction processing
+  - Effect stacking logic
+  - Category and tag-based queries
+  - Dispel mechanics
+  - Effect clearing and cleanup
+
+### Technical Features
+- **Effect Categories**: 6 categories for organization
+- **Effect Tags**: Flexible tagging system for queries
+- **Interaction Priority**: Priority-based interaction resolution
+- **Stack Limits**: Configurable max stacks per effect
+- **Dispel System**: Type-based effect removal
+- **Metadata Storage**: Custom data per effect instance
+
+### Effect Stacking
+- Poison: Max 5 stacks
+- Burn: Max 3 stacks
+- Bleed: Max 5 stacks
+- Regeneration: Max 3 stacks
+- Fortify: Max 2 stacks
+- Thorns: Max 3 stacks
+
+### Strategic Depth
+- **Offensive Combos**: DOT stacking, burst damage setups
+- **Defensive Combos**: Tank builds, sustain strategies
+- **Counter-Plays**: Effect cancellation, dispels
+- **Element Interactions**: Fire/Ice/Lightning mechanics
+- **Shatter Mechanic**: Bonus damage on frozen targets
+
+### API Additions
+```javascript
+// Apply effects
+applyEffect(fighter, 'BURN')
+applyEffect(fighter, 'FROZEN')
+
+// Check effects
+hasEffect(fighter, 'frozen')
+statusEffectManager.getEffect(fighter, 'burn')
+
+// Process effects
+processEffects(fighter)
+
+// Dispel effects
+dispelEffects(fighter, 2, 'debuff')
+
+// Clear all effects
+clearEffects(fighter)
+
+// Query by category/tag
+statusEffectManager.getEffectsByCategory(fighter, EffectCategory.DOT)
+statusEffectManager.getEffectsByTag(fighter, 'damage')
+```
+
+### Files Added
+- `src/game/StatusEffectSystem.js`: Enhanced status effect system
+- `docs/STATUS_EFFECTS.md`: Complete status effect guide
+
+### Documentation
+- Complete effect catalog with icons
+- Interaction matrix explanation
+- Strategic combo guide
+- API reference
+- Usage examples
+- Tips and tricks
+
+### Game Balance
+- DOT effects deal consistent damage over time
+- Stacking allows for build-around strategies
+- Interactions create counter-play opportunities
+- CC effects provide tactical control
+- Protection effects enable tank builds
+
+### Version
+- Version bumped from 4.6.0 to 4.7.0
+
 ## [4.6.0] - 2026-01-09
 
 ### Added - Performance Optimization System ⚡

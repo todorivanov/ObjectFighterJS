@@ -113,6 +113,36 @@
 
 ---
 
+## 🎯 Status Effect System
+
+Advanced status effect system with **17 effects** and **interaction matrix**:
+
+**Status Effects**:
+- **DOT**: Poison ☠️, Burn 🔥, Bleed 🩸, Shock ⚡
+- **Buffs**: Strength 💪, Defense 🛡️, Bless ✨, Haste 💨, Fortify ⛰️
+- **Debuffs**: Weakness 😰, Curse 🌑, Slow 🐌, Vulnerable 💔
+- **Protection**: Shield 🔰, Reflect 🪞, Thorns 🌹
+- **Crowd Control**: Stun 💫, Frozen ❄️, Silence 🔇
+- **Special**: Enrage 😡, Clarity 🧠, Regeneration 💚
+
+**Interactions**:
+- Fire melts Ice, Ice extinguishes Fire
+- Curse reduces healing, cancels Bless
+- Frozen + Heavy Damage = Shatter combo
+- Shock amplified when Wet
+- Effect stacking (up to 5 stacks)
+
+**Strategic Combos**:
+```
+DOT Stack: Poison + Burn + Bleed
+Burst: Bless + Enrage + Vulnerable
+Tank: Fortify + Shield + Thorns
+```
+
+See [Status Effects Guide](docs/STATUS_EFFECTS.md) for complete documentation.
+
+---
+
 ## ⚡ Performance Optimization
 
 Built-in performance optimization with real-time monitoring:

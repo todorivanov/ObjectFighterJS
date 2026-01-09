@@ -329,6 +329,9 @@ export class WikiScreen extends BaseComponent {
           <button class="tab-button ${this._activeTab === 'story' ? 'active' : ''}" data-tab="story">
             📖 Story Mode
           </button>
+          <button class="tab-button ${this._activeTab === 'status-effects' ? 'active' : ''}" data-tab="status-effects">
+            🎯 Status Effects
+          </button>
           <button class="tab-button ${this._activeTab === 'marketplace' ? 'active' : ''}" data-tab="marketplace">
             🏪 Marketplace
           </button>
@@ -354,6 +357,7 @@ export class WikiScreen extends BaseComponent {
 
         <div class="wiki-content">
           ${this.renderStoryContent()}
+          ${this.renderStatusEffectsContent()}
           ${this.renderMarketplaceContent()}
           ${this.renderEconomyContent()}
           ${this.renderClassesContent()}
@@ -450,6 +454,384 @@ export class WikiScreen extends BaseComponent {
 
         <p style="text-align: center; margin-top: 30px;">
           <strong>📚 For detailed mission list and strategies, see STORY_MODE_GUIDE.md</strong>
+        </p>
+      </div>
+    `;
+  }
+
+  renderStatusEffectsContent() {
+    return `
+      <div class="content-section ${this._activeTab === 'status-effects' ? 'active' : ''}" id="status-effects-content">
+        <h1>🎯 Status Effects System</h1>
+        
+        <div class="info-box">
+          <strong>17 Unique Effects | 11 Interactions | Strategic Depth</strong><br>
+          Master status effects to dominate combat with powerful combos!
+        </div>
+
+        <h2>🔴 Damage Over Time (DOT)</h2>
+        <table>
+          <tr>
+            <th>Effect</th>
+            <th>Duration</th>
+            <th>Damage/Turn</th>
+            <th>Special</th>
+          </tr>
+          <tr>
+            <td>☠️ Poison</td>
+            <td>4 turns</td>
+            <td>10 HP</td>
+            <td>Stackable (max 5)</td>
+          </tr>
+          <tr>
+            <td>🔥 Burn</td>
+            <td>3 turns</td>
+            <td>12 HP</td>
+            <td>Stackable (max 3), Fire element</td>
+          </tr>
+          <tr>
+            <td>🩸 Bleed</td>
+            <td>4 turns</td>
+            <td>8 HP</td>
+            <td>Stackable (max 5), Increases with actions</td>
+          </tr>
+          <tr>
+            <td>⚡ Shock</td>
+            <td>2 turns</td>
+            <td>15 HP</td>
+            <td>Chains, Amplified when Wet (x2)</td>
+          </tr>
+        </table>
+
+        <h2>💚 Healing & Buffs</h2>
+        <table>
+          <tr>
+            <th>Effect</th>
+            <th>Duration</th>
+            <th>Bonus</th>
+            <th>Special</th>
+          </tr>
+          <tr>
+            <td>💚 Regeneration</td>
+            <td>5 turns</td>
+            <td>+15 HP/turn</td>
+            <td>Stackable (max 3)</td>
+          </tr>
+          <tr>
+            <td>💪 Strength Boost</td>
+            <td>3 turns</td>
+            <td>+20 Strength</td>
+            <td>Flat bonus</td>
+          </tr>
+          <tr>
+            <td>🛡️ Defense Boost</td>
+            <td>3 turns</td>
+            <td>+15 Defense</td>
+            <td>Flat bonus</td>
+          </tr>
+          <tr>
+            <td>✨ Bless</td>
+            <td>3 turns</td>
+            <td>+25% damage</td>
+            <td>Cancels Curse</td>
+          </tr>
+          <tr>
+            <td>💨 Haste</td>
+            <td>3 turns</td>
+            <td>+40% speed</td>
+            <td>Cancels Slow</td>
+          </tr>
+          <tr>
+            <td>⛰️ Fortify</td>
+            <td>3 turns</td>
+            <td>-30% damage taken</td>
+            <td>Stackable (max 2)</td>
+          </tr>
+          <tr>
+            <td>😡 Enrage</td>
+            <td>2 turns</td>
+            <td>+40% dmg, -20% def</td>
+            <td>High risk, high reward</td>
+          </tr>
+          <tr>
+            <td>🧠 Clarity</td>
+            <td>3 turns</td>
+            <td>-50% mana costs</td>
+            <td>Great for casters</td>
+          </tr>
+        </table>
+
+        <h2>😰 Debuffs</h2>
+        <table>
+          <tr>
+            <th>Effect</th>
+            <th>Duration</th>
+            <th>Penalty</th>
+            <th>Special</th>
+          </tr>
+          <tr>
+            <td>😰 Weakness</td>
+            <td>3 turns</td>
+            <td>-15 all stats</td>
+            <td>General debuff</td>
+          </tr>
+          <tr>
+            <td>🌑 Curse</td>
+            <td>4 turns</td>
+            <td>-50% healing</td>
+            <td>Cancels Bless, reduces heals</td>
+          </tr>
+          <tr>
+            <td>🐌 Slow</td>
+            <td>3 turns</td>
+            <td>-30% speed</td>
+            <td>Cancels Haste</td>
+          </tr>
+          <tr>
+            <td>💔 Vulnerable</td>
+            <td>2 turns</td>
+            <td>+50% damage taken</td>
+            <td>Very dangerous!</td>
+          </tr>
+        </table>
+
+        <h2>🛡️ Protection Effects</h2>
+        <table>
+          <tr>
+            <th>Effect</th>
+            <th>Duration</th>
+            <th>Protection</th>
+            <th>Special</th>
+          </tr>
+          <tr>
+            <td>🔰 Shield</td>
+            <td>3 turns</td>
+            <td>Absorbs 50 damage</td>
+            <td>Tracks absorbed damage</td>
+          </tr>
+          <tr>
+            <td>🪞 Reflect</td>
+            <td>2 turns</td>
+            <td>Reflects 30% damage</td>
+            <td>Returns damage to attacker</td>
+          </tr>
+          <tr>
+            <td>🌹 Thorns</td>
+            <td>4 turns</td>
+            <td>Returns 15 damage</td>
+            <td>Stackable (max 3)</td>
+          </tr>
+        </table>
+
+        <h2>🎯 Crowd Control</h2>
+        <table>
+          <tr>
+            <th>Effect</th>
+            <th>Duration</th>
+            <th>Effect</th>
+            <th>Special</th>
+          </tr>
+          <tr>
+            <td>💫 Stun</td>
+            <td>1 turn</td>
+            <td>Cannot act</td>
+            <td>Complete disable</td>
+          </tr>
+          <tr>
+            <td>❄️ Frozen</td>
+            <td>2 turns</td>
+            <td>-30% speed</td>
+            <td>Shatterable! Vulnerable to heavy damage</td>
+          </tr>
+          <tr>
+            <td>🔇 Silence</td>
+            <td>2 turns</td>
+            <td>Cannot use skills</td>
+            <td>Blocks all abilities</td>
+          </tr>
+        </table>
+
+        <h2>⚡ Effect Interactions</h2>
+        <p>Status effects can interact with each other strategically:</p>
+
+        <h3>🔥 Fire vs Ice ❄️</h3>
+        <ul>
+          <li><strong>Burn removes Frozen</strong> - Fire melts ice</li>
+          <li><strong>Frozen removes Burn</strong> - Ice extinguishes fire</li>
+        </ul>
+
+        <h3>💥 Combo Interactions</h3>
+        <table>
+          <tr>
+            <th>Trigger</th>
+            <th>Result</th>
+            <th>Effect</th>
+          </tr>
+          <tr>
+            <td>❄️ Frozen + Heavy Damage</td>
+            <td>💥 SHATTER</td>
+            <td>+30 bonus damage!</td>
+          </tr>
+          <tr>
+            <td>⚡ Shock + 💧 Wet</td>
+            <td>Amplify</td>
+            <td>Double shock damage (x2)</td>
+          </tr>
+          <tr>
+            <td>☠️ Poison + 💚 Regeneration</td>
+            <td>Reduce Both</td>
+            <td>Effects partially cancel (50%)</td>
+          </tr>
+          <tr>
+            <td>🌑 Curse + ✨ Bless</td>
+            <td>Dispel Both</td>
+            <td>Light and dark cancel out</td>
+          </tr>
+          <tr>
+            <td>💨 Haste + 🐌 Slow</td>
+            <td>Dispel Both</td>
+            <td>Time effects cancel</td>
+          </tr>
+          <tr>
+            <td>🩸 Bleed + Action Taken</td>
+            <td>Stack Bleed</td>
+            <td>Taking actions worsens bleeding</td>
+          </tr>
+          <tr>
+            <td>💔 Vulnerable + ⛰️ Fortify</td>
+            <td>Reduce Both</td>
+            <td>Partially cancel (50%)</td>
+          </tr>
+        </table>
+
+        <h2>💡 Strategic Combos</h2>
+
+        <h3>🔴 Offensive Combos</h3>
+        <div class="success-box">
+          <h4>DOT Stack</h4>
+          <p><code>Poison + Burn + Bleed</code> = Massive sustained damage (30+ HP/turn!)</p>
+
+          <h4>Burst Damage</h4>
+          <p><code>Bless + Enrage + Vulnerable (on enemy)</code> = Maximum burst potential</p>
+
+          <h4>Shatter Combo</h4>
+          <p><code>1. Apply Frozen → 2. Deal heavy damage → 3. SHATTER (+30 bonus!)</code></p>
+        </div>
+
+        <h3>🛡️ Defensive Combos</h3>
+        <div class="info-box">
+          <h4>Tank Build</h4>
+          <p><code>Fortify + Shield + Thorns</code> = Absorb and reflect damage</p>
+
+          <h4>Sustain Build</h4>
+          <p><code>Regeneration (stacked x3) + Clarity</code> = Continuous healing with mana</p>
+        </div>
+
+        <h3>⚔️ Counter-Plays</h3>
+        <ul>
+          <li><strong>vs Healing:</strong> Apply Curse (-50% healing received)</li>
+          <li><strong>vs Casters:</strong> Apply Silence (can't use skills)</li>
+          <li><strong>vs DOTs:</strong> Stack Regeneration or end fight quickly</li>
+          <li><strong>vs Buffs:</strong> Use Vulnerable to bypass shields</li>
+        </ul>
+
+        <h2>📊 Effect Stacking</h2>
+        <p>Some effects can stack for increased power:</p>
+        <table>
+          <tr>
+            <th>Effect</th>
+            <th>Max Stacks</th>
+            <th>Total Power at Max</th>
+          </tr>
+          <tr>
+            <td>☠️ Poison</td>
+            <td>5 stacks</td>
+            <td>50 HP/turn</td>
+          </tr>
+          <tr>
+            <td>🔥 Burn</td>
+            <td>3 stacks</td>
+            <td>36 HP/turn</td>
+          </tr>
+          <tr>
+            <td>🩸 Bleed</td>
+            <td>5 stacks</td>
+            <td>40 HP/turn</td>
+          </tr>
+          <tr>
+            <td>💚 Regeneration</td>
+            <td>3 stacks</td>
+            <td>45 HP/turn heal</td>
+          </tr>
+          <tr>
+            <td>⛰️ Fortify</td>
+            <td>2 stacks</td>
+            <td>-60% damage taken</td>
+          </tr>
+          <tr>
+            <td>🌹 Thorns</td>
+            <td>3 stacks</td>
+            <td>45 damage returned</td>
+          </tr>
+        </table>
+
+        <h2>🎮 How to Apply Effects</h2>
+        <p>Status effects are applied through:</p>
+        <ul>
+          <li><strong>⚔️ Skills</strong> - Most skills apply status effects</li>
+          <li><strong>🎁 Items</strong> - Some consumables grant buffs</li>
+          <li><strong>⚙️ Equipment</strong> - Certain legendary items apply effects</li>
+          <li><strong>🎭 Class Abilities</strong> - Passive effects from your class</li>
+        </ul>
+
+        <h2>💡 Pro Tips</h2>
+        <div class="success-box">
+          <ul>
+            <li><strong>Stack Early</strong> - Apply multiple DOTs at fight start</li>
+            <li><strong>Watch for Combos</strong> - Look for interaction opportunities</li>
+            <li><strong>Counter Enemy Strategy</strong> - Use Curse vs healers, Silence vs casters</li>
+            <li><strong>Time Your Dispels</strong> - Save dispels for critical debuffs</li>
+            <li><strong>Shatter Setup</strong> - Frozen + Heavy hit = free +30 damage</li>
+            <li><strong>Elemental Advantage</strong> - Use fire vs ice, ice vs fire</li>
+          </ul>
+        </div>
+
+        <h2>⚠️ Important Notes</h2>
+        <div class="warning-box">
+          <ul>
+            <li>Effects tick at the START of each turn</li>
+            <li>Some effects can be dispelled, others are permanent</li>
+            <li>Interactions trigger automatically when conditions are met</li>
+            <li>Stacking effects refresh duration on new application</li>
+            <li>CC effects (Stun, Frozen, Silence) are very powerful - use wisely!</li>
+          </ul>
+        </div>
+
+        <h2>📈 Advanced Strategy</h2>
+        <h3>Early Game (Level 1-5):</h3>
+        <ul>
+          <li>Focus on simple buffs (Strength, Defense)</li>
+          <li>Use Regeneration for sustain</li>
+          <li>Learn basic interactions</li>
+        </ul>
+
+        <h3>Mid Game (Level 5-10):</h3>
+        <ul>
+          <li>Start stacking DOTs for damage</li>
+          <li>Experiment with combos</li>
+          <li>Use CC strategically</li>
+        </ul>
+
+        <h3>Late Game (Level 10+):</h3>
+        <ul>
+          <li>Master all interactions</li>
+          <li>Build specialized strategies</li>
+          <li>Shatter combo for burst</li>
+          <li>Counter enemy strategies</li>
+        </ul>
+
+        <p style="text-align: center; margin-top: 30px;">
+          <strong>📚 For complete details and API reference, see STATUS_EFFECTS.md</strong>
         </p>
       </div>
     `;
