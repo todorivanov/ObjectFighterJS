@@ -909,7 +909,7 @@ performanceMonitor.getStatus()
 - **2.0.0** - Team Battle & Equipment Update  
 - **1.0.0** - Initial Release
 
-[4.0.0]: https://github.com/todorivanov/ObjectFighterJS/releases/tag/v4.0.0
-[3.0.0]: https://github.com/todorivanov/ObjectFighterJS/releases/tag/v3.0.0
-[2.0.0]: https://github.com/todorivanov/ObjectFighterJS/releases/tag/v2.0.0
-[1.0.0]: https://github.com/todorivanov/ObjectFighterJS/releases/tag/v1.0.0
+[4.0.0]: https://github.com/todorivanov/legends-of-the-rena/releases/tag/v4.0.0
+[3.0.0]: https://github.com/todorivanov/legends-of-the-rena/releases/tag/v3.0.0
+[2.0.0]: https://github.com/todorivanov/legends-of-the-rena/releases/tag/v2.0.0
+[1.0.0]: https://github.com/todorivanov/legends-of-the-rena/releases/tag/v1.0.0

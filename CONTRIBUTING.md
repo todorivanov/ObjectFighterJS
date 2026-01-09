@@ -23,7 +23,7 @@ This project and everyone participating in it is governed by respect and profess
 
 ### Reporting Bugs 🐛
 
-Before creating bug reports, please check the [issue tracker](https://github.com/todorivanov/ObjectFighterJS/issues) to see if the problem has already been reported.
+Before creating bug reports, please check the [issue tracker](https://github.com/todorivanov/legends-of-the-rena/issues) to see if the problem has already been reported.
 
 **When creating a bug report, include:**
 - **Clear title** and description
@@ -74,13 +74,13 @@ We welcome code contributions! Here's what we need help with:
 
 2. **Clone your fork:**
 ```bash
-git clone https://github.com/YOUR-USERNAME/ObjectFighterJS.git
-cd ObjectFighterJS
+git clone https://github.com/YOUR-USERNAME/legends-of-the-rena.git
+cd legends-of-the-rena
 ```
 
 3. **Add upstream remote:**
 ```bash
-git remote add upstream https://github.com/todorivanov/ObjectFighterJS.git
+git remote add upstream https://github.com/todorivanov/legends-of-the-rena.git
 ```
 
 4. **Install dependencies:**
@@ -331,8 +331,8 @@ When adding features:
 ## ❓ Questions?
 
 Feel free to:
-- Open an [issue](https://github.com/todorivanov/ObjectFighterJS/issues)
-- Start a [discussion](https://github.com/todorivanov/ObjectFighterJS/discussions)
+- Open an [issue](https://github.com/todorivanov/legends-of-the-rena/issues)
+- Start a [discussion](https://github.com/todorivanov/legends-of-the-rena/discussions)
 - Reach out to maintainers
 
 ---

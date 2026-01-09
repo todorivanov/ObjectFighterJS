@@ -107,7 +107,7 @@ Recognized security researchers:
 
 ## 📞 Contact
 
-- **GitHub Security Advisories**: https://github.com/todorivanov/ObjectFighterJS/security/advisories
+- **GitHub Security Advisories**: https://github.com/todorivanov/legends-of-the-rena/security/advisories
 - **Repository Owner**: @todorivanov
 - **Response Time**: Within 48 hours
 

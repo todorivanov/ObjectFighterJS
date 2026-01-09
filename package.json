@@ -21,13 +21,13 @@
     "tournament",
     "vanilla-js"
   ],
-  "homepage": "https://github.com/todorivanov/ObjectFighterJS#readme",
+  "homepage": "https://github.com/todorivanov/legends-of-the-rena#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/todorivanov/ObjectFighterJS.git"
+    "url": "git+https://github.com/todorivanov/legends-of-the-rena.git"
   },
   "bugs": {
-    "url": "https://github.com/todorivanov/ObjectFighterJS/issues"
+    "url": "https://github.com/todorivanov/legends-of-the-rena/issues"
   },
   "author": {
     "name": "Todor Ivanov",

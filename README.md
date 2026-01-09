@@ -2,7 +2,7 @@
 
 **A modern browser-based RPG fighting game with tactical grid combat, story campaigns, character progression, and dynamic equipment systems.**
 
-## 🎮 [Play Live Demo](https://todorivanov.github.io/ObjectFighterJS/)
+## 🎮 [Play Live Demo](https://todorivanov.github.io/legends-of-the-rena/)
 
 ---
 
@@ -10,8 +10,8 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/ObjectFighterJS.git
-   cd ObjectFighterJS
+   git clone https://github.com/yourusername/legends-of-the-rena.git
+   cd legends-of-the-rena
    ```
 
 2. **Install dependencies**
@@ -222,7 +222,7 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) for deta
 
 - **Author**: Todor Ivanov
 - **GitHub**: [@TodorIvanov](https://github.com/TodorIvanov)
-- **Repository**: [ObjectFighterJS](https://github.com/TodorIvanov/ObjectFighterJS)
+- **Repository**: [Legends of the Rena](https://github.com/todorivanov/legends-of-the-rena)
 
 ---
 
