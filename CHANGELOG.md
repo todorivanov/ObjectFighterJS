@@ -35,10 +35,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `GridManager.isInAttackRange()` - Range validation
 - `GridCombatIntegration.isTargetInRange()` - Combat range check
 
+### Added - Enhanced Terrain Visuals 🎨
+
+**Rich Visual Design:**
+- **Gradient Backgrounds** - All 10 terrain types have unique multi-color gradients
+- **Texture Patterns** - Repeating patterns for grass, forest, water, mud, rock, and walls
+- **Animated Effects** - Water shimmer (3s), fire pulse (2s), ice sparkle (3s)
+- **3D Elevation Effects** - High ground scaled up with shadows, low ground scaled down and dimmed
+- **Centered Icons** - Terrain icons increased to 28px and centered behind fighters
+
+**Terrain-Specific Visuals:**
+- **Normal Ground** (◻️) - Clean gray gradient
+- **Grassland** (🌱) - Green gradient with diagonal stripe pattern
+- **Forest** (🌳) - Dark green with vertical tree shadow lines
+- **Water** (💧) - Blue gradient with diagonal wave pattern + shimmer animation
+- **Mud** (🟤) - Brown with spotty texture dots
+- **Rock** (⬜) - Gray stone with diagonal pattern + highlighted edges
+- **High Ground** (🏔️) - Elevated with thick border, shadows, and 1.05x scale
+- **Low Ground** (⬛) - Depressed with deep shadows, darkened, and 0.95x scale
+- **Wall** (🧱) - Dark gray with brick pattern (horizontal/vertical lines)
+- **Pit** (⚫) - Black radial gradient with deep inset shadows
+
+**UI/UX Improvements:**
+- Icons now have drop shadows for better visibility
+- Fighter icons (z-index 2) appear above terrain icons (z-index 1)
+- Each terrain instantly recognizable by color, pattern, and animation
+- Professional, polished appearance
+
+### Added - In-Game Wiki: Grid Combat Tab 📚
+
+**New Wiki Section:**
+- **Grid Combat Tab** - Comprehensive guide to tactical grid system
+- **Core Mechanics** - Positioning, movement, and range explained
+- **10 Terrain Cards** - Visual display with stats for each terrain type
+- **Tactical Mechanics** - Flanking, line of sight, and battlefield layouts
+- **Pro Tips** - Strategic advice for mastering grid combat
+- **Movement Skills** - Complete list of all class movement abilities
+
+**Wiki Enhancements:**
+- Interactive terrain cards with hover effects
+- Color-coded terrain categories (highlight for good, danger for bad, impassable)
+- Organized movement skill reference
+- Links to technical documentation
+
 ### Changed
 - Attack button now disabled/grayed when target out of range
 - Combat flow validates range before executing attacks
 - Out-of-range attacks show warning message instead of executing
+- Grid UI side-by-side layout: battle logs (left) + tactical grid (right)
+- README simplified to focus on quick start and documentation links
+- Wiki opens to Grid Combat tab by default
 
 ---
 

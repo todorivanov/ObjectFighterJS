@@ -1,668 +1,229 @@
-# Legends of the Arena v4.1 ⚔️
+# Legends of the Arena v4.9 ⚔️
 
-**An epic browser-based RPG fighting game with story mode, turn-based tactical combat, character progression, equipment systems, and marketplace economy.**
+**A modern browser-based RPG fighting game with tactical grid combat, story campaigns, character progression, and dynamic equipment systems.**
 
 ## 🎮 [Play Live Demo](https://todorivanov.github.io/ObjectFighterJS/)
 
-> **Note**: Once you enable GitHub Pages, your game will be available at the link above!
+---
+
+## ⚡ Quick Start
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/ObjectFighterJS.git
+   cd ObjectFighterJS
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Run the game**
+   ```bash
+   npm run dev
+   ```
+
+4. **Build for production**
+   ```bash
+   npm run build
+   ```
 
 ---
 
-## ✨ Key Features
+## 🌟 Key Features
 
-### 🎯 **Tactical Turn-Based Combat**
-- **Player-controlled actions** - Choose your moves strategically
-- **4 action types** - Attack, Defend, Use Skill, Use Item
-- **Class-specific skills** - 2 unique abilities per class
-- **Status effects** - Buffs, debuffs, damage-over-time
-- **Advanced combo system** ⭐NEW⭐ - Chain actions for powerful effects
-- **Critical hits** - 15% chance for 1.5x damage
+### 🗺️ **Tactical Grid Combat** ⭐NEW in v4.9⭐
+- **5x5 tactical grid** with 10 distinct terrain types
+- **Strategic positioning** - terrain provides bonuses/penalties
+- **Movement skills** - class-specific movement abilities
+- **Weapon ranges** - melee (1 cell) vs ranged (2-4 cells)
+- **Line of sight** mechanics and flanking bonuses
+- **Enhanced visuals** - animated terrains, gradients, patterns
 
-### 🎮 **Multiple Game Modes**
-- **Story Mode** - Epic 25-mission campaign across 5 unique regions
-- **Single Combat** - Face an opponent with your custom character
-- **Tournament Mode** - 3-round bracket championship with escalating rewards
+### 🎮 **Game Modes**
+- **Story Mode** - 25-mission campaign across 5 regions
+- **Single Combat** - Quick battles with custom characters
+- **Tournament Mode** - 3-round championship brackets
 
-### 👤 **Character Progression**
-- **Create your character** - Choose name, class, and avatar
-- **Level system** - Gain XP and level up (1-20)
-- **Stat bonuses** - Increase HP, Strength, and Defense per level
-- **Profile tracking** - View wins, losses, streaks, and statistics
+### 👤 **Character System**
+- **10 unique classes** with distinct playstyles
+- **Level progression** (1-20) with stat bonuses
+- **Equipment system** - 24 items across 4 rarity tiers
+- **Combo system** - chain attacks for powerful effects
+- **17 status effects** with interaction matrix
 
-### ⚔️ **Equipment System**
-- **24 unique items** - 10 weapons, 8 armor pieces, 6 accessories
-- **4 rarity tiers** - Common, Rare, Epic, Legendary
-- **Stat bonuses** - Strength, HP, Defense, Crit Chance, Mana Regen
-- **Durability system** - Items degrade and require repairs
-- **Level requirements** - Unlock powerful gear as you progress
-- **Class restrictions** - Specialized equipment for each class
+### 💰 **Economy & Progression**
+- **Marketplace** - buy, sell, and repair equipment
+- **Gold currency** - earn from battles and missions
+- **Achievements** - 25 unlockables with 6000+ XP rewards
+- **Difficulty levels** - Easy to Nightmare with scaled rewards
 
-### 🏆 **Tournament Mode**
-- **3 difficulty levels** - Normal, Hard, Nightmare
-- **Progressive rewards** - 300-600 XP + guaranteed equipment drops
-- **Bracket progression** - Quarter Final → Semi Final → Grand Final
-- **Champion status** - Track tournament wins and titles
-
-### 🏅 **Achievement System**
-- **25 achievements** across 4 categories
-- **6,000+ total XP** available from achievements
-- **Progress tracking** - Real-time progress bars
-- **Unlock notifications** - Celebrate your accomplishments
-
-### ⚙️ **Difficulty Levels**
-- **Easy** - Forgiving gameplay for newcomers (+30% player HP/STR)
-- **Normal** - Balanced challenge for most players
-- **Hard** - Tough opponents with +30% XP rewards
-- **Nightmare** - Extreme challenge with +50% XP and best loot
-
-### 🎨 **Modern UI/UX**
-- **Native Web Components** - Zero dependencies, lightweight
-- **Glass morphism design** - Beautiful, modern aesthetic
-- **Dark theme** - Easy on the eyes
-- **Smooth animations** - Polished user experience
-- **Sound effects** - Immersive audio feedback
-- **Responsive design** - Works on all screen sizes
-
-### 💰 **Marketplace & Economy**
-- **Gold currency** - Earn from battles, missions, and tournaments
-- **Rotating shop** - New items every 24 hours
-- **Buy & Sell** - Trade equipment for profit
-- **Repair shop** - Restore durability of damaged items
-- **Consumables** - Purchase health and mana potions
-
-### ⚡ **Combo System**
-- **20+ unique combos** - Universal and class-specific chains
-- **Action sequences** - Trigger combos by performing specific moves
-- **Powerful bonuses** - Damage multipliers, healing, mana restore
-- **Status effects** - Apply buffs/debuffs through combos
-- **Visual feedback** - Stunning animations when combos trigger
-- **Combo hints** - Real-time suggestions for available combos
-
-### 🎯 **Combat Phase System** ⭐ACTIVE⭐
-- **Fully Integrated** - All combat uses phase system
-- **Structured phases** - 8 distinct battle phases
-- **Event hooks** - Extensibility points for custom logic
-- **Action queue** - Priority-based action execution
-- **Event bus** - Rich combat events for integrations
-- **Modular design** - Easy to extend and customize
-- **Backward Compatible** - All existing features preserved
-
-### 💾 **Advanced Save System**
-- **Multiple save slots** - Manage up to 3 different characters
-- **Import/Export** - Download and share your save files
-- **Auto-backup** - Automatic backups protect your progress
-- **Data compression** - Efficient storage using LZ-String
-- **Version migration** - Seamless updates across game versions
-- **Save management UI** - Easy-to-use interface for all save operations
-
-### 📖 **Story Mode Campaign**
-- **25 epic missions** across 5 unique regions
-- **Boss battles** with legendary opponents
-- **Survival mode** - Face multiple waves of enemies
-- **Star rating** - Complete objectives for bonus rewards
-- **Branching paths** - Choose between Forest or Mountain
-- **Rich narrative** - Dialogue and story progression
-
-### 📚 **In-Game Wiki**
-- Comprehensive guides for all game systems
-- Achievement database
-- Equipment catalog
-- Tournament strategies
-- Difficulty comparisons
+### 💾 **Advanced Features**
+- **Multiple save slots** with import/export
+- **Data compression** for efficient storage
+- **Version migration** for seamless updates
+- **Auto-backup** to protect your progress
+- **Native Web Components** - zero framework dependencies
+- **Modern UI/UX** with glassmorphism design
 
 ---
 
-## 🗺️ Tactical Grid Combat System
+## 📚 Documentation
 
-**5x5 grid-based positioning** adds strategic depth to every battle:
+### 📖 **User Guides**
+- [Story Mode Guide](guides/STORY_MODE_GUIDE.md) - Campaign walkthrough
+- [Character Classes Guide](guides/CHARACTER_CLASSES_GUIDE.md) - Class details and strategies
+- [Equipment System Guide](guides/EQUIPMENT_SYSTEM_GUIDE.md) - Items and gear
+- [Achievements Guide](guides/ACHIEVEMENTS_GUIDE.md) - All 25 achievements
+- [Tournament Mode Guide](guides/TOURNAMENT_MODE_GUIDE.md) - Championship system
+- [Marketplace Guide](guides/MARKETPLACE_GUIDE.md) - Economy and trading
+- [Difficulty System Guide](guides/DIFFICULTY_SYSTEM_GUIDE.md) - Challenge levels
 
-**Grid Features**:
-- **25-cell battlefield** with unique positioning
-- **10 terrain types** with different effects
-- **6 predefined layouts** (Open Field, Forest, Ruins, Swamp, Mountain, Arena)
-- **Real-time visualization** with interactive UI
+### 🔧 **Technical Documentation**
+- [Grid Combat System](docs/GRID_COMBAT_SYSTEM.md) - Tactical grid mechanics ⭐
+- [Weapon Range System](docs/WEAPON_RANGE_SYSTEM.md) - Attack distances ⭐
+- [Status Effects](docs/STATUS_EFFECTS.md) - Effect system and interactions
+- [Combo System](docs/COMBO_SYSTEM.md) - Combo chains and bonuses
+- [Combat Phases](docs/COMBAT_PHASES.md) - Phase system architecture
+- [State Management](docs/STATE_MANAGEMENT.md) - Store pattern
+- [Save System V2](docs/SAVE_SYSTEM_V2.md) - Advanced save features
+- [AI System](docs/AI_SYSTEM.md) - Behavior trees and personalities
+- [Performance Optimization](docs/PERFORMANCE_OPTIMIZATION.md) - Lazy loading, pooling
+- [Testing](docs/TESTING.md) - Test framework and strategies
 
-**Terrain Types**:
-- **⬜ Normal** - Standard ground
-- **🌲 Forest** - +15% defense, blocks line of sight
-- **⛰️ High Ground** - +25% attack, +20% defense (best advantage!)
-- **🌊 Water** - Slows movement, -15% attack
-- **🧱 Wall** - Impassable obstacle
-- And 5 more terrain types!
-
-**Tactical Mechanics**:
-- **Movement System** - 1-3 spaces per turn (class-dependent)
-- **Line of Sight** - Terrain blocks vision and attacks
-- **Flanking Bonus** - +25% damage when surrounded
-- **Terrain Bonuses** - Attack/defense modifiers
-- **Strategic Positioning** - Control high ground for advantage
-
-**Combat Actions**:
-```
-⚔️ Attack → Basic attack (range-dependent!)
-🛡️ Defend → Reduce damage by 50%
-💫 Skills → Class abilities (including movement!)
-🧪 Item → Heal +20 HP
-```
-
-**Attack Range System** (NEW!):
-- **Melee classes** (Warrior, Tank, etc.): Range 1
-- **Mages** (Mage, Necromancer): Range 3 (ranged magic!)
-- **Weapons** add range bonuses (staves = 3, swords = 1)
-- **Must be in range** to attack - out of range attacks are blocked
-- Use **movement skills** to close distance to enemies
-
-**Movement Skills**:
-- Each class has a **unique movement skill**
-- Examples: "Shadow Step" (Assassin), "Quick Step" (Agile)
-- Costs **mana** (10-15) and has **cooldown** (0-2 turns)
-- Click the skill → Click highlighted cells to move
-- Terrain effects apply automatically
-- **Strategic choice**: Move closer OR attack?
-
-See [Grid Combat Guide](docs/GRID_COMBAT_SYSTEM.md) for complete documentation.
-
----
-
-## 🎯 Status Effect System
-
-Advanced status effect system with **17 effects** and **interaction matrix**:
-
-**Status Effects**:
-- **DOT**: Poison ☠️, Burn 🔥, Bleed 🩸, Shock ⚡
-- **Buffs**: Strength 💪, Defense 🛡️, Bless ✨, Haste 💨, Fortify ⛰️
-- **Debuffs**: Weakness 😰, Curse 🌑, Slow 🐌, Vulnerable 💔
-- **Protection**: Shield 🔰, Reflect 🪞, Thorns 🌹
-- **Crowd Control**: Stun 💫, Frozen ❄️, Silence 🔇
-- **Special**: Enrage 😡, Clarity 🧠, Regeneration 💚
-
-**Interactions**:
-- Fire melts Ice, Ice extinguishes Fire
-- Curse reduces healing, cancels Bless
-- Frozen + Heavy Damage = Shatter combo
-- Shock amplified when Wet
-- Effect stacking (up to 5 stacks)
-
-**Strategic Combos**:
-```
-DOT Stack: Poison + Burn + Bleed
-Burst: Bless + Enrage + Vulnerable
-Tank: Fortify + Shield + Thorns
-```
-
-See [Status Effects Guide](docs/STATUS_EFFECTS.md) for complete documentation.
-
----
-
-## ⚡ Performance Optimization
-
-Built-in performance optimization with real-time monitoring:
-
-**Features**:
-- **Lazy Loading** - Load resources on demand, faster initial load
-- **Object Pooling** - Reuse objects, reduced GC pressure
-- **Performance Monitor** - Real-time FPS, memory, and metrics tracking
-- **Visual UI** - Always-visible performance metrics (top-left corner)
-
-**Performance Metrics**:
-- FPS counter with history
-- Frame time tracking
-- Memory usage monitoring
-- Object pool utilization
-- Lazy loader statistics
-
-**Developer Tools**:
-```javascript
-import { profile, performanceMonitor } from './utils/PerformanceMonitor.js';
-
-// Profile any function
-const result = profile('heavyWork', () => doWork());
-
-// Get metrics
-const metrics = performanceMonitor.getMetrics();
-console.log(`FPS: ${metrics.fps}`);
-```
-
-See [Performance Guide](docs/PERFORMANCE_OPTIMIZATION.md) for complete documentation.
+### 📝 **Project Documentation**
+- [Migration Guide](guides/MIGRATION_GUIDE.md) - Version upgrade guide
+- [Contributing](CONTRIBUTING.md) - Contribution guidelines
+- [Code of Conduct](CODE_OF_CONDUCT.md) - Community standards
+- [Changelog](CHANGELOG.md) - Version history and updates
 
 ---
 
 ## 🧪 Testing
 
-The project includes comprehensive testing with **49+ test cases**:
+Run the comprehensive test suite:
 
 ```bash
-npm test              # Run tests in watch mode
-npm run test:unit     # Unit tests with coverage
-npm run test:watch    # Continuous testing
-npm run test:ui       # Interactive test UI
-npm run test:e2e      # E2E tests across browsers
-npm run test:all      # All tests
+# Unit tests
+npm run test:unit
+
+# Integration tests
+npm run test
+
+# E2E tests
+npm run test:e2e
+
+# All tests with coverage
+npm run test:all
+npm run test:coverage
+
+# Watch mode
+npm run test:watch
 ```
 
-**Testing Stack**:
-- **Vitest 2.1** - Fast unit/integration tests with coverage
-- **Playwright 1.48** - Cross-browser E2E tests (Chrome, Firefox, Safari, Edge)
-- **Happy-DOM** - Lightweight DOM for testing
-- **Coverage**: 70%+ code coverage target
-
-**Test Coverage**:
-- ✅ Fighter combat mechanics
-- ✅ Combo system
-- ✅ Phase manager & action queue
-- ✅ Game flow (E2E)
-- ✅ Character creation (E2E)
-- ✅ Responsive design (E2E)
-
-See [Testing Guide](docs/TESTING.md) for complete documentation.
+See [docs/TESTING.md](docs/TESTING.md) for detailed testing documentation.
 
 ---
 
-## 🎮 Game Modes
+## 🚀 Technology Stack
 
-### **Story Mode** ⭐NEW⭐
-Embark on an epic 25-mission campaign! Journey through 5 unique regions, from the Tutorial Arena to the legendary Champions' Valley. Face standard battles, survive enemy waves, and defeat powerful bosses. Earn stars by completing optional objectives, unlock new regions, and become a true Legend of the Arena!
-
-### **Single Combat**
-Create your character and face opponents in 1v1 tactical battles. Choose your actions each turn and outsmart your enemy! Earn gold and equipment with each victory.
-
-### **Tournament Mode**
-Enter the arena and face 3 opponents in succession. Win all rounds to claim the championship and massive rewards!
+- **Frontend**: Native Web Components (zero dependencies!)
+- **Build Tool**: Vite 5
+- **Testing**: Vitest + Playwright
+- **Storage**: LocalStorage with LZ-String compression
+- **Styling**: CSS3 with modern features (Grid, Flexbox, Animations)
+- **ES Modules**: Modern JavaScript (ES2021+)
 
 ---
 
-## ⚔️ Combat System
+## 📁 Project Structure
 
-### **Turn-Based Tactical Combat**
-Each turn, choose from 4 actions:
-1. **Attack** - Standard damage with 90% accuracy
-2. **Defend** - Reduce incoming damage by 50% for 1 turn
-3. **Use Skill** - Class-specific abilities (costs mana, has cooldown)
-4. **Use Item** - Heal for 20 HP (limited uses)
-
-### **Skills by Class**
-- **TANK** - Iron Wall (buff), Taunt Strike (damage)
-- **BALANCED** - Power Slash (damage), Second Wind (heal)
-- **AGILE** - Swift Strike (damage), Poison Dart (debuff)
-- **MAGE** - Fireball (damage), Mana Surge (buff)
-- **HYBRID** - Versatile Strike (damage), Rejuvenate (buff)
-- **ASSASSIN** - Shadow Strike (high damage), Weaken (debuff)
-- **BRAWLER** - Haymaker (damage), Adrenaline (buff)
-
-### **Status Effects**
-- 💪 **Strength Boost** - Increased damage
-- 💔 **Strength Debuff** - Reduced damage
-- 💚 **Regeneration** - Heal over time
-- ☠️ **Poison** - Damage over time
-- 💧 **Mana Regen** - Increased mana regeneration
-
-### **Combat Features**
-- **Combo system** - Build streaks for bonus damage
-- **Critical hits** - 15% chance for 1.5x damage
-- **Mana regeneration** - 10 mana per turn
-- **Smart AI** - Adapts to difficulty level
-
----
-
-## 🎯 Fighters
-
-Choose from **10 unique fighters** across 7 different classes:
-
-| Fighter | Class | HP | STR | Description |
-|---------|-------|-----|-----|-------------|
-| **Gosho** | BALANCED | 500 | 10 | Perfect for beginners |
-| **Marina** | BALANCED | 550 | 9 | Tactical and consistent |
-| **Ivan** | AGILE | 400 | 20 | High damage, low defense |
-| **Viktor** | AGILE | 425 | 18 | Fast and deadly |
-| **Jivko** | TANK | 1000 | 4 | Impenetrable defense |
-| **Dimitri** | TANK | 900 | 5 | Superior endurance |
-| **Bobba** | HYBRID | 750 | 6 | Versatile combatant |
-| **Nikolai** | BRAWLER | 600 | 8 | Relentless pressure |
-| **Petar** | ASSASSIN | 450 | 11 | Precision strikes |
-| **Svetlana** | MAGE | 475 | 13 | Arcane power |
-
----
-
-## 🚀 Quick Start
-
-### **Installation**
-```bash
-npm install
 ```
+src/
+├── ai/              # AI behavior trees and personalities
+├── components/      # Web Components (UI)
+├── config/          # Game configuration and routes
+├── data/            # Game data (classes, equipment, missions)
+├── entities/        # Core game entities (Fighter, Team, Referee)
+├── game/            # Game systems (Combat, Grid, Economy, etc.)
+├── store/           # State management
+├── styles/          # Global styles and themes
+└── utils/           # Utility functions and helpers
 
-### **Development**
-```bash
-npm run dev
-# Opens at http://localhost:3000
-```
-
-### **Production Build**
-```bash
-npm run build
-npm run preview
+docs/                # Technical documentation
+guides/              # User guides
+tests/               # Test suites (unit, integration, e2e)
 ```
 
 ---
 
-## 🛠️ Technology Stack
+## 🎨 In-Game Wiki
 
-- **Build Tool**: Vite 5 (⚡ Lightning fast HMR)
-- **UI Framework**: Native Web Components (Zero dependencies!)
-- **Styling**: Custom CSS with Glass Morphism
-- **Language**: Modern JavaScript (ES2022+)
-- **Code Quality**: ESLint + Prettier
-- **Audio**: Web Audio API
-
----
-
-## 📝 NPM Scripts
-
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server (port 3000) |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build (port 4173) |
-| `npm run lint` | Check code quality |
-| `npm run format` | Auto-format code with Prettier |
+The game includes a comprehensive **in-game wiki** accessible from the main menu:
+- 🗺️ Grid Combat - Tactical system guide
+- 📖 Story Mode - Campaign information
+- 🎯 Status Effects - All effects and interactions
+- 🏪 Marketplace - Shopping guide
+- 💰 Economy - Gold and progression
+- 🎭 Classes - Character class details
+- 🏅 Achievements - All unlockables
+- ⚔️ Equipment - Item database
+- 🏆 Tournament - Championship guide
+- ⚙️ Difficulty - Challenge levels
 
 ---
 
-## 🎯 How to Play
+## 🔄 Recent Updates (v4.9.0)
 
-### **First Time Setup**
-1. **Character Creation** - Create your custom character (name, class, avatar)
-2. **Learn the Basics** - Check the in-game Wiki (📚 button on main menu)
-3. **Visit Marketplace** - Spend your starting 100 gold on equipment!
+### ✨ **Enhanced Terrain Visuals**
+- Rich gradient backgrounds for all terrain types
+- Unique texture patterns (grass stripes, wave patterns, brick walls)
+- Animated effects (water shimmer, fire pulse, ice sparkle)
+- 3D-style elevation (high ground raised, low ground sunken)
+- Larger, centered terrain icons for better visibility
 
-### **Story Mode** (NEW!)
-1. Click **"📖 Story Mode"** from main menu
-2. Select an unlocked region (Tutorial Arena starts unlocked)
-3. Choose a mission to view objectives and rewards
-4. Complete missions to earn stars, gold, XP, and equipment!
-5. Unlock new regions by defeating region bosses
+### 🎯 **Weapon Range System**
+- Attack ranges based on weapon and class type
+- Visual indicators when targets are out of range
+- Strategic positioning required for combat
+- AI intelligently moves to attack range
 
-### **Single Combat**
-1. Click **"⚔️ Single Combat"** from main menu
-2. Select an opponent from the gallery
-3. Click **"Start Battle"**
-4. Choose your actions each turn:
-   - **Attack** for consistent damage
-   - **Defend** when low on health
-   - **Use Skill** for powerful effects (watch mana and cooldowns!)
-   - **Use Item** to heal in emergencies
-5. Defeat your opponent to gain gold, XP, and equipment!
+### 🏃 **Movement Skills**
+- Movement as class-specific skills with mana costs
+- Interactive grid movement with cell highlighting
+- Cooldown system for strategic depth
 
-### **Marketplace** (NEW!)
-1. Click **"🏪 Marketplace"** from main menu
-2. Browse equipment in the rotating shop (refreshes every 24 hours)
-3. Purchase equipment, consumables, or repair damaged items
-4. Sell unwanted equipment for gold
-
-### **Tournament Mode**
-1. Click **"🏆 Tournament"** from main menu
-2. Choose difficulty (Normal, Hard, or Nightmare)
-3. Select 4 opponents to fill the bracket
-4. Battle through 3 rounds to become champion!
-
----
-
-## 📚 Documentation & Guides
-
-Comprehensive guides are available in the `guides/` folder:
-
-- **[Achievements Guide](guides/ACHIEVEMENTS_GUIDE.md)** - All 25 achievements, rewards, and strategies
-- **[Equipment Guide](guides/EQUIPMENT_SYSTEM_GUIDE.md)** - Complete equipment database and usage guide
-- **[Tournament Guide](guides/TOURNAMENT_MODE_GUIDE.md)** - Tournament strategies and rewards
-- **[Difficulty Guide](guides/DIFFICULTY_SYSTEM_GUIDE.md)** - Difficulty comparison and optimization tips
-
-**In-Game Wiki**: Access all guides from the main menu (📚 Game Wiki button)
-
----
-
-## 📦 Project Structure
-
-```
-ObjectFighterJS/
-├── .github/
-│   └── workflows/
-│       └── deploy.yml           # GitHub Actions deployment
-│
-├── src/
-│   ├── api/
-│   │   └── mockFighters.js      # Fighter data
-│   │
-│   ├── components/              # Web Components
-│   │   ├── BaseComponent.js
-│   │   ├── TitleScreen.js
-│   │   ├── FighterGallery.js
-│   │   ├── CombatArena.js
-│   │   ├── ActionSelection.js
-│   │   ├── FighterHUD.js
-│   │   ├── ProfileScreen.js
-│   │   ├── CharacterCreation.js
-│   │   ├── EquipmentScreen.js
-│   │   ├── TournamentBracket.js
-│   │   ├── AchievementsScreen.js
-│   │   ├── SettingsScreen.js
-│   │   ├── WikiScreen.js
-│   │   └── ...more
-│   │
-│   ├── config/
-│   │   └── gameConfig.js        # Game configuration
-│   │
-│   ├── data/
-│   │   ├── achievements.js      # Achievement definitions
-│   │   └── equipment.js         # Equipment database
-│   │
-│   ├── entities/
-│   │   ├── baseEntity.js        # Base combat entity
-│   │   ├── fighter.js           # Fighter class
-│   │   ├── referee.js           # Game referee
-│   │   └── team.js              # Team class
-│   │
-│   ├── game/
-│   │   ├── game.js              # Main game engine
-│   │   ├── CombatEngine.js      # Combat logic
-│   │   ├── TurnManager.js       # Turn-based system
-│   │   ├── SkillSystem.js       # Skills & abilities
-│   │   ├── StatusEffect.js      # Status effects
-│   │   ├── LevelingSystem.js    # XP & leveling
-│   │   ├── EquipmentManager.js  # Equipment logic
-│   │   ├── TournamentMode.js    # Tournament system
-│   │   ├── AchievementManager.js# Achievement tracking
-│   │   ├── DifficultyManager.js # Difficulty scaling
-│   │   ├── EventManager.js      # Event bus
-│   │   ├── GameStateManager.js  # State management
-│   │   └── ...more
-│   │
-│   ├── utils/
-│   │   ├── helpers.js           # Utility functions
-│   │   ├── logger.js            # Combat logger
-│   │   ├── saveManager.js       # Save/load system
-│   │   ├── soundManager.js      # Audio system
-│   │   └── hudManager.js        # HUD updates
-│   │
-│   ├── styles/
-│   │   └── theme.css            # Global theme
-│   │
-│   ├── index.css                # Main styles
-│   └── main-new.js              # Application entry point
-│
-├── guides/                       # Game documentation
-│   ├── ACHIEVEMENTS_GUIDE.md
-│   ├── EQUIPMENT_SYSTEM_GUIDE.md
-│   ├── TOURNAMENT_MODE_GUIDE.md
-│   └── DIFFICULTY_SYSTEM_GUIDE.md
-│
-├── index.html                   # HTML template
-├── package.json                 # Dependencies
-├── vite.config.js              # Vite configuration
-└── README.md                    # This file
-```
-
----
-
-## 🚀 Deployment
-
-### **GitHub Pages (Automatic)**
-
-This project includes automatic deployment to GitHub Pages via GitHub Actions.
-
-**Quick Setup:**
-
-1. **Enable GitHub Pages:**
-   - Go to repository **Settings** → **Pages**
-   - **Source**: Select "GitHub Actions"
-
-2. **Set Permissions:**
-   - Go to **Settings** → **Actions** → **General**
-   - **Workflow permissions**: Select "Read and write permissions"
-
-3. **Push to main/master:**
-   ```bash
-   git push origin main
-   ```
-
-4. **Access your game** (~1-2 minutes later):  
-```  
-https://todorivanov.github.io/ObjectFighterJS/  
-```
-
-**Auto-Deploy**: Every push to main/master automatically triggers deployment!
-
----
-
-## 🔄 Version History
-
-### **v4.0.0 - Legends of the Arena** (Jan 2026) ⚔️
-**MAJOR UPDATE - Story Mode, Economy, and Marketplace!**
-
-**New Name**: Rebranded to "Legends of the Arena"
-
-**New Features**:
-- 📖 **Story Mode** - 25-mission campaign across 5 regions
-- 💰 **Gold Economy** - Earn and spend gold currency
-- 🏪 **Marketplace** - Rotating shop with buy/sell/repair
-- 🔧 **Equipment Durability** - Items degrade and need repairs
-- ⭐ **Mission Stars** - Earn up to 3 stars per mission
-- 👑 **Boss Battles** - Epic encounters with legendary foes
-- 🛡️ **Survival Mode** - Face waves of increasingly powerful enemies
-
-**Improvements**:
-- Enhanced fighter class with unique methods
-- Centralized game configuration
-- Comprehensive JSDoc documentation
-- Removed legacy code and unused dependencies
-- Improved code organization and maintainability
-
-**Total Lines of Code**: ~14,000+ lines
-**New Files**: 15+ new game systems and components
-
-### **v3.0.0 - The RPG Update** (Jan 2026) 🎮
-**Phase 5 Complete - Full RPG Experience!**
-
-**New Features:**
-- ✨ **Character Creation** - Create your own custom fighter
-- 📈 **Leveling System** - Gain XP and level up (1-20)
-- 👤 **Profile System** - Track stats, progress, and achievements
-- ⚔️ **Equipment System** - 24 items with rarity tiers
-- 🏆 **Tournament Mode** - 3-round championships
-- 🏅 **Achievement System** - 25 achievements worth 6,000+ XP
-- ⚙️ **Difficulty Levels** - 4 difficulty settings with modifiers
-- 📚 **In-Game Wiki** - Comprehensive game guides
-- 💾 **Save/Load System** - Persistent player data
-- 🎯 **Auto-Battle Mode** - Optional automatic combat
-- 📜 **Auto-Scroll Toggle** - Control battle log scrolling
-
-**Total Lines of Code**: ~10,000+ lines
-**Components**: 15+ Web Components
-**Game Systems**: 10+ interconnected systems
-
-### **v2.4.0 - Phase 3 Complete** (Jan 2026) 🎯
-**Gameplay Enhancements:**
-- ⚔️ **Turn-Based Combat** - Player-controlled tactical combat
-- 🌟 **Skill System** - Class-specific abilities
-- 💫 **Status Effects** - 5 buffs/debuffs
-- 💥 **Combo System** - Chain attacks for bonus damage
-- 🎮 **Action Selection UI** - Interactive combat interface
-- 🤖 **Smart AI** - Strategic opponent decision-making
-
-### **v2.3.0 - UX Improvements** (Jan 2026) 🎯
-- 🖥️ **Fullscreen layout** - Immersive experience
-- 📊 **Live fighter HUD** - Real-time stats display
-- 🔊 **Fixed sound system** - Proper Web Audio API
-- 🎨 **Visual improvements** - Enhanced UI/UX
-
-### **v2.0.0 - Modernization** (Jan 2026) ⚡
-**Phase 1 & 2 Complete:**
-- ⚡ **17x faster** dev server (Webpack → Vite)
-- 🗑️ **Removed jQuery** - Pure vanilla JS
-- 🏗️ **Clean architecture** - Event-driven design
-- 🎨 **Web Components** - Modern UI framework
-- 🌙 **Dark mode** - Theme system
-- 🔊 **Sound effects** - Web Audio API
-- 💥 **Animations** - CSS animations throughout
-- 📉 **50% less** code duplication
-
----
-
-## 🎮 Game Statistics
-
-- **Total Fighters**: 10
-- **Classes**: 7 (Tank, Balanced, Agile, Mage, Hybrid, Assassin, Brawler)
-- **Skills**: 14 (2 per class)
-- **Equipment Items**: 24 (10 weapons, 8 armor, 6 accessories)
-- **Story Missions**: 25 across 5 regions
-- **Achievements**: 25 across 4 categories
-- **Max Level**: 20
-- **Difficulty Levels**: 4
-- **Game Modes**: 4 (Story, Single, Team, Tournament)
+See [CHANGELOG.md](CHANGELOG.md) for complete version history.
 
 ---
 
 ## 🤝 Contributing
 
-This is a learning project demonstrating:
-- ✅ Object-Oriented Programming in JavaScript
-- ✅ Native Web Components
-- ✅ Event-Driven Architecture
-- ✅ Modern ES2022+ features
-- ✅ State Management patterns
-- ✅ Game development concepts
-
-Feel free to explore, learn, and experiment!
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ---
 
 ## 📄 License
 
-MIT License - See [LICENSE](LICENSE) file for details
+This project is licensed under the MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-## 👤 Author
+## 🙏 Acknowledgments
 
-**Todor Ivanov**
-
----
-
-## 🎉 Highlights
-
-✨ **Modern Stack**: Vite 5 + Native Web Components  
-⚡ **Zero Dependencies**: No frameworks, pure vanilla JS  
-🎮 **Rich Gameplay**: RPG progression + tactical combat  
-🎨 **Beautiful UI**: Glass morphism + smooth animations  
-📱 **Responsive**: Works on desktop, tablet, and mobile  
-🚀 **Auto-Deploy**: GitHub Actions + GitHub Pages  
-📚 **Well Documented**: In-game wiki + markdown guides  
-💾 **Advanced Save System**: Multiple slots + import/export + backups  
+- Font: [Press Start 2P](https://fonts.google.com/specimen/Press+Start+2P)
+- Icons: Unicode emoji characters
+- Inspiration: Classic RPG and tactical strategy games
 
 ---
 
-**Version**: 4.1.0  
-**Status**: Legends of the Arena - Enhanced Save System! ⚔️✨💾  
-**Play Now**: Deploy to GitHub Pages and become a legend!
+## 📧 Contact
+
+- **Author**: Todor Ivanov
+- **GitHub**: [@TodorIvanov](https://github.com/TodorIvanov)
+- **Repository**: [ObjectFighterJS](https://github.com/TodorIvanov/ObjectFighterJS)
 
 ---
 
-*Built with ❤️ using Vite, JavaScript, and Web Components*
+**⚔️ May the best fighter win! ⚔️**

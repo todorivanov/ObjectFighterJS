@@ -3,7 +3,7 @@ import { BaseComponent } from './BaseComponent.js';
 export class WikiScreen extends BaseComponent {
   constructor() {
     super();
-    this._activeTab = 'achievements';
+    this._activeTab = 'grid-combat';
   }
 
   template() {
@@ -298,6 +298,117 @@ export class WikiScreen extends BaseComponent {
         .rarity-epic { color: #a855f7; }
         .rarity-legendary { color: #f97316; }
 
+        /* Grid Combat Styles */
+        .terrain-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 15px;
+          margin: 20px 0;
+        }
+
+        .terrain-card {
+          background: rgba(255, 255, 255, 0.05);
+          border: 2px solid rgba(255, 255, 255, 0.1);
+          border-radius: 12px;
+          padding: 15px;
+          text-align: center;
+          transition: all 0.3s ease;
+        }
+
+        .terrain-card:hover {
+          transform: translateY(-3px);
+          border-color: rgba(255, 215, 0, 0.5);
+          background: rgba(255, 255, 255, 0.08);
+        }
+
+        .terrain-card.highlight {
+          border-color: rgba(76, 175, 80, 0.6);
+          background: rgba(76, 175, 80, 0.1);
+        }
+
+        .terrain-card.danger {
+          border-color: rgba(244, 67, 54, 0.6);
+          background: rgba(244, 67, 54, 0.1);
+        }
+
+        .terrain-card.impassable {
+          border-color: rgba(158, 158, 158, 0.6);
+          background: rgba(0, 0, 0, 0.3);
+        }
+
+        .terrain-icon {
+          font-size: 48px;
+          margin-bottom: 10px;
+        }
+
+        .terrain-card h4 {
+          margin: 10px 0;
+          color: #FFD700;
+          font-size: 16px;
+        }
+
+        .terrain-card p {
+          font-size: 13px;
+          color: rgba(255, 255, 255, 0.8);
+          margin: 10px 0;
+          min-height: 40px;
+        }
+
+        .terrain-stats {
+          display: flex;
+          justify-content: space-around;
+          margin-top: 10px;
+          font-size: 12px;
+          color: rgba(255, 255, 255, 0.7);
+        }
+
+        .terrain-stats span {
+          background: rgba(0, 0, 0, 0.3);
+          padding: 4px 8px;
+          border-radius: 4px;
+        }
+
+        .mechanic-card {
+          background: rgba(106, 66, 194, 0.1);
+          border-left: 4px solid #6a42c2;
+          border-radius: 8px;
+          padding: 20px;
+          margin: 15px 0;
+        }
+
+        .mechanic-card h3 {
+          margin-top: 0;
+          color: #FFD700;
+        }
+
+        .mechanic-card ul {
+          margin: 10px 0;
+          padding-left: 20px;
+        }
+
+        .mechanic-card li {
+          margin: 8px 0;
+        }
+
+        .tips {
+          display: grid;
+          gap: 15px;
+          margin: 20px 0;
+        }
+
+        .tip {
+          background: rgba(255, 215, 0, 0.1);
+          border-left: 4px solid #FFD700;
+          padding: 15px;
+          border-radius: 8px;
+        }
+
+        .tip strong {
+          color: #FFD700;
+          display: block;
+          margin-bottom: 5px;
+        }
+
         @media (max-width: 768px) {
           .wiki-container {
             padding: 20px;
@@ -314,6 +425,10 @@ export class WikiScreen extends BaseComponent {
           h1 { font-size: 28px; }
           h2 { font-size: 22px; }
           h3 { font-size: 18px; }
+
+          .terrain-grid {
+            grid-template-columns: 1fr;
+          }
         }
       </style>
 
@@ -326,6 +441,9 @@ export class WikiScreen extends BaseComponent {
         </div>
 
         <div class="tab-navigation">
+          <button class="tab-button ${this._activeTab === 'grid-combat' ? 'active' : ''}" data-tab="grid-combat">
+            🗺️ Grid Combat
+          </button>
           <button class="tab-button ${this._activeTab === 'story' ? 'active' : ''}" data-tab="story">
             📖 Story Mode
           </button>
@@ -356,6 +474,7 @@ export class WikiScreen extends BaseComponent {
         </div>
 
         <div class="wiki-content">
+          ${this.renderGridCombatContent()}
           ${this.renderStoryContent()}
           ${this.renderStatusEffectsContent()}
           ${this.renderMarketplaceContent()}
@@ -365,6 +484,241 @@ export class WikiScreen extends BaseComponent {
           ${this.renderEquipmentContent()}
           ${this.renderTournamentContent()}
           ${this.renderDifficultyContent()}
+        </div>
+      </div>
+    `;
+  }
+
+  renderGridCombatContent() {
+    return `
+      <div class="content-section ${this._activeTab === 'grid-combat' ? 'active' : ''}" id="grid-combat-content">
+        <h1>🗺️ Tactical Grid Combat System</h1>
+        
+        <div class="info-box">
+          <strong>5x5 Tactical Grid | 10 Terrain Types | Strategic Positioning | Weapon Ranges</strong><br>
+          Master positioning and terrain to dominate every battle!
+        </div>
+
+        <h2>🎯 Core Mechanics</h2>
+        <p>All combat takes place on a <strong>5x5 tactical grid</strong> where positioning matters! Fighters occupy grid cells, and you must strategically move, position, and attack to win.</p>
+
+        <div class="mechanic-card">
+          <h3>📍 Grid Positioning</h3>
+          <ul>
+            <li><strong>Cell-Based Movement</strong> - Fighters occupy single cells</li>
+            <li><strong>Starting Positions</strong> - Player starts bottom-left, enemy top-right</li>
+            <li><strong>Line of Sight</strong> - Some terrain blocks vision and ranged attacks</li>
+            <li><strong>Distance Matters</strong> - Must be in range to attack</li>
+          </ul>
+        </div>
+
+        <div class="mechanic-card">
+          <h3>🏃 Movement System</h3>
+          <ul>
+            <li><strong>Movement Skills</strong> - Each class has a unique movement ability</li>
+            <li><strong>Mana Cost</strong> - Movement requires 10-15 mana</li>
+            <li><strong>Cooldowns</strong> - Skills have 0-2 turn cooldowns</li>
+            <li><strong>Interactive</strong> - Click highlighted cells to move</li>
+            <li><strong>Strategic Choice</strong> - Must choose between moving, attacking, or defending</li>
+          </ul>
+          <p><strong>Class Movement Skills:</strong></p>
+          <ul>
+            <li>⚔️ Warrior: <em>Reposition</em> (15 mana, 1 cooldown)</li>
+            <li>🛡️ Tank: <em>Steady Advance</em> (10 mana, 2 cooldown)</li>
+            <li>⚖️ Balanced: <em>Tactical Move</em> (10 mana, 1 cooldown)</li>
+            <li>🗡️ Assassin: <em>Shadow Step</em> (12 mana, 0 cooldown)</li>
+            <li>🪄 Mage: <em>Arcane Step</em> (15 mana, 1 cooldown)</li>
+            <li>⚡ Berserker: <em>Rage Rush</em> (10 mana, 1 cooldown)</li>
+            <li>✝️ Paladin: <em>Divine Stride</em> (12 mana, 1 cooldown)</li>
+            <li>💀 Necromancer: <em>Death Walk</em> (15 mana, 2 cooldown)</li>
+            <li>👊 Brawler: <em>Quick Step</em> (10 mana, 0 cooldown)</li>
+          </ul>
+        </div>
+
+        <div class="mechanic-card">
+          <h3>🎯 Weapon Range System</h3>
+          <ul>
+            <li><strong>Melee Weapons</strong> - Range 1 (swords, axes, hammers)</li>
+            <li><strong>Ranged Weapons</strong> - Range 2-4 (staves, wands)</li>
+            <li><strong>Class Ranges</strong> - Mages have 3-cell base range, others have 1</li>
+            <li><strong>Out of Range</strong> - Attack button disabled when too far</li>
+            <li><strong>Must Move</strong> - Use movement skills to get closer</li>
+          </ul>
+        </div>
+
+        <h2>🌍 Terrain Types (10 Total)</h2>
+
+        <div class="terrain-grid">
+          <div class="terrain-card">
+            <div class="terrain-icon">◻️</div>
+            <h4>Normal Ground</h4>
+            <p>Standard battlefield terrain with no bonuses or penalties.</p>
+            <div class="terrain-stats">
+              <span>Move: 1</span>
+              <span>Def: +0%</span>
+              <span>Atk: +0%</span>
+            </div>
+          </div>
+
+          <div class="terrain-card">
+            <div class="terrain-icon">🌱</div>
+            <h4>Grassland</h4>
+            <p>Open grassland, easy to traverse.</p>
+            <div class="terrain-stats">
+              <span>Move: 1</span>
+              <span>Def: +0%</span>
+              <span>Atk: +0%</span>
+            </div>
+          </div>
+
+          <div class="terrain-card">
+            <div class="terrain-icon">🌳</div>
+            <h4>Dense Forest</h4>
+            <p>Provides cover but hinders attacks. Blocks line of sight!</p>
+            <div class="terrain-stats">
+              <span>Move: 2</span>
+              <span>Def: +15%</span>
+              <span>Atk: -10%</span>
+            </div>
+          </div>
+
+          <div class="terrain-card">
+            <div class="terrain-icon">💧</div>
+            <h4>Shallow Water</h4>
+            <p>Difficult to move through, reduces combat effectiveness.</p>
+            <div class="terrain-stats">
+              <span>Move: 3</span>
+              <span>Def: -10%</span>
+              <span>Atk: -15%</span>
+            </div>
+          </div>
+
+          <div class="terrain-card">
+            <div class="terrain-icon">🟤</div>
+            <h4>Muddy Ground</h4>
+            <p>Slows movement and reduces stability.</p>
+            <div class="terrain-stats">
+              <span>Move: 2</span>
+              <span>Def: -5%</span>
+              <span>Atk: -10%</span>
+            </div>
+          </div>
+
+          <div class="terrain-card">
+            <div class="terrain-icon">⬜</div>
+            <h4>Rocky Terrain</h4>
+            <p>Stable ground provides slight defensive advantage.</p>
+            <div class="terrain-stats">
+              <span>Move: 1</span>
+              <span>Def: +10%</span>
+              <span>Atk: +5%</span>
+            </div>
+          </div>
+
+          <div class="terrain-card highlight">
+            <div class="terrain-icon">🏔️</div>
+            <h4>High Ground</h4>
+            <p><strong>BEST POSITION!</strong> Elevated position grants huge combat advantage.</p>
+            <div class="terrain-stats">
+              <span>Move: 1</span>
+              <span>Def: +20%</span>
+              <span>Atk: +25%</span>
+            </div>
+          </div>
+
+          <div class="terrain-card danger">
+            <div class="terrain-icon">⬛</div>
+            <h4>Low Ground</h4>
+            <p><strong>AVOID!</strong> Depression in terrain, disadvantageous position.</p>
+            <div class="terrain-stats">
+              <span>Move: 1</span>
+              <span>Def: -15%</span>
+              <span>Atk: -10%</span>
+            </div>
+          </div>
+
+          <div class="terrain-card impassable">
+            <div class="terrain-icon">🧱</div>
+            <h4>Stone Wall</h4>
+            <p><strong>IMPASSABLE!</strong> Cannot move through. Blocks line of sight.</p>
+            <div class="terrain-stats">
+              <span>Move: ∞</span>
+              <span>Def: —</span>
+              <span>Atk: —</span>
+            </div>
+          </div>
+
+          <div class="terrain-card impassable">
+            <div class="terrain-icon">⚫</div>
+            <h4>Deep Pit</h4>
+            <p><strong>IMPASSABLE!</strong> Dangerous pit, cannot be crossed.</p>
+            <div class="terrain-stats">
+              <span>Move: ∞</span>
+              <span>Def: —</span>
+              <span>Atk: —</span>
+            </div>
+          </div>
+        </div>
+
+        <h2>🎯 Tactical Mechanics</h2>
+
+        <div class="mechanic-card">
+          <h3>⚔️ Flanking</h3>
+          <p>Attack enemies from behind or sides for bonus damage!</p>
+          <ul>
+            <li><strong>+15% Damage</strong> when attacking from flanking position</li>
+            <li>Flanking detected automatically</li>
+            <li>Position yourself strategically to flank</li>
+          </ul>
+        </div>
+
+        <div class="mechanic-card">
+          <h3>👁️ Line of Sight</h3>
+          <p>Some terrain blocks vision and ranged attacks:</p>
+          <ul>
+            <li>🌳 <strong>Forest</strong> blocks line of sight</li>
+            <li>🧱 <strong>Walls</strong> block line of sight</li>
+            <li>Cannot attack targets you can't see!</li>
+          </ul>
+        </div>
+
+        <div class="mechanic-card">
+          <h3>🏰 Predefined Battlefields</h3>
+          <p>Story missions use unique battlefield layouts:</p>
+          <ul>
+            <li><strong>Training Grounds</strong> - Balanced mix of terrain</li>
+            <li><strong>Forest Clearing</strong> - Dense forest with central opening</li>
+            <li><strong>Desert Ruins</strong> - Rocky terrain with walls</li>
+            <li><strong>Treacherous Swamp</strong> - Mud and water obstacles</li>
+            <li><strong>Mountain Pass</strong> - High and low ground</li>
+            <li><strong>Combat Arena</strong> - Walled perimeter with rock cover</li>
+          </ul>
+        </div>
+
+        <h2>💡 Pro Tips</h2>
+        <div class="tips">
+          <div class="tip">
+            <strong>🏔️ Secure High Ground</strong> - The +25% attack bonus is massive! Rush for elevated positions early.
+          </div>
+          <div class="tip">
+            <strong>🌳 Use Cover</strong> - Forest provides +15% defense and blocks enemy line of sight.
+          </div>
+          <div class="tip">
+            <strong>💧 Avoid Water & Mud</strong> - These terrains reduce your combat effectiveness significantly.
+          </div>
+          <div class="tip">
+            <strong>⚡ Assassins Excel</strong> - Shadow Step has 0 cooldown for maximum mobility!
+          </div>
+          <div class="tip">
+            <strong>🎯 Range Matters</strong> - Mages can attack from 3 cells away, melee must close in.
+          </div>
+          <div class="tip">
+            <strong>⚔️ Flank Enemies</strong> - Position yourself behind enemies for +15% damage bonus.
+          </div>
+        </div>
+
+        <div class="info-box">
+          <strong>📚 For Technical Details:</strong> See <code>docs/GRID_COMBAT_SYSTEM.md</code> and <code>docs/WEAPON_RANGE_SYSTEM.md</code>
         </div>
       </div>
     `;
