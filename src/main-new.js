@@ -11,7 +11,7 @@ import './components/index.js';
 
 // Import game modules
 import Game from './game/game.js';
-import { Team } from './entities/team.js';
+// Team Battle removed - keeping only Story, Single Combat, and Tournament modes
 import { Fighter } from './entities/fighter.js';
 import { soundManager } from './utils/soundManager.js';
 import { getFighters } from './api/mockFighters.js';
@@ -905,14 +905,6 @@ function startBattle(fighters, tournamentInfo = null) {
       ) {
         console.log('🎮 Starting single fight:', fighters[0].name, 'vs', fighters[1].name);
         Game.startGame(fighters[0], fighters[1]);
-      } else if (appState.gameMode === 'team') {
-        // Team match logic
-        const team1 = new Team('Team One', fighters.slice(0, Math.floor(fighters.length / 2)));
-        const team2 = new Team('Team Two', fighters.slice(Math.floor(fighters.length / 2)));
-        console.log('🎮 Starting team match:', team1.name, 'vs', team2.name);
-        console.log('Team 1 fighters:', team1.fighters.map((f) => f.name).join(', '));
-        console.log('Team 2 fighters:', team2.fighters.map((f) => f.name).join(', '));
-        Game.startTeamMatch(team1, team2);
       }
     });
   });

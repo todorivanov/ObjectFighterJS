@@ -21,7 +21,6 @@
 ### 🎮 **Multiple Game Modes**
 - **Story Mode** - Epic 25-mission campaign across 5 unique regions
 - **Single Combat** - Face an opponent with your custom character
-- **Team Battle** - Assemble and command teams in epic battles
 - **Tournament Mode** - 3-round bracket championship with escalating rewards
 
 ### 👤 **Character Progression**
@@ -215,9 +214,6 @@ Embark on an epic 25-mission campaign! Journey through 5 unique regions, from th
 ### **Single Combat**
 Create your character and face opponents in 1v1 tactical battles. Choose your actions each turn and outsmart your enemy! Earn gold and equipment with each victory.
 
-### **Team Battle**
-Select multiple fighters for each team and watch them battle it out in epic team combat.
-
 ### **Tournament Mode**
 Enter the arena and face 3 opponents in succession. Win all rounds to claim the championship and massive rewards!
 
@@ -349,12 +345,6 @@ npm run preview
 2. Browse equipment in the rotating shop (refreshes every 24 hours)
 3. Purchase equipment, consumables, or repair damaged items
 4. Sell unwanted equipment for gold
-
-### **Team Battle**
-1. Click **"👥 Team Battle"** from main menu
-2. Select multiple fighters for each team
-3. Click **"Start Battle"**
-4. Watch the teams battle automatically
 
 ### **Tournament Mode**
 1. Click **"🏆 Tournament"** from main menu

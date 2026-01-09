@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.7.0] - 2026-01-09
 
+### Removed - Team Battle Mode 🔄
+- **Removed Team Battle** from game modes
+  - Removed "👥 Team Battle" button from title screen
+  - Removed `startTeamMatch()` from Game class
+  - Removed `processTeamCombat()` and `removeFighter()` from CombatEngine
+  - Removed team-specific victory condition logic
+  - Removed `introduceTeams()`, `matchRoundSummary()`, and `declareWinningTeam()` from Referee
+  - Removed `displayTeamSummary()` and `displayTeamHealthSummary()` from Game class
+  - Removed Team import from main-new.js
+  - Kept Team entity file for potential future use
+- **Game now focuses on three core modes**:
+  - 📖 Story Mode (25 missions, 5 regions)
+  - ⚔️ Single Combat (1v1 battles)
+  - 🏆 Tournament Mode (bracket championships)
+- Updated README.md to reflect mode changes
+- Simplified codebase by removing ~300 lines of team-specific code
+
 ### Added - Enhanced Status Effect System 🎯
 - **17 Status Effects** (9 new + 8 enhanced existing):
   - **New Effects**:

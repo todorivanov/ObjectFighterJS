@@ -1,9 +1,8 @@
 import { Referee } from '../entities/referee.js';
-import { Helpers } from '../utils/helpers.js';
+// Helpers and EventManager imports removed - no longer needed after Team Battle removal
 import { Logger } from '../utils/logger.js';
 import { getFighters } from '../api/mockFighters.js';
 import { GameStateManager } from './GameStateManager.js';
-import { EventManager } from './EventManager.js';
 import { CombatEngine } from './CombatEngine.js';
 import { hudManager } from '../utils/hudManager.js';
 import { TurnManager } from './TurnManager.js';
@@ -19,7 +18,7 @@ import { createAI } from '../ai/AIManager.js';
 import { comboSystem } from './ComboSystem.js';
 import { combatPhaseManager, CombatPhase } from './CombatPhaseManager.js';
 
-const ROUND_INTERVAL = 1500;
+// ROUND_INTERVAL removed - no longer needed after Team Battle removal
 const AI_TURN_DELAY = 1200;
 
 // Game instance state manager
@@ -845,167 +844,7 @@ export default class Game {
    * @param {Team} teamOne - First team
    * @param {Team} teamTwo - Second team
    */
-  static startTeamMatch(teamOne, teamTwo) {
-    // Initialize clean state
-    this.stopGame();
-    gameState = new GameStateManager();
-    comboSystem.reset(); // Reset combo tracking for new battle
-
-    Logger.clearLog();
-
-    // Create team summary display
-    this.displayTeamSummary(teamOne, teamTwo);
-
-    Referee.introduceTeams(teamOne, teamTwo);
-
-    let roundCount = 0;
-    const intervalId = setInterval(() => {
-      roundCount++;
-
-      // Show round number
-      const roundMsg = `<div class="round-announcement" style="background: linear-gradient(135deg, #6a42c2, #ffa726); color: white; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; border-radius: 12px; margin: 15px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">⚔️ ROUND ${roundCount} ⚔️</div>`;
-      Logger.log(roundMsg);
-
-      const randomNumber = Helpers.getRandomNumber(0, 1001);
-
-      // Process random events (higher threshold for team matches)
-      EventManager.processRoundEvent(gameState, teamOne.fighters, teamTwo.fighters, randomNumber, {
-        min: 470,
-        max: 530,
-      });
-
-      // Process team combat
-      if (randomNumber < 500) {
-        CombatEngine.processTeamCombat(teamOne, teamTwo);
-      } else {
-        CombatEngine.processTeamCombat(teamTwo, teamOne);
-      }
-
-      // Display round summary with health bars
-      this.displayTeamHealthSummary(teamOne, teamTwo);
-
-      // Check victory condition
-      const result = CombatEngine.checkVictoryCondition(teamOne, teamTwo, true);
-      if (result) {
-        Referee.declareWinningTeam(result.winner);
-        gameState.stop();
-
-        // Award XP for team victory (more than single fight)
-        const xpReward = 150; // Higher XP for team matches
-        SaveManager.increment('stats.totalWins');
-        SaveManager.increment('stats.totalFightsPlayed');
-        SaveManager.increment('stats.winStreak');
-        const bestStreak = SaveManager.get('stats.bestStreak') || 0;
-        if (SaveManager.get('stats.winStreak') > bestStreak) {
-          SaveManager.update('stats.bestStreak', SaveManager.get('stats.winStreak'));
-        }
-        LevelingSystem.awardXP(xpReward, 'Victory in Team Battle');
-
-        // Show victory screen
-        setTimeout(() => {
-          if (window.showVictoryScreen) {
-            // For team match, show first fighter of winning team
-            const winningFighter = result.winner.fighters[0];
-            window.showVictoryScreen(winningFighter);
-          }
-        }, 2000);
-      }
-    }, ROUND_INTERVAL);
-
-    gameState.setIntervalId(intervalId);
-  }
-
-  /**
-   * Display team summary at start
-   */
-  static displayTeamSummary(teamOne, teamTwo) {
-    const team1List = teamOne.fighters
-      .map((f) => `<span style="color: #00e676;">⚔️ ${f.name}</span>`)
-      .join(', ');
-    const team2List = teamTwo.fighters
-      .map((f) => `<span style="color: #ffa726;">⚔️ ${f.name}</span>`)
-      .join(', ');
-
-    const summaryMsg = `
-      <div style="background: linear-gradient(145deg, rgba(42, 26, 71, 0.8), rgba(26, 13, 46, 0.9)); border: 2px solid rgba(106, 66, 194, 0.5); border-radius: 16px; padding: 25px; margin: 20px 0; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
-        <h3 style="text-align: center; color: #ffa726; font-size: 28px; margin: 0 0 20px 0; text-transform: uppercase;">⚔️ Team Battle ⚔️</h3>
-        <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center;">
-          <div style="text-align: right;">
-            <h4 style="color: #00e676; font-size: 20px; margin: 0 0 10px 0;">💚 ${teamOne.name}</h4>
-            <div style="color: white; line-height: 1.6;">${team1List}</div>
-          </div>
-          <div style="font-size: 40px; color: #ffa726;">VS</div>
-          <div style="text-align: left;">
-            <h4 style="color: #ffa726; font-size: 20px; margin: 0 0 10px 0;">🧡 ${teamTwo.name}</h4>
-            <div style="color: white; line-height: 1.6;">${team2List}</div>
-          </div>
-        </div>
-      </div>
-    `;
-
-    Logger.log(summaryMsg);
-  }
-
-  /**
-   * Display team health summary
-   */
-  static displayTeamHealthSummary(teamOne, teamTwo) {
-    const team1Fighters = teamOne.fighters
-      .map((f) => {
-        // Ensure health values are valid numbers
-        const currentHealth = isNaN(f.health) ? 0 : Math.max(0, Math.round(f.health));
-        const maxHealth = isNaN(f.maxHealth) || f.maxHealth === 0 ? 100 : f.maxHealth;
-        const healthPercent = Math.max(0, Math.min(100, (currentHealth / maxHealth) * 100));
-        const healthColor =
-          healthPercent > 60 ? '#00e676' : healthPercent > 30 ? '#ffc107' : '#ff1744';
-        const status = currentHealth > 0 ? '💚' : '💀';
-
-        return `
-        <div style="margin: 5px 0;">
-          ${status} <strong>${f.name}</strong>: 
-          <span style="color: ${healthColor};">${currentHealth} HP</span>
-        </div>
-      `;
-      })
-      .join('');
-
-    const team2Fighters = teamTwo.fighters
-      .map((f) => {
-        // Ensure health values are valid numbers
-        const currentHealth = isNaN(f.health) ? 0 : Math.max(0, Math.round(f.health));
-        const maxHealth = isNaN(f.maxHealth) || f.maxHealth === 0 ? 100 : f.maxHealth;
-        const healthPercent = Math.max(0, Math.min(100, (currentHealth / maxHealth) * 100));
-        const healthColor =
-          healthPercent > 60 ? '#00e676' : healthPercent > 30 ? '#ffc107' : '#ff1744';
-        const status = currentHealth > 0 ? '🧡' : '💀';
-
-        return `
-        <div style="margin: 5px 0;">
-          ${status} <strong>${f.name}</strong>: 
-          <span style="color: ${healthColor};">${currentHealth} HP</span>
-        </div>
-      `;
-      })
-      .join('');
-
-    const summaryMsg = `
-      <div style="background: rgba(0, 0, 0, 0.3); border-radius: 12px; padding: 20px; margin: 15px 0; border-left: 4px solid #6a42c2;">
-        <h4 style="text-align: center; color: #b39ddb; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 2px;">📊 Team Status</h4>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-          <div>
-            <h5 style="color: #00e676; margin: 0 0 10px 0;">💚 ${teamOne.name}</h5>
-            ${team1Fighters}
-          </div>
-          <div>
-            <h5 style="color: #ffa726; margin: 0 0 10px 0;">🧡 ${teamTwo.name}</h5>
-            ${team2Fighters}
-          </div>
-        </div>
-      </div>
-    `;
-
-    Logger.log(summaryMsg);
-  }
+  // Team Battle mode removed - keeping only Story, Single Combat, and Tournament modes
 
   /**
    * Stop the current game and clean up resources
