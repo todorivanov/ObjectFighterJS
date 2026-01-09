@@ -16,7 +16,7 @@ import { Fighter } from './entities/fighter.js';
 import { soundManager } from './utils/soundManager.js';
 import { getFighters } from './api/mockFighters.js';
 import { Logger } from './utils/logger.js';
-import { SaveManager } from './utils/saveManager.js';
+import { SaveManagerV2 as SaveManager } from './utils/SaveManagerV2.js';
 import { LevelingSystem } from './game/LevelingSystem.js';
 import { EquipmentManager } from './game/EquipmentManager.js';
 import { tournamentMode } from './game/TournamentMode.js';
@@ -119,6 +119,7 @@ function initializeRouter() {
       // Equipment screen to be implemented
       console.log('Equipment screen - to be implemented');
     },
+    showSaveManagementScreen,
   };
 
   // Register all routes
@@ -645,6 +646,22 @@ function showSettingsScreen() {
 
   root.appendChild(settingsScreen);
   appState.currentScreen = 'settings';
+}
+
+/**
+ * Show save management screen
+ */
+function showSaveManagementScreen() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  const saveManagementScreen = document.createElement('save-management-screen');
+  saveManagementScreen.addEventListener('back', () => {
+    router.navigate(RoutePaths.SETTINGS);
+  });
+
+  root.appendChild(saveManagementScreen);
+  appState.currentScreen = 'save-management';
 }
 
 /**

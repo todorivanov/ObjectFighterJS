@@ -38,20 +38,6 @@ export class NavigationBar extends BaseComponent {
 
   connectedCallback() {
     this.render();
-    this.attachEventListeners();
-  }
-
-  attachEventListeners() {
-    // Navigation buttons
-    this.buttons.forEach((button) => {
-      const btn = this.shadowRoot.querySelector(`#${button.id}-btn`);
-      if (btn) {
-        btn.addEventListener('click', () => {
-          soundManager.play('event');
-          router.navigate(button.path);
-        });
-      }
-    });
   }
 
   render() {
@@ -162,6 +148,17 @@ export class NavigationBar extends BaseComponent {
         ${buttonsHTML}
       </div>
     `;
+    
+    // Attach event listeners after rendering
+    this.buttons.forEach((button) => {
+      const btn = this.shadowRoot.querySelector(`#${button.id}-btn`);
+      if (btn) {
+        btn.addEventListener('click', () => {
+          soundManager.play('event');
+          router.navigate(button.path);
+        });
+      }
+    });
   }
 }
 

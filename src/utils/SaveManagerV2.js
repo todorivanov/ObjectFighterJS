@@ -91,8 +91,17 @@ export class SaveManagerV2 {
       story: {
         unlockedRegions: ['tutorial'],
         unlockedMissions: ['tutorial_1'],
-        completedMissions: {},
+        completedMissions: [],
         currentMission: null,
+        missionStars: {},
+      },
+      // Alias for backward compatibility
+      storyProgress: {
+        unlockedRegions: ['tutorial'],
+        unlockedMissions: ['tutorial_1'],
+        completedMissions: [],
+        currentMission: null,
+        missionStars: {},
       },
       marketplace: {
         lastRefresh: null,
@@ -400,10 +409,10 @@ export class SaveManagerV2 {
 
   /**
    * Delete save slot
-   * @param {number} slot - Save slot
+   * @param {number} slot - Save slot (defaults to 1)
    * @returns {boolean} Success
    */
-  static deleteSave(slot) {
+  static deleteSave(slot = 1) {
     try {
       const saveKey = this.getSaveKey(slot);
       localStorage.removeItem(saveKey);
@@ -522,6 +531,23 @@ export class SaveManagerV2 {
 
     const defaultData = this.getDefaultProfile();
 
+    // Migrate storyProgress to story if it exists
+    const storyData = data.story || data.storyProgress || defaultData.story;
+    
+    // Ensure story has the correct structure
+    const migratedStory = {
+      unlockedRegions: storyData.unlockedRegions || ['tutorial'],
+      unlockedMissions: storyData.unlockedMissions || ['tutorial_1'],
+      completedMissions: storyData.completedMissions || [],
+      currentMission: storyData.currentMission || null,
+    };
+    
+    // Handle old format where completedMissions might be an object with missionStars
+    if (data.storyProgress?.missionStars) {
+      // Old format had missionStars as a separate field
+      migratedStory.missionStars = data.storyProgress.missionStars;
+    }
+
     return {
       ...defaultData,
       ...data,
@@ -531,7 +557,9 @@ export class SaveManagerV2 {
         ...defaultData.settings,
         ...data.settings,
       },
-      story: data.story || data.storyProgress || defaultData.story,
+      story: migratedStory,
+      // Keep storyProgress as an alias for backward compatibility
+      storyProgress: migratedStory,
     };
   }
 
@@ -621,9 +649,23 @@ export class SaveManagerV2 {
     const data = this.load();
     const keys = path.split('.');
     const lastKey = keys.pop();
-    const target = keys.reduce((obj, key) => obj[key], data);
+    
+    // Navigate to nested object, creating intermediate objects if needed
+    let target = data;
+    for (const key of keys) {
+      if (!target[key]) {
+        target[key] = {};
+      }
+      target = target[key];
+    }
+    
     target[lastKey] = value;
     this.save(data);
+  }
+
+  static update(path, value) {
+    // Alias for set() for backward compatibility
+    return this.set(path, value);
   }
 
   static increment(path, amount = 1) {

@@ -5,6 +5,59 @@ All notable changes to Legends of the Arena will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.1.0] - 2026-01-09
+
+### Added - Save System V2
+- **Multiple Save Slots**: Manage up to 3 different character saves
+- **Import/Export**: Download save files as JSON and import them back
+- **Auto-Backup System**: Automatic backups (up to 5 per slot) before each save
+- **Backup Restore**: Restore from any previous backup with timestamp selection
+- **Data Compression**: LZ-String compression reduces save file size by ~60%
+- **Version Migration**: Automatic migration of old save formats to new versions
+- **Save Management Screen**: Dedicated UI for managing all save operations
+- **Storage Info**: View localStorage usage and available space
+- **Save Validation**: Integrity checks to prevent corrupted saves
+
+### Added - Architecture Improvements
+- **Router System**: Client-side routing with History API and route guards
+- **State Management**: Centralized store with actions, reducers, and selectors
+- **Enhanced AI System**: Behavior trees with personality-based decision making
+- **Component Refactoring**: Extracted navigation, theme, and sound controls into reusable Web Components
+- **SaveManagerAdapter**: Backward compatibility layer for gradual migration
+
+### Added - New Components
+- `NavigationBar`: Persistent navigation with Profile, Achievements, and Settings
+- `ThemeToggle`: Dark/light mode toggle component
+- `SoundToggle`: Sound on/off toggle component
+- `SaveManagementScreen`: Full-featured save management interface
+
+### Technical
+- Added `lz-string` dependency for data compression
+- Created `SaveManagerV2` with advanced features
+- Implemented `Router` class for client-side navigation
+- Added `Store` class with middleware and time-travel debugging
+- Created `AIManager` with behavior tree support
+- Added comprehensive documentation in `/docs` folder
+
+### Changed
+- Refactored `main-new.js` to use Router instead of imperative navigation
+- Updated all navigation to use `router.navigate()` instead of direct function calls
+- Settings screen now includes link to Save Management
+- All 19 modules migrated from old `SaveManager` to `SaveManagerV2`
+- Version bumped from 4.0.0 to 4.1.0
+
+### Removed
+- `src/utils/saveManager.js` - Replaced by SaveManagerV2
+- `src/utils/SaveManagerAdapter.js` - No longer needed after direct migration
+
+### Documentation
+- Added `ROUTER_SYSTEM.md` - Router architecture and usage
+- Added `STATE_MANAGEMENT.md` - Store pattern documentation
+- Added `SAVE_SYSTEM_V2.md` - Save system features and API
+- Added `AI_SYSTEM.md` - AI behavior tree documentation
+- Added `COMPONENT_REFACTORING.md` - Component architecture guide
+- Added `STORE_EXAMPLES.md` - Integration examples
+
 ## [4.0.0] - 2026-01-09
 
 ### Added - Major Features

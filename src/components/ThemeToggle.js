@@ -41,7 +41,7 @@ export class ThemeToggle extends BaseComponent {
         :host {
           display: block;
           position: fixed;
-          top: 20px;
+          bottom: 20px;
           right: 80px;
           z-index: 10000;
         }

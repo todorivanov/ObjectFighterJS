@@ -1,4 +1,4 @@
-# Legends of the Arena v4.0 ⚔️
+# Legends of the Arena v4.1 ⚔️
 
 **An epic browser-based RPG fighting game with story mode, turn-based tactical combat, character progression, equipment systems, and marketplace economy.**
 
@@ -70,6 +70,14 @@
 - **Buy & Sell** - Trade equipment for profit
 - **Repair shop** - Restore durability of damaged items
 - **Consumables** - Purchase health and mana potions
+
+### 💾 **Advanced Save System** ⭐NEW⭐
+- **Multiple save slots** - Manage up to 3 different characters
+- **Import/Export** - Download and share your save files
+- **Auto-backup** - Automatic backups protect your progress
+- **Data compression** - Efficient storage using LZ-String
+- **Version migration** - Seamless updates across game versions
+- **Save management UI** - Easy-to-use interface for all save operations
 
 ### 📖 **Story Mode Campaign**
 - **25 epic missions** across 5 unique regions
@@ -494,12 +502,12 @@ MIT License - See [LICENSE](LICENSE) file for details
 📱 **Responsive**: Works on desktop, tablet, and mobile  
 🚀 **Auto-Deploy**: GitHub Actions + GitHub Pages  
 📚 **Well Documented**: In-game wiki + markdown guides  
-💾 **Save System**: LocalStorage persistence  
+💾 **Advanced Save System**: Multiple slots + import/export + backups  
 
 ---
 
-**Version**: 4.0.0  
-**Status**: Legends of the Arena - Epic Story Mode! ⚔️✨  
+**Version**: 4.1.0  
+**Status**: Legends of the Arena - Enhanced Save System! ⚔️✨💾  
 **Play Now**: Deploy to GitHub Pages and become a legend!
 
 ---

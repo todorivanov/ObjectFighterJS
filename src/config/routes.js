@@ -3,7 +3,7 @@
  * Centralized route configuration with guards
  */
 
-import { SaveManager } from '../utils/saveManager.js';
+import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 import { StoryMode } from '../game/StoryMode.js';
 
 /**
@@ -175,6 +175,11 @@ export function getRouteConfig(handlers) {
       handler: handlers.showEquipmentScreen,
       guard: 'characterCreated',
       title: 'Equipment - Legends of the Arena',
+    },
+    {
+      path: RoutePaths.SAVE_MANAGEMENT,
+      handler: handlers.showSaveManagementScreen,
+      title: 'Save Management - Legends of the Arena',
     },
   ];
 }

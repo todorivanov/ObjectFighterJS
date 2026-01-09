@@ -4,7 +4,7 @@
 
 import { createStore } from './Store.js';
 import { reducers } from './reducers.js';
-import { SaveManager } from '../utils/saveManager.js';
+import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 
 /**
  * Get initial state from SaveManager or defaults

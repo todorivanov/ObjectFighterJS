@@ -1,10 +1,11 @@
 /**
- * Compression Utilities - Data compression for save files
- * Simple LZ-based compression without external dependencies
+ * Compression Utilities - Data compression for save files using LZ-String
  */
 
+import LZString from 'lz-string';
+
 /**
- * Compress a string using simple LZ compression
+ * Compress a string using LZ compression
  * @param {string} str - String to compress
  * @returns {string} Compressed string
  */
@@ -12,31 +13,7 @@ export function compress(str) {
   if (!str || str.length === 0) return '';
 
   try {
-    // Simple run-length encoding + dictionary-based compression
-    const dict = {};
-    let dictSize = 256;
-    let result = '';
-    let w = '';
-
-    for (let i = 0; i < str.length; i++) {
-      const c = str[i];
-      const wc = w + c;
-
-      if (dict[wc]) {
-        w = wc;
-      } else {
-        result += w.length === 1 ? w : dict[w] || w;
-        dict[wc] = dictSize++;
-        w = c;
-      }
-    }
-
-    if (w) {
-      result += w.length === 1 ? w : dict[w] || w;
-    }
-
-    // Base64 encode for safe storage
-    return btoa(encodeURIComponent(result));
+    return LZString.compressToUTF16(str);
   } catch (error) {
     console.error('Compression failed:', error);
     return str; // Return original if compression fails
@@ -52,9 +29,8 @@ export function decompress(compressed) {
   if (!compressed || compressed.length === 0) return '';
 
   try {
-    // Base64 decode
-    const decoded = decodeURIComponent(atob(compressed));
-    return decoded;
+    const decompressed = LZString.decompressFromUTF16(compressed);
+    return decompressed || compressed;
   } catch (error) {
     console.error('Decompression failed:', error);
     return compressed; // Return original if decompression fails

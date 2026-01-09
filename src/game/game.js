@@ -8,7 +8,7 @@ import { CombatEngine } from './CombatEngine.js';
 import { hudManager } from '../utils/hudManager.js';
 import { TurnManager } from './TurnManager.js';
 import { soundManager } from '../utils/soundManager.js';
-import { SaveManager } from '../utils/saveManager.js';
+import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 import { LevelingSystem } from './LevelingSystem.js';
 import { EquipmentManager } from './EquipmentManager.js';
 import { DifficultyManager } from './DifficultyManager.js';

@@ -181,11 +181,13 @@ export class SaveManagementScreen extends BaseComponent {
         :host {
           display: block;
           width: 100%;
-          min-height: 100vh;
+          height: 100vh;
           background: linear-gradient(135deg, #1a0d2e 0%, #2d1b69 100%);
           color: white;
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
           padding: 40px 20px;
+          overflow-y: auto;
+          overflow-x: hidden;
         }
 
         .container {
