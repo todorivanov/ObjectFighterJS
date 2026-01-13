@@ -61,6 +61,7 @@ export class NavigationBar extends BaseComponent {
       .join('');
 
     this.shadowRoot.innerHTML = `
+      <style>${this.styles()}</style>
       <div class="nav-container">
         ${buttonsHTML}
       </div>

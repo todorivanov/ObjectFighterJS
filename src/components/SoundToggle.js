@@ -37,6 +37,7 @@ export class SoundToggle extends BaseComponent {
 
   render() {
     this.shadowRoot.innerHTML = `
+      <style>${this.styles()}</style>
       <button 
         id="sound-toggle-btn" 
         class="sound-toggle-btn"
