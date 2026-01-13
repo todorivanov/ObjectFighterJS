@@ -3,7 +3,7 @@
  * Centralized route configuration with guards
  */
 
-import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
+import { gameStore } from '../store/gameStore.js';
 
 /**
  * Route Guards - Access control functions
@@ -13,8 +13,8 @@ export const RouteGuards = {
    * Check if character has been created
    */
   characterCreated: () => {
-    const saveData = SaveManager.load();
-    return saveData.profile.characterCreated;
+    const state = gameStore.getState();
+    return state.player.characterCreated;
   },
 
   /**
@@ -22,9 +22,9 @@ export const RouteGuards = {
    * @param {Object} data - Route data with minLevel
    */
   minimumLevel: (data) => {
-    const saveData = SaveManager.load();
+    const state = gameStore.getState();
     const minLevel = data.minLevel || 1;
-    return saveData.profile.level >= minLevel;
+    return state.player.level >= minLevel;
   },
 
   /**
@@ -33,8 +33,8 @@ export const RouteGuards = {
    */
   regionUnlocked: (data) => {
     if (!data.regionId) return true;
-    const saveData = SaveManager.load();
-    return saveData.story?.unlockedRegions?.includes(data.regionId) || false;
+    const state = gameStore.getState();
+    return state.story?.unlockedRegions?.includes(data.regionId) || false;
   },
 
   /**
@@ -43,16 +43,16 @@ export const RouteGuards = {
    */
   missionUnlocked: (data) => {
     if (!data.missionId) return true;
-    const saveData = SaveManager.load();
-    return saveData.story?.unlockedMissions?.includes(data.missionId) || false;
+    const state = gameStore.getState();
+    return state.story?.unlockedMissions?.includes(data.missionId) || false;
   },
 
   /**
    * Check if tournament is unlocked (level 5+)
    */
   tournamentUnlocked: () => {
-    const saveData = SaveManager.load();
-    return saveData.profile.level >= 5;
+    const state = gameStore.getState();
+    return state.player.level >= 5;
   },
 };
 

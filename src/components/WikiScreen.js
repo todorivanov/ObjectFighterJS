@@ -11,8 +11,7 @@ export class WikiScreen extends BaseComponent {
     return `
       <style>${styles}</style>
       <div class="wiki-container">
-        <button class="back-button">← Back</button>
-        <button class="back-button">← Back</button>
+        <button class="back-button" id="backBtn">← Back</button>
 
         <div class="wiki-header">
           <div class="wiki-title">📚 Game Wiki</div>

@@ -8,13 +8,16 @@ import { Logger } from '../utils/logger.js';
 import { soundManager } from '../utils/soundManager.js';
 import { ACHIEVEMENTS, getAchievementById } from '../data/achievements.js';
 import { EconomyManager } from './EconomyManager.js';
+import { gameStore } from '../store/gameStore.js';
+import { unlockAchievement as unlockAchievementAction } from '../store/actions.js';
 
 export class AchievementManager {
   /**
    * Check if an achievement is unlocked
    */
   static isUnlocked(achievementId) {
-    const unlocked = SaveManager.get('unlocks.achievements') || [];
+    const state = gameStore.getState();
+    const unlocked = state.unlocks?.achievements || [];
     return unlocked.includes(achievementId);
   }
 
@@ -22,7 +25,8 @@ export class AchievementManager {
    * Get all unlocked achievements
    */
   static getUnlockedAchievements() {
-    const unlocked = SaveManager.get('unlocks.achievements') || [];
+    const state = gameStore.getState();
+    const unlocked = state.unlocks?.achievements || [];
     return unlocked.map((id) => getAchievementById(id)).filter(Boolean);
   }
 
@@ -30,7 +34,8 @@ export class AchievementManager {
    * Get completion percentage
    */
   static getCompletionPercentage() {
-    const unlocked = SaveManager.get('unlocks.achievements') || [];
+    const state = gameStore.getState();
+    const unlocked = state.unlocks?.achievements || [];
     return Math.floor((unlocked.length / ACHIEVEMENTS.length) * 100);
   }
 
@@ -48,10 +53,8 @@ export class AchievementManager {
       return false;
     }
 
-    // Add to unlocked list
-    const unlocked = SaveManager.get('unlocks.achievements') || [];
-    unlocked.push(achievementId);
-    SaveManager.update('unlocks.achievements', unlocked);
+    // Add to unlocked list using gameStore
+    gameStore.dispatch(unlockAchievementAction(achievementId));
 
     // Award XP
     if (achievement.reward.xp) {
@@ -60,10 +63,7 @@ export class AchievementManager {
 
     // Award Gold
     if (achievement.reward.gold) {
-      // Import dynamically to avoid circular dependency
-      import('./EconomyManager.js').then(({ EconomyManager }) => {
-        EconomyManager.addGold(achievement.reward.gold, `Achievement: ${achievement.name}`);
-      });
+      EconomyManager.addGold(achievement.reward.gold, `Achievement: ${achievement.name}`);
     }
 
     // Show achievement notification

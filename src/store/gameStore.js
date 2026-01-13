@@ -12,6 +12,112 @@ import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 function getInitialState() {
   const saveData = SaveManager.load();
 
+  // If no save exists, return minimal state for character creation
+  if (!saveData) {
+    console.log('💾 No save found, initializing for character creation');
+    return {
+      player: {
+        id: `player_${Date.now()}`,
+        name: '',
+        level: 1,
+        xp: 0,
+        xpToNextLevel: 100,
+        gold: 100,
+        health: 100,
+        maxHealth: 100,
+        strength: 10,
+        defense: 0,
+        class: null,
+        characterCreated: false,
+        character: null,
+      },
+      combat: {
+        active: false,
+        fighter1: null,
+        fighter2: null,
+        round: 0,
+        currentTurn: null,
+        winner: null,
+        options: {},
+      },
+      gameMode: null,
+      currentScreen: 'character-creation',
+      fighters: [],
+      selectedFighters: [],
+      tournament: {
+        active: false,
+        opponents: [],
+        difficulty: 'normal',
+        currentRound: 0,
+        roundsWon: 0,
+        won: false,
+      },
+      story: {
+        currentMission: null,
+        completedMissions: {},
+        unlockedRegions: ['tutorial'],
+        unlockedMissions: ['tutorial_1'],
+      },
+      inventory: {
+        equipment: [],
+        consumables: {
+          health_potion: 3,
+          mana_potion: 3,
+        },
+      },
+      equipped: {
+        weapon: null,
+        armor: null,
+        accessory: null,
+      },
+      equipmentDurability: {},
+      stats: {
+        totalWins: 0,
+        totalLosses: 0,
+        totalDraws: 0,
+        winStreak: 0,
+        bestStreak: 0,
+        totalDamageDealt: 0,
+        totalDamageTaken: 0,
+        totalFightsPlayed: 0,
+        tournamentsWon: 0,
+        tournamentsPlayed: 0,
+        criticalHits: 0,
+        skillsUsed: 0,
+        itemsUsed: 0,
+        totalGoldEarned: 0,
+        totalGoldSpent: 0,
+        bossesDefeated: 0,
+        survivalMissionsCompleted: 0,
+      },
+      settings: {
+        difficulty: 'normal',
+        soundEnabled: true,
+        soundVolume: 0.3,
+        autoBattle: false,
+        autoScroll: true,
+        darkMode: true,
+        showPerformanceMonitor: false,
+      },
+      unlocks: {
+        fighters: [],
+        skills: [],
+        achievements: [],
+      },
+      ui: {
+        loading: false,
+        loadingMessage: '',
+        error: null,
+        notification: {
+          message: '',
+          type: 'info',
+          duration: 3000,
+          visible: false,
+        },
+      },
+    };
+  }
+
   return {
     // Player state
     player: {
@@ -60,7 +166,18 @@ function getInitialState() {
     // Story mode state
     story: {
       currentMission: null,
-      completedMissions: saveData.story?.completedMissions || {},
+      completedMissions: (() => {
+        const missions = saveData.story?.completedMissions || {};
+        // Handle migration from array format to object format
+        if (Array.isArray(missions)) {
+          const migratedMissions = {};
+          missions.forEach((missionId) => {
+            migratedMissions[missionId] = { stars: 0, completedAt: Date.now() };
+          });
+          return migratedMissions;
+        }
+        return missions;
+      })(),
       unlockedRegions: saveData.story?.unlockedRegions || ['tutorial'],
       unlockedMissions: saveData.story?.unlockedMissions || ['tutorial_1'],
     },
@@ -140,48 +257,76 @@ function getInitialState() {
 export const gameStore = createStore(getInitialState(), reducers);
 
 /**
- * Middleware: Auto-save to localStorage on state changes
+ * Save current state to SaveManager
  */
-gameStore.use({
-  after: (state, action, _prevState) => {
-    // Skip UI-only actions
-    const uiOnlyActions = [
-      'SET_LOADING',
-      'SET_ERROR',
-      'CLEAR_ERROR',
-      'SHOW_NOTIFICATION',
-      'HIDE_NOTIFICATION',
-      '@@UNDO',
-      '@@REDO',
-    ];
+export function saveGameState() {
+  // Skip saving if we're in the middle of resetting
+  if (isResetting) {
+    console.log('💾 Save skipped (resetting)');
+    return;
+  }
 
-    if (uiOnlyActions.includes(action.type)) {
-      return;
-    }
+  const state = gameStore.getState();
+  try {
+    SaveManager.save({
+      version: '4.0.0',
+      profile: {
+        ...state.player,
+        character: state.player.character,
+        characterCreated: state.player.characterCreated,
+        lastPlayedAt: Date.now(),
+      },
+      stats: state.stats,
+      equipped: state.equipped,
+      inventory: state.inventory,
+      equipmentDurability: state.equipmentDurability,
+      unlocks: state.unlocks,
+      settings: state.settings,
+      story: state.story,
+    });
+    console.log('💾 Game auto-saved');
+  } catch (error) {
+    console.error('❌ Failed to save:', error);
+  }
+}
 
-    // Auto-save state to SaveManager
-    try {
-      SaveManager.save({
-        version: '4.0.0',
-        profile: {
-          ...state.player,
-          character: state.player.character,
-          characterCreated: state.player.characterCreated,
-          lastPlayedAt: Date.now(),
-        },
-        stats: state.stats,
-        equipped: state.equipped,
-        inventory: state.inventory,
-        equipmentDurability: state.equipmentDurability,
-        unlocks: state.unlocks,
-        settings: state.settings,
-        story: state.story,
-      });
-    } catch (error) {
-      console.error('❌ Failed to auto-save:', error);
-    }
-  },
-});
+/**
+ * Initialize auto-save interval (30 seconds)
+ */
+let autoSaveInterval = null;
+let isResetting = false;
+
+export function startAutoSave() {
+  if (autoSaveInterval) {
+    clearInterval(autoSaveInterval);
+  }
+
+  // Auto-save every 30 seconds
+  autoSaveInterval = setInterval(() => {
+    saveGameState();
+  }, 30000);
+
+  console.log('⏰ Auto-save started (every 30 seconds)');
+}
+
+export function stopAutoSave() {
+  if (autoSaveInterval) {
+    clearInterval(autoSaveInterval);
+    autoSaveInterval = null;
+    console.log('⏰ Auto-save stopped');
+  }
+}
+
+export function setResetting(value) {
+  isResetting = value;
+}
+
+// Save before page unload
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', () => {
+    saveGameState();
+  });
+}
 
 /**
  * Middleware: Log all actions in development

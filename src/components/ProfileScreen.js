@@ -1,9 +1,10 @@
 import { BaseComponent } from './BaseComponent.js';
 import profileStyles from '../styles/components/ProfileScreen.scss?inline';
-import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
+import { gameStore, setResetting } from '../store/gameStore.js';
 import { LevelingSystem } from '../game/LevelingSystem.js';
 import { EquipmentManager } from '../game/EquipmentManager.js';
 import { AchievementManager } from '../game/AchievementManager.js';
+import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 import { RARITY_COLORS, RARITY_NAMES } from '../data/equipment.js';
 
 /**
@@ -16,19 +17,48 @@ import { RARITY_COLORS, RARITY_NAMES } from '../data/equipment.js';
 export class ProfileScreen extends BaseComponent {
   constructor() {
     super();
-    this.profileData = SaveManager.load();
 
-    // Ensure storyProgress exists for backward compatibility
-    if (!this.profileData.storyProgress && this.profileData.story) {
-      this.profileData.storyProgress = this.profileData.story;
-    }
+    // Load data from store instead of SaveManager
+    const state = gameStore.getState();
+    this.profileData = {
+      profile: {
+        ...state.player,
+        character: state.player.character,
+        characterCreated: state.player.characterCreated,
+      },
+      stats: state.stats,
+      equipped: state.equipped,
+      inventory: state.inventory,
+      story: state.story,
+      storyProgress: state.story, // Backward compatibility
+    };
 
     this.currentTab = 'profile'; // 'profile' or 'equipment'
   }
 
+  refreshData() {
+    // Reload data from store
+    const state = gameStore.getState();
+    this.profileData = {
+      profile: {
+        ...state.player,
+        character: state.player.character,
+        characterCreated: state.player.characterCreated,
+      },
+      stats: state.stats,
+      equipped: state.equipped,
+      inventory: state.inventory,
+      story: state.story,
+      storyProgress: state.story, // Backward compatibility
+    };
+  }
+
   getTotalStars() {
-    const missionStars = this.profileData.storyProgress?.missionStars || {};
-    return Object.values(missionStars).reduce((sum, stars) => sum + stars, 0);
+    const completedMissions = this.profileData.storyProgress?.completedMissions || {};
+    return Object.values(completedMissions).reduce(
+      (sum, mission) => sum + (mission?.stars || 0),
+      0
+    );
   }
 
   getTotalAchievements() {
@@ -68,8 +98,47 @@ export class ProfileScreen extends BaseComponent {
 
   template() {
     const { profile, stats } = this.profileData;
-    const xpProgress = LevelingSystem.getXPProgress();
-    const xpForNext = LevelingSystem.getXPForNextLevel();
+
+    // Calculate correct level based on actual XP (to handle data mismatches)
+    const totalXP = profile.xp || 0;
+    const correctLevel = LevelingSystem.getLevelFromXP(totalXP);
+    const currentLevel = correctLevel; // Use calculated level instead of stored level
+
+    // Calculate XP in current level and progress
+    let xpInCurrentLevel = 0;
+    let xpForNext = 0;
+    let xpProgress = 0;
+
+    try {
+      const xpForCurrentLevel = LevelingSystem.getTotalXPForLevel(currentLevel);
+      const xpForNextLevel = LevelingSystem.getTotalXPForLevel(currentLevel + 1);
+      const xpNeededForLevel = xpForNextLevel - xpForCurrentLevel;
+
+      xpInCurrentLevel = Math.max(0, totalXP - xpForCurrentLevel);
+      xpForNext = Math.max(0, xpForNextLevel - totalXP);
+      xpProgress = xpNeededForLevel > 0 ? (xpInCurrentLevel / xpNeededForLevel) * 100 : 0;
+
+      console.log('XP Debug:', {
+        storedLevel: profile.level,
+        correctLevel,
+        totalXP,
+        xpForCurrentLevel,
+        xpForNextLevel,
+        xpNeededForLevel,
+        xpInCurrentLevel,
+        xpForNext,
+        xpProgress,
+      });
+    } catch (e) {
+      console.error('Error calculating XP:', e);
+      xpInCurrentLevel = totalXP;
+      xpForNext = 100;
+      xpProgress = 0;
+    }
+
+    // Clamp progress between 0 and 100
+    const progressPercent = Math.max(0, Math.min(100, xpProgress));
+
     const winRate =
       stats.totalFightsPlayed > 0
         ? ((stats.totalWins / stats.totalFightsPlayed) * 100).toFixed(1)
@@ -103,16 +172,16 @@ export class ProfileScreen extends BaseComponent {
               Level & Experience
             </h2>
             <div class="level-section">
-              <div class="level-number">${profile.level}</div>
+              <div class="level-number">${currentLevel}</div>
               <div class="level-label">Level</div>
               <div class="xp-bar-container">
                 <div class="xp-bar-label">
-                  <span>${profile.xp.toLocaleString()} XP</span>
+                  <span>${xpInCurrentLevel.toLocaleString()} XP</span>
                   <span>${xpForNext.toLocaleString()} XP to next level</span>
                 </div>
                 <div class="xp-bar">
-                  <div class="xp-bar-fill" style="width: ${xpProgress}%">
-                    ${xpProgress.toFixed(0)}%
+                  <div class="xp-bar-fill" style="width: ${progressPercent}%">
+                    ${progressPercent.toFixed(0)}%
                   </div>
                 </div>
               </div>
@@ -222,12 +291,12 @@ export class ProfileScreen extends BaseComponent {
             <div class="stat-row">
               <span class="stat-label">Campaign Progress</span>
               <span class="stat-value highlight">
-                ${Math.floor(((this.profileData.storyProgress?.completedMissions?.length || 0) / 25) * 100)}%
+                ${Math.floor((Object.keys(this.profileData.storyProgress?.completedMissions || {}).length / 25) * 100)}%
               </span>
             </div>
             <div class="stat-row">
               <span class="stat-label">Missions Completed</span>
-              <span class="stat-value highlight">${this.profileData.storyProgress?.completedMissions?.length || 0}/25</span>
+              <span class="stat-value highlight">${Object.keys(this.profileData.storyProgress?.completedMissions || {}).length}/25</span>
             </div>
             <div class="stat-row">
               <span class="stat-label">Total Stars Earned</span>
@@ -325,11 +394,11 @@ export class ProfileScreen extends BaseComponent {
             </div>
             <div class="stat-row">
               <span class="stat-label">Account Created</span>
-              <span class="stat-value">${new Date(profile.createdAt).toLocaleDateString()}</span>
+              <span class="stat-value">${profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : 'N/A'}</span>
             </div>
             <div class="stat-row">
               <span class="stat-label">Last Played</span>
-              <span class="stat-value">${new Date(profile.lastPlayedAt).toLocaleDateString()}</span>
+              <span class="stat-value">${profile.lastPlayedAt ? new Date(profile.lastPlayedAt).toLocaleDateString() : new Date().toLocaleDateString()}</span>
             </div>
             <div class="stat-row">
               <span class="stat-label">Inventory Space</span>
@@ -460,8 +529,9 @@ export class ProfileScreen extends BaseComponent {
   }
 
   renderInventoryItem(item) {
-    const playerLevel = SaveManager.get('profile.level');
-    const playerClass = SaveManager.get('profile.character.class');
+    const state = gameStore.getState();
+    const playerLevel = state.player.level;
+    const playerClass = state.player.class;
 
     const meetsLevel = item.requirements.level <= playerLevel;
     const meetsClass = !item.requirements.class || item.requirements.class.includes(playerClass);
@@ -542,9 +612,17 @@ export class ProfileScreen extends BaseComponent {
               'This will delete your level, XP, stats, and equipment. Are you ABSOLUTELY sure?'
             )
           ) {
+            // Set resetting flag to prevent beforeunload save
+            setResetting(true);
+
+            // Delete save and all backups
             SaveManager.deleteSave();
+
+            // Clear entire localStorage (removes any remaining data)
+            localStorage.clear();
+
             alert('✅ Progress reset! Reloading page...');
-            window.location.reload();
+            window.location.href = window.location.href.split('#')[0];
           }
         }
       });
@@ -559,6 +637,7 @@ export class ProfileScreen extends BaseComponent {
         if (slot && slot !== '') {
           // Check if it's not the reset button
           EquipmentManager.unequipItem(slot);
+          this.refreshData();
           this.render();
         }
       });
@@ -570,6 +649,7 @@ export class ProfileScreen extends BaseComponent {
         e.stopPropagation();
         const equipmentId = btn.dataset.equip;
         if (EquipmentManager.equipItem(equipmentId)) {
+          this.refreshData();
           this.render();
         }
       });

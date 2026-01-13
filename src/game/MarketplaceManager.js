@@ -10,6 +10,8 @@ import { EquipmentManager } from './EquipmentManager.js';
 import { DurabilityManager } from './DurabilityManager.js';
 import { Logger } from '../utils/logger.js';
 import { AchievementManager } from './AchievementManager.js';
+import { gameStore } from '../store/gameStore.js';
+import { incrementStat } from '../store/actions.js';
 
 export class MarketplaceManager {
   // Refresh interval: 24 hours in milliseconds
@@ -252,6 +254,12 @@ export class MarketplaceManager {
     // Initialize durability
     DurabilityManager.initializeItemDurability(equipmentId);
 
+    // Track purchase statistics
+    gameStore.dispatch(incrementStat('itemsPurchased'));
+    if (equipment.rarity === 'legendary') {
+      gameStore.dispatch(incrementStat('legendaryPurchases'));
+    }
+
     // Track purchase
     const purchaseHistory = SaveManager.get('marketplace.purchaseHistory') || [];
     purchaseHistory.push({
@@ -312,14 +320,15 @@ export class MarketplaceManager {
     }
 
     // Check if item is in inventory
-    const inventory = SaveManager.get('inventory.equipment') || [];
+    const state = gameStore.getState();
+    const inventory = state.inventory?.equipment || [];
     if (!inventory.includes(equipmentId)) {
       console.log('❌ Item not in inventory');
       return false;
     }
 
     // Check if item is equipped AND if it's the only copy
-    const equipped = SaveManager.get('equipped');
+    const equipped = state.equipped;
     const isEquipped = Object.values(equipped).includes(equipmentId);
 
     // Count how many copies of this item we have
@@ -361,6 +370,10 @@ export class MarketplaceManager {
 
     // Award gold
     EconomyManager.addGold(sellPrice, `Sold ${equipment.name}`);
+
+    // Track sale statistics
+    gameStore.dispatch(incrementStat('itemsSold'));
+    gameStore.dispatch(incrementStat('goldFromSales', sellPrice));
 
     console.log(`✅ Sold ${equipment.name} for ${sellPrice} gold`);
 

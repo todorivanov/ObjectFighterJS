@@ -2,7 +2,8 @@
  * LevelingSystem - Manages player progression, XP, and level-ups
  */
 
-import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
+import { gameStore } from '../store/gameStore.js';
+import { addXP as addXPAction, levelUp as levelUpAction, updatePlayer } from '../store/actions.js';
 import { Logger } from '../utils/logger.js';
 import { soundManager } from '../utils/soundManager.js';
 import { DifficultyManager } from './DifficultyManager.js';
@@ -54,22 +55,25 @@ export class LevelingSystem {
     // Apply difficulty multiplier
     const scaledAmount = DifficultyManager.getScaledXP(amount);
 
-    const currentProfile = SaveManager.get('profile');
-    const currentLevel = currentProfile.level;
-    const currentXP = currentProfile.xp;
+    const state = gameStore.getState();
+    const currentLevel = state.player.level;
+    const currentXP = state.player.xp;
     const newXP = currentXP + scaledAmount;
 
     // Calculate new level
     const newLevel = this.getLevelFromXP(newXP);
     const leveledUp = newLevel > currentLevel;
 
-    // Update save data
-    SaveManager.update('profile.xp', newXP);
-    SaveManager.update('profile.level', newLevel);
+    // Update state
+    gameStore.dispatch(addXPAction(scaledAmount));
+
+    if (leveledUp) {
+      gameStore.dispatch(levelUpAction());
+    }
 
     if (newLevel > 1) {
       const xpForNextLevel = this.getTotalXPForLevel(newLevel + 1);
-      SaveManager.update('profile.xpToNextLevel', xpForNextLevel - newXP);
+      gameStore.dispatch(updatePlayer({ xpToNextLevel: xpForNextLevel - newXP }));
     }
 
     // Log XP gain (show scaled amount)
@@ -173,7 +177,8 @@ export class LevelingSystem {
    * Apply level-based stat bonuses to fighter
    */
   static applyLevelBonuses(fighter) {
-    const level = SaveManager.get('profile.level') || 1;
+    const state = gameStore.getState();
+    const level = state.player.level || 1;
 
     if (level === 1) return fighter; // No bonuses at level 1
 
@@ -202,14 +207,16 @@ export class LevelingSystem {
    * Get current player level
    */
   static getCurrentLevel() {
-    return SaveManager.get('profile.level') || 1;
+    const state = gameStore.getState();
+    return state.player.level || 1;
   }
 
   /**
    * Get current player XP
    */
   static getCurrentXP() {
-    return SaveManager.get('profile.xp') || 0;
+    const state = gameStore.getState();
+    return state.player.xp || 0;
   }
 
   /**

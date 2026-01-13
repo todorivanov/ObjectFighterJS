@@ -1,6 +1,8 @@
 import { BaseComponent } from './BaseComponent.js';
 import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 import { getAllClasses } from '../data/classes.js';
+import { gameStore } from '../store/gameStore.js';
+import { updatePlayer } from '../store/actions.js';
 import styles from '../styles/components/CharacterCreation.scss?inline';
 
 /**
@@ -225,6 +227,23 @@ export class CharacterCreation extends BaseComponent {
     SaveManager.update('profile.name', this.characterName);
     SaveManager.update('profile.character', characterData);
     SaveManager.update('profile.characterCreated', true);
+
+    const currentTime = Date.now();
+
+    // Update gameStore to sync state
+    gameStore.dispatch(
+      updatePlayer({
+        name: this.characterName,
+        character: characterData,
+        characterCreated: true,
+        health: stats.health,
+        maxHealth: stats.health,
+        strength: stats.strength,
+        class: this.selectedClass,
+        createdAt: currentTime,
+        lastPlayedAt: currentTime,
+      })
+    );
 
     console.log('✅ Character created:', characterData);
 

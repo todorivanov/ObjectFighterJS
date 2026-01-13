@@ -19,6 +19,8 @@ import { comboSystem } from './ComboSystem.js';
 import { combatPhaseManager, CombatPhase } from './CombatPhaseManager.js';
 import { gridManager } from './GridManager.js';
 import { gridCombatIntegration } from './GridCombatIntegration.js';
+import { gameStore } from '../store/gameStore.js';
+import { incrementStat, updateStreak } from '../store/actions.js';
 
 // ROUND_INTERVAL removed - no longer needed after Team Battle removal
 const AI_TURN_DELAY = 1200;
@@ -259,9 +261,9 @@ export default class Game {
           currentEnemyFighter = null;
         } else {
           // Track loss from surrender (normal combat)
-          SaveManager.increment('stats.totalLosses');
-          SaveManager.increment('stats.totalFightsPlayed');
-          SaveManager.update('stats.winStreak', 0); // Reset streak
+          gameStore.dispatch(incrementStat('totalLosses'));
+          gameStore.dispatch(incrementStat('totalFightsPlayed'));
+          gameStore.dispatch(updateStreak(false)); // Reset streak
 
           // Small XP for attempt
           LevelingSystem.awardXP(25, 'Battle Participation');
@@ -299,9 +301,9 @@ export default class Game {
 
         // Track player stats
         if (attacker.isPlayer) {
-          SaveManager.increment('stats.totalDamageDealt', actualDmg);
+          gameStore.dispatch(incrementStat('totalDamageDealt', actualDmg));
           if (attackResult.isCritical) {
-            SaveManager.increment('stats.criticalHits');
+            gameStore.dispatch(incrementStat('criticalHits'));
           }
 
           // Track story mode events
@@ -313,7 +315,7 @@ export default class Game {
           }
         }
         if (defender.isPlayer) {
-          SaveManager.increment('stats.totalDamageTaken', actualDmg);
+          gameStore.dispatch(incrementStat('totalDamageTaken', actualDmg));
 
           // Track story mode events
           if (currentStoryMission) {
@@ -356,7 +358,7 @@ export default class Game {
           const success = skill.use(attacker, defender);
           if (success) {
             if (attacker.isPlayer) {
-              SaveManager.increment('stats.skillsUsed');
+              gameStore.dispatch(incrementStat('skillsUsed'));
 
               // Track skill use for story mode
               if (currentStoryMission) {
@@ -373,7 +375,7 @@ export default class Game {
         const previousHealth = attacker.health;
         attacker.useItem();
         if (attacker.isPlayer) {
-          SaveManager.increment('stats.itemsUsed');
+          gameStore.dispatch(incrementStat('itemsUsed'));
 
           // Track item use for story mode
           if (currentStoryMission) {
@@ -435,16 +437,12 @@ export default class Game {
       }
 
       // Normal combat (non-story mode)
-      SaveManager.increment('stats.totalFightsPlayed');
+      gameStore.dispatch(incrementStat('totalFightsPlayed'));
 
       if (playerWon) {
         const xpReward = 100; // Base XP for single fight victory
-        SaveManager.increment('stats.totalWins');
-        SaveManager.increment('stats.winStreak');
-        const bestStreak = SaveManager.get('stats.bestStreak') || 0;
-        if (SaveManager.get('stats.winStreak') > bestStreak) {
-          SaveManager.update('stats.bestStreak', SaveManager.get('stats.winStreak'));
-        }
+        gameStore.dispatch(incrementStat('totalWins'));
+        gameStore.dispatch(updateStreak(true)); // Increment streak and update best
         LevelingSystem.awardXP(xpReward, 'Victory in Single Combat');
 
         // Award gold based on difficulty
@@ -465,8 +463,8 @@ export default class Game {
         }
       } else {
         // Player lost
-        SaveManager.increment('stats.totalLosses');
-        SaveManager.update('stats.winStreak', 0); // Reset streak
+        gameStore.dispatch(incrementStat('totalLosses'));
+        gameStore.dispatch(updateStreak(false)); // Reset streak
         LevelingSystem.awardXP(50, 'Battle Participation'); // Consolation XP
       }
 
@@ -719,9 +717,9 @@ export default class Game {
           currentEnemyFighter = null;
         } else {
           // Track loss from surrender (normal combat)
-          SaveManager.increment('stats.totalLosses');
-          SaveManager.increment('stats.totalFightsPlayed');
-          SaveManager.update('stats.winStreak', 0);
+          gameStore.dispatch(incrementStat('totalLosses'));
+          gameStore.dispatch(incrementStat('totalFightsPlayed'));
+          gameStore.dispatch(updateStreak(false)); // Reset streak
 
           // Small XP for attempt
           LevelingSystem.awardXP(25, 'Battle Participation');
@@ -807,16 +805,12 @@ export default class Game {
       }
 
       // Normal combat
-      SaveManager.increment('stats.totalFightsPlayed');
+      gameStore.dispatch(incrementStat('totalFightsPlayed'));
 
       if (playerWon) {
         const xpReward = 100;
-        SaveManager.increment('stats.totalWins');
-        SaveManager.increment('stats.winStreak');
-        const bestStreak = SaveManager.get('stats.bestStreak') || 0;
-        if (SaveManager.get('stats.winStreak') > bestStreak) {
-          SaveManager.update('stats.bestStreak', SaveManager.get('stats.winStreak'));
-        }
+        gameStore.dispatch(incrementStat('totalWins'));
+        gameStore.dispatch(updateStreak(true)); // Increment streak and update best
         LevelingSystem.awardXP(xpReward, 'Victory in Single Combat');
 
         const difficulty = SaveManager.get('settings.difficulty') || 'normal';
@@ -833,8 +827,8 @@ export default class Game {
           }, 1000);
         }
       } else {
-        SaveManager.increment('stats.totalLosses');
-        SaveManager.update('stats.winStreak', 0);
+        gameStore.dispatch(incrementStat('totalLosses'));
+        gameStore.dispatch(updateStreak(false)); // Reset streak
         LevelingSystem.awardXP(50, 'Battle Participation');
       }
 
@@ -914,9 +908,9 @@ export default class Game {
 
             // Track player stats
             if (action.attacker.isPlayer) {
-              SaveManager.increment('stats.totalDamageDealt', actualDmg);
+              gameStore.dispatch(incrementStat('totalDamageDealt', actualDmg));
               if (attackResult.isCritical) {
-                SaveManager.increment('stats.criticalHits');
+                gameStore.dispatch(incrementStat('criticalHits'));
               }
 
               if (currentStoryMission) {
@@ -927,7 +921,7 @@ export default class Game {
               }
             }
             if (action.target.isPlayer) {
-              SaveManager.increment('stats.totalDamageTaken', actualDmg);
+              gameStore.dispatch(incrementStat('totalDamageTaken', actualDmg));
 
               if (currentStoryMission) {
                 StoryMode.trackMissionEvent('damage_taken', { amount: actualDmg });
@@ -969,7 +963,7 @@ export default class Game {
 
               if (success) {
                 if (action.attacker.isPlayer) {
-                  SaveManager.increment('stats.skillsUsed');
+                  gameStore.dispatch(incrementStat('skillsUsed'));
 
                   if (currentStoryMission) {
                     StoryMode.trackMissionEvent('skill_used');
@@ -986,7 +980,7 @@ export default class Game {
             action.attacker.useItem();
 
             if (action.attacker.isPlayer) {
-              SaveManager.increment('stats.itemsUsed');
+              gameStore.dispatch(incrementStat('itemsUsed'));
 
               if (currentStoryMission) {
                 const isHealing = action.attacker.health > previousHealth;

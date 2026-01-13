@@ -168,8 +168,8 @@ export class SaveManagerV2 {
       const dataString = localStorage.getItem(saveKey);
 
       if (!dataString) {
-        console.log('💾 No save found, creating new profile');
-        return this.getDefaultProfile();
+        console.log('💾 No save found');
+        return null;
       }
 
       // Try to parse directly first
@@ -188,8 +188,7 @@ export class SaveManagerV2 {
       return saveData;
     } catch (error) {
       console.error('❌ Load failed:', error);
-      console.log('💾 Creating new profile due to load error');
-      return this.getDefaultProfile();
+      return null;
     }
   }
 
@@ -678,11 +677,17 @@ export class SaveManagerV2 {
   // Legacy compatibility methods
   static get(path) {
     const data = this.load();
+    if (!data) return undefined;
     return path.split('.').reduce((obj, key) => obj?.[key], data);
   }
 
   static set(path, value) {
-    const data = this.load();
+    let data = this.load();
+    // If no save exists, create a new profile
+    if (!data) {
+      console.log('💾 Creating new profile for first save');
+      data = this.getDefaultProfile();
+    }
     const keys = path.split('.');
     const lastKey = keys.pop();
 

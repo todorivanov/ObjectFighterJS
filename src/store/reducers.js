@@ -213,6 +213,58 @@ export const storyReducers = {
     },
   }),
 
+  [ActionTypes.SET_CURRENT_MISSION_STATE]: (state, { missionState }) => ({
+    story: {
+      ...state.story,
+      currentMission: missionState,
+    },
+  }),
+
+  [ActionTypes.TRACK_MISSION_EVENT]: (state, { event, data }) => {
+    const currentMission = state.story.currentMission;
+    if (!currentMission || typeof currentMission === 'string') return {};
+
+    const updatedMission = { ...currentMission };
+
+    switch (event) {
+      case 'round_complete':
+        updatedMission.roundCount++;
+        break;
+      case 'damage_dealt':
+        updatedMission.damageDealt += data.amount;
+        updatedMission.maxSingleHit = Math.max(updatedMission.maxSingleHit, data.amount);
+        break;
+      case 'damage_taken':
+        updatedMission.damageTaken += data.amount;
+        break;
+      case 'critical_hit':
+        updatedMission.critsLanded++;
+        break;
+      case 'skill_used':
+        updatedMission.skillsUsed++;
+        break;
+      case 'item_used':
+        updatedMission.itemsUsed++;
+        if (data.isHealing) {
+          updatedMission.healingUsed = true;
+        }
+        break;
+      case 'defended':
+        updatedMission.defended = true;
+        break;
+      case 'combo':
+        updatedMission.maxCombo = Math.max(updatedMission.maxCombo, data.combo);
+        break;
+    }
+
+    return {
+      story: {
+        ...state.story,
+        currentMission: updatedMission,
+      },
+    };
+  },
+
   [ActionTypes.COMPLETE_MISSION]: (state, { missionId, stars, rewards: _rewards }) => {
     const completedMissions = state.story.completedMissions || {};
     const currentStars = completedMissions[missionId]?.stars || 0;
@@ -261,7 +313,7 @@ export const inventoryReducers = {
   [ActionTypes.REMOVE_ITEM]: (state, { itemId }) => ({
     inventory: {
       ...state.inventory,
-      equipment: state.inventory.equipment.filter((item) => item.id !== itemId),
+      equipment: state.inventory.equipment.filter((item) => item !== itemId),
     },
   }),
 
@@ -270,14 +322,27 @@ export const inventoryReducers = {
       ...state.equipped,
       [slot]: itemId,
     },
-  }),
-
-  [ActionTypes.UNEQUIP_ITEM]: (state, { slot }) => ({
-    equipped: {
-      ...state.equipped,
-      [slot]: null,
+    inventory: {
+      ...state.inventory,
+      equipment: state.inventory.equipment.filter((id) => id !== itemId),
     },
   }),
+
+  [ActionTypes.UNEQUIP_ITEM]: (state, { slot }) => {
+    const unequippedItemId = state.equipped[slot];
+    return {
+      equipped: {
+        ...state.equipped,
+        [slot]: null,
+      },
+      inventory: {
+        ...state.inventory,
+        equipment: unequippedItemId
+          ? [...state.inventory.equipment, unequippedItemId]
+          : state.inventory.equipment,
+      },
+    };
+  },
 
   [ActionTypes.UPDATE_DURABILITY]: (state, { itemId, durability }) => ({
     equipmentDurability: {

@@ -3,7 +3,8 @@
  * Manages wear and tear, repairs, and effectiveness calculations
  */
 
-import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
+import { gameStore } from '../store/gameStore.js';
+import { updateDurability, unequipItem, incrementStat } from '../store/actions.js';
 import { getEquipmentById } from '../data/equipment.js';
 import { Logger } from '../utils/logger.js';
 import { EconomyManager } from './EconomyManager.js';
@@ -15,8 +16,9 @@ export class DurabilityManager {
    * @returns {Array} - Items that broke during battle
    */
   static applyBattleWear(equippedItems = null) {
-    const equipped = equippedItems || SaveManager.get('equipped');
-    const durabilityMap = SaveManager.get('equipmentDurability') || {};
+    const state = gameStore.getState();
+    const equipped = equippedItems || state.equipped;
+    const durabilityMap = state.equipmentDurability || {};
     const brokenItems = [];
 
     ['weapon', 'armor', 'accessory'].forEach((slot) => {
@@ -40,13 +42,13 @@ export class DurabilityManager {
       const newDurability = Math.max(0, currentDurability - degradation);
 
       // Update durability
-      durabilityMap[equipmentId] = newDurability;
+      gameStore.dispatch(updateDurability(equipmentId, newDurability));
 
       // Check if item broke
       if (newDurability === 0) {
         brokenItems.push({ slot, equipment });
         // Unequip broken item
-        SaveManager.update(`equipped.${slot}`, null);
+        gameStore.dispatch(unequipItem(slot));
         console.log(`💔 ${equipment.name} broke!`);
 
         const message = `
@@ -70,9 +72,6 @@ export class DurabilityManager {
         console.log(`⚠️ ${equipment.name} durability: ${newDurability}%`);
       }
     });
-
-    // Save updated durability map
-    SaveManager.update('equipmentDurability', durabilityMap);
 
     return brokenItems;
   }
@@ -98,7 +97,8 @@ export class DurabilityManager {
    * @returns {number} - Current durability
    */
   static getDurability(equipmentId) {
-    const durabilityMap = SaveManager.get('equipmentDurability') || {};
+    const state = gameStore.getState();
+    const durabilityMap = state.equipmentDurability || {};
     const equipment = getEquipmentById(equipmentId);
 
     if (!equipment || !equipment.durability) return 100;
@@ -115,9 +115,7 @@ export class DurabilityManager {
    * @param {number} durability - New durability value
    */
   static setDurability(equipmentId, durability) {
-    const durabilityMap = SaveManager.get('equipmentDurability') || {};
-    durabilityMap[equipmentId] = Math.max(0, durability);
-    SaveManager.update('equipmentDurability', durabilityMap);
+    gameStore.dispatch(updateDurability(equipmentId, Math.max(0, durability)));
   }
 
   /**
@@ -152,6 +150,9 @@ export class DurabilityManager {
 
     // Restore durability
     this.setDurability(equipmentId, finalTarget);
+
+    // Track repair statistics
+    gameStore.dispatch(incrementStat('itemsRepaired'));
 
     console.log(`🔧 Repaired ${equipment.name} to ${finalTarget}/${maxDurability}`);
 
@@ -206,7 +207,8 @@ export class DurabilityManager {
    * @returns {Array} - Array of items needing attention
    */
   static checkEquippedItemDurability() {
-    const equipped = SaveManager.get('equipped');
+    const state = gameStore.getState();
+    const equipped = state.equipped;
     const warnings = [];
 
     ['weapon', 'armor', 'accessory'].forEach((slot) => {
@@ -284,12 +286,12 @@ export class DurabilityManager {
     const equipment = getEquipmentById(equipmentId);
     if (!equipment || !equipment.durability) return;
 
-    const durabilityMap = SaveManager.get('equipmentDurability') || {};
+    const state = gameStore.getState();
+    const durabilityMap = state.equipmentDurability || {};
 
     // Only initialize if not already set
     if (durabilityMap[equipmentId] === undefined) {
-      durabilityMap[equipmentId] = equipment.durability.max;
-      SaveManager.update('equipmentDurability', durabilityMap);
+      gameStore.dispatch(updateDurability(equipmentId, equipment.durability.max));
     }
   }
 
@@ -298,7 +300,8 @@ export class DurabilityManager {
    * @returns {Object} - Map of equipmentId -> durability info
    */
   static getAllDurability() {
-    const inventory = SaveManager.get('inventory.equipment') || [];
+    const state = gameStore.getState();
+    const inventory = state.inventory.equipment || [];
     const result = {};
 
     inventory.forEach((equipmentId) => {

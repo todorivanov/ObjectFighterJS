@@ -27,6 +27,8 @@ export const ActionTypes = {
 
   // Story Mode Actions
   SET_STORY_MISSION: 'SET_STORY_MISSION',
+  SET_CURRENT_MISSION_STATE: 'SET_CURRENT_MISSION_STATE',
+  TRACK_MISSION_EVENT: 'TRACK_MISSION_EVENT',
   COMPLETE_MISSION: 'COMPLETE_MISSION',
   UNLOCK_REGION: 'UNLOCK_REGION',
   UNLOCK_MISSION: 'UNLOCK_MISSION',
@@ -152,6 +154,16 @@ export const tournamentNextRound = () => ({
 export const setStoryMission = (missionId) => ({
   type: ActionTypes.SET_STORY_MISSION,
   payload: { missionId },
+});
+
+export const setCurrentMissionState = (missionState) => ({
+  type: ActionTypes.SET_CURRENT_MISSION_STATE,
+  payload: { missionState },
+});
+
+export const trackMissionEvent = (event, data) => ({
+  type: ActionTypes.TRACK_MISSION_EVENT,
+  payload: { event, data },
 });
 
 export const completeMission = (missionId, stars, rewards) => ({

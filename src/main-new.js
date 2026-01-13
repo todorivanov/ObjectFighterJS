@@ -25,7 +25,14 @@ import { DifficultyManager } from './game/DifficultyManager.js';
 import { getMissionById } from './data/storyMissions.js';
 import { router } from './utils/Router.js';
 import { getRouteConfig, RouteGuards, RoutePaths } from './config/routes.js';
-import { gameStore, setGameMode, setScreen } from './store/index.js';
+import {
+  gameStore,
+  setGameMode,
+  setScreen,
+  startAutoSave,
+  stopAutoSave,
+  saveGameState,
+} from './store/index.js';
 
 // Make bootstrap available globally if needed
 window.bootstrap = bootstrap;
@@ -61,12 +68,19 @@ function initApp() {
   // Initialize store
   console.log('📦 Store initialized with state:', gameStore.inspect());
 
+  // Start auto-save only if character is already created
+  const state = gameStore.getState();
+  if (state.player.characterCreated) {
+    startAutoSave();
+  } else {
+    console.log('⏰ Auto-save deferred until character creation');
+  }
+
   // Initialize router
   initializeRouter();
 
-  // Initialize save system
-  const saveData = SaveManager.load();
-  console.log(`💾 Save data loaded. Player Level: ${saveData.profile.level}`);
+  console.log(`💾 Save data loaded. Player Level: ${state.player.level}`);
+  console.log(`👤 Character created: ${state.player.characterCreated}`);
 
   // Load fighters data
   getFighters().then((fighters) => {
@@ -74,7 +88,7 @@ function initApp() {
     console.log(`✅ Loaded ${fighters.length} fighters`);
 
     // Navigate to initial route
-    const initialPath = saveData.profile.characterCreated
+    const initialPath = state.player.characterCreated
       ? RoutePaths.HOME
       : RoutePaths.CHARACTER_CREATION;
     router.navigate(initialPath, {}, true); // true = replace (don't add to history)
@@ -178,6 +192,9 @@ function showCharacterCreation() {
   charCreation.addEventListener('character-created', (e) => {
     console.log('✅ Character created:', e.detail);
     soundManager.init();
+
+    // Start auto-save now that character is created
+    startAutoSave();
 
     // Reload app after character creation
     getFighters().then((fighters) => {
@@ -350,13 +367,13 @@ function startStoryMission(missionId) {
   }
 
   // Create the player fighter
-  const playerData = SaveManager.load();
+  const state = gameStore.getState();
   const playerFighter = new Fighter({
     id: 'player',
-    name: playerData.profile.name,
-    class: playerData.profile.class,
-    level: playerData.profile.level,
-    health: playerData.profile.maxHealth,
+    name: state.player.name,
+    class: state.player.class,
+    level: state.player.level,
+    health: state.player.maxHealth,
     isPlayer: true,
   });
 
@@ -708,8 +725,8 @@ function startTournamentBattle() {
   }
 
   // Get player's character
-  const saveData = SaveManager.load();
-  const playerCharacter = createPlayerFighter(saveData.profile.character);
+  const state = gameStore.getState();
+  const playerCharacter = createPlayerFighter(state.player.character);
 
   // Store tournament round info to log after arena is created
   const tournamentInfo = {
@@ -778,8 +795,8 @@ function showOpponentSelection() {
   gallery.addEventListener('selection-complete', (e) => {
     console.log('Opponent chosen:', e.detail);
     // Get player's character
-    const saveData = SaveManager.load();
-    const playerCharacter = createPlayerFighter(saveData.profile.character);
+    const state = gameStore.getState();
+    const playerCharacter = createPlayerFighter(state.player.character);
 
     // Get opponent and apply difficulty modifiers
     const opponent = e.detail.fighters[0];

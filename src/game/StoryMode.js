@@ -4,6 +4,14 @@
  */
 
 import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
+import { gameStore } from '../store/gameStore.js';
+import {
+  setCurrentMissionState,
+  trackMissionEvent as trackMissionEventAction,
+  completeMission as completeMissionAction,
+  unlockRegion as unlockRegionAction,
+  incrementStat,
+} from '../store/actions.js';
 import { getMissionById } from '../data/storyMissions.js';
 import { getRegionById, isRegionUnlocked } from '../data/storyRegions.js';
 import { EconomyManager } from './EconomyManager.js';
@@ -27,7 +35,11 @@ export class StoryMode {
     }
 
     // Check if region is unlocked
-    const storyProgress = SaveManager.get('storyProgress');
+    const state = gameStore.getState();
+    const storyProgress = {
+      completedMissions: state.story.completedMissions || {},
+      unlockedRegions: state.story.unlockedRegions || [],
+    };
     if (!isRegionUnlocked(mission.region, storyProgress)) {
       console.log('❌ Region not unlocked yet');
       return null;
@@ -52,7 +64,7 @@ export class StoryMode {
     };
 
     // Set as current mission
-    SaveManager.update('storyProgress.currentMission', missionState);
+    gameStore.dispatch(setCurrentMissionState(missionState));
 
     console.log(`📖 Started Mission: ${mission.name}`);
     return missionState;
@@ -83,49 +95,12 @@ export class StoryMode {
    * @param {*} data - Event data
    */
   static trackMissionEvent(event, data = {}) {
-    const missionState = SaveManager.get('storyProgress.currentMission');
-    if (!missionState) return;
+    const state = gameStore.getState();
+    const missionState = state.story.currentMission;
+    if (!missionState || typeof missionState === 'string') return;
 
-    switch (event) {
-      case 'round_complete':
-        missionState.roundCount++;
-        break;
-
-      case 'damage_dealt':
-        missionState.damageDealt += data.amount;
-        missionState.maxSingleHit = Math.max(missionState.maxSingleHit, data.amount);
-        break;
-
-      case 'damage_taken':
-        missionState.damageTaken += data.amount;
-        break;
-
-      case 'critical_hit':
-        missionState.critsLanded++;
-        break;
-
-      case 'skill_used':
-        missionState.skillsUsed++;
-        break;
-
-      case 'item_used':
-        missionState.itemsUsed++;
-        if (data.isHealing) {
-          missionState.healingUsed = true;
-        }
-        break;
-
-      case 'defended':
-        missionState.defended = true;
-        break;
-
-      case 'combo':
-        missionState.maxCombo = Math.max(missionState.maxCombo, data.combo);
-        break;
-    }
-
-    // Update current mission state
-    SaveManager.update('storyProgress.currentMission', missionState);
+    // Dispatch tracking event to update mission state
+    gameStore.dispatch(trackMissionEventAction(event, data));
   }
 
   /**
@@ -135,8 +110,9 @@ export class StoryMode {
    * @returns {Object} - Mission results with rewards
    */
   static completeMission(victory, playerState = {}) {
-    const missionState = SaveManager.get('storyProgress.currentMission');
-    if (!missionState) {
+    const state = gameStore.getState();
+    const missionState = state.story.currentMission;
+    if (!missionState || typeof missionState === 'string') {
       console.error('No active mission');
       return null;
     }
@@ -146,7 +122,7 @@ export class StoryMode {
     if (!victory) {
       // Mission failed
       console.log('❌ Mission failed');
-      SaveManager.update('storyProgress.currentMission', null);
+      gameStore.dispatch(setCurrentMissionState(null));
 
       return {
         success: false,
@@ -160,20 +136,8 @@ export class StoryMode {
     const results = this.evaluateObjectives(missionState, playerState);
     const starsEarned = results.starsEarned;
 
-    // Mark mission as completed
-    const completedMissions = SaveManager.get('storyProgress.completedMissions') || [];
-    if (!completedMissions.includes(mission.id)) {
-      completedMissions.push(mission.id);
-      SaveManager.update('storyProgress.completedMissions', completedMissions);
-    }
-
-    // Update mission stars (track best attempt)
-    const missionStars = SaveManager.get('storyProgress.missionStars') || {};
-    const previousStars = missionStars[mission.id] || 0;
-    if (starsEarned > previousStars) {
-      missionStars[mission.id] = starsEarned;
-      SaveManager.update('storyProgress.missionStars', missionStars);
-    }
+    // Mark mission as completed and store stars
+    gameStore.dispatch(completeMissionAction(mission.id, starsEarned, null));
 
     // Unlock new missions/regions
     if (mission.unlocks) {
@@ -181,10 +145,9 @@ export class StoryMode {
         if (unlock.startsWith('region_')) {
           // Region unlock
           const regionId = unlock.replace('region_', '');
-          const unlockedRegions = SaveManager.get('storyProgress.unlockedRegions') || [];
+          const unlockedRegions = state.story.unlockedRegions || [];
           if (!unlockedRegions.includes(regionId)) {
-            unlockedRegions.push(regionId);
-            SaveManager.update('storyProgress.unlockedRegions', unlockedRegions);
+            gameStore.dispatch(unlockRegionAction(regionId));
             console.log(`🗺️ Unlocked new region: ${regionId}`);
           }
         }
@@ -194,9 +157,6 @@ export class StoryMode {
     // Award rewards
     const rewards = this.awardMissionRewards(mission, starsEarned);
 
-    // Clear current mission
-    SaveManager.update('storyProgress.currentMission', null);
-
     console.log(`✅ Mission Complete: ${starsEarned}/3 stars`);
 
     // Track achievements
@@ -204,19 +164,19 @@ export class StoryMode {
 
     // Check for flawless mission (no damage taken)
     if (missionState.damageTaken === 0) {
-      SaveManager.increment('stats.flawlessMissions');
+      gameStore.dispatch(incrementStat('flawlessMissions'));
       AchievementManager.trackFlawlessMission();
     }
 
     // Check for fast mission (5 rounds or less)
     if (missionState.roundCount <= 5) {
-      SaveManager.increment('stats.fastMissions');
+      gameStore.dispatch(incrementStat('fastMissions'));
       AchievementManager.trackFastMission();
     }
 
     // Check for perfect missions (3 stars)
     if (starsEarned === 3) {
-      SaveManager.increment('stats.perfectMissions');
+      gameStore.dispatch(incrementStat('perfectMissions'));
     }
 
     // Check all achievements after mission completion
@@ -384,10 +344,11 @@ export class StoryMode {
     const region = getRegionById(regionId);
     if (!region) return [];
 
-    const completedMissions = SaveManager.get('storyProgress.completedMissions') || [];
+    const state = gameStore.getState();
+    const completedMissions = state.story.completedMissions || {};
 
     // All missions in region are available once region is unlocked
-    return region.missions.filter((missionId) => !completedMissions.includes(missionId));
+    return region.missions.filter((missionId) => !completedMissions[missionId]);
   }
 
   /**
@@ -396,8 +357,9 @@ export class StoryMode {
    * @returns {number} - Stars earned (0-3)
    */
   static getMissionStars(missionId) {
-    const missionStars = SaveManager.get('storyProgress.missionStars') || {};
-    return missionStars[missionId] || 0;
+    const state = gameStore.getState();
+    const completedMissions = state.story.completedMissions || {};
+    return completedMissions[missionId]?.stars || 0;
   }
 
   /**
@@ -406,8 +368,9 @@ export class StoryMode {
    * @returns {boolean}
    */
   static isMissionCompleted(missionId) {
-    const completedMissions = SaveManager.get('storyProgress.completedMissions') || [];
-    return completedMissions.includes(missionId);
+    const state = gameStore.getState();
+    const completedMissions = state.story.completedMissions || {};
+    return !!completedMissions[missionId];
   }
 
   /**
@@ -415,10 +378,11 @@ export class StoryMode {
    * @returns {number} - Percentage (0-100)
    */
   static getTotalProgress() {
-    const completedMissions = SaveManager.get('storyProgress.completedMissions') || [];
+    const state = gameStore.getState();
+    const completedMissions = state.story.completedMissions || {};
 
     // Calculate based on completed missions count
-    return Math.floor((completedMissions.length / 25) * 100);
+    return Math.floor((Object.keys(completedMissions).length / 25) * 100);
   }
 
   /**
@@ -426,11 +390,17 @@ export class StoryMode {
    * @returns {Object} - { earned, total }
    */
   static getTotalStars() {
-    const missionStars = SaveManager.get('storyProgress.missionStars') || {};
-    const completedMissions = SaveManager.get('storyProgress.completedMissions') || [];
+    const state = gameStore.getState();
+    const completedMissions = state.story.completedMissions || {};
 
-    const earned = Object.values(missionStars).reduce((sum, stars) => sum + stars, 0);
-    const total = completedMissions.length * 3; // 3 stars per mission
+    let earned = 0;
+    let count = 0;
+    Object.values(completedMissions).forEach((mission) => {
+      earned += mission.stars || 0;
+      count++;
+    });
+
+    const total = count * 3; // 3 stars per mission
 
     return { earned, total };
   }

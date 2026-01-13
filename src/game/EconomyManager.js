@@ -3,7 +3,12 @@
  * Manages earning, spending, and tracking of gold throughout the game
  */
 
-import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
+import { gameStore } from '../store/gameStore.js';
+import {
+  addGold as addGoldAction,
+  spendGold as spendGoldAction,
+  incrementStat,
+} from '../store/actions.js';
 import { Logger } from '../utils/logger.js';
 
 export class EconomyManager {
@@ -19,11 +24,12 @@ export class EconomyManager {
       return false;
     }
 
-    const currentGold = SaveManager.get('profile.gold') || 0;
+    const state = gameStore.getState();
+    const currentGold = state.player.gold || 0;
     const newGold = currentGold + amount;
 
-    SaveManager.update('profile.gold', newGold);
-    SaveManager.increment('stats.totalGoldEarned', amount);
+    gameStore.dispatch(addGoldAction(amount));
+    gameStore.dispatch(incrementStat('totalGoldEarned', amount));
 
     console.log(`💰 +${amount} gold earned from ${source} (Total: ${newGold})`);
 
@@ -59,7 +65,8 @@ export class EconomyManager {
       return false;
     }
 
-    const currentGold = SaveManager.get('profile.gold') || 0;
+    const state = gameStore.getState();
+    const currentGold = state.player.gold || 0;
 
     if (currentGold < amount) {
       console.log(`❌ Insufficient gold. Need ${amount}, have ${currentGold}`);
@@ -85,8 +92,8 @@ export class EconomyManager {
     }
 
     const newGold = currentGold - amount;
-    SaveManager.update('profile.gold', newGold);
-    SaveManager.increment('stats.totalGoldSpent', amount);
+    gameStore.dispatch(spendGoldAction(amount));
+    gameStore.dispatch(incrementStat('totalGoldSpent', amount));
 
     console.log(`💸 -${amount} gold spent on ${purpose} (Remaining: ${newGold})`);
 
@@ -99,7 +106,8 @@ export class EconomyManager {
    * @returns {boolean} - Can afford
    */
   static canAfford(amount) {
-    const currentGold = SaveManager.get('profile.gold') || 0;
+    const state = gameStore.getState();
+    const currentGold = state.player.gold || 0;
     return currentGold >= amount;
   }
 
@@ -108,7 +116,8 @@ export class EconomyManager {
    * @returns {number} - Current gold amount
    */
   static getGold() {
-    return SaveManager.get('profile.gold') || 0;
+    const state = gameStore.getState();
+    return state.player.gold || 0;
   }
 
   /**
@@ -218,10 +227,11 @@ export class EconomyManager {
    * @returns {Object} - Gold statistics
    */
   static getGoldStats() {
+    const state = gameStore.getState();
     return {
-      current: SaveManager.get('profile.gold') || 0,
-      totalEarned: SaveManager.get('stats.totalGoldEarned') || 0,
-      totalSpent: SaveManager.get('stats.totalGoldSpent') || 0,
+      current: state.player.gold || 0,
+      totalEarned: state.stats.totalGoldEarned || 0,
+      totalSpent: state.stats.totalGoldSpent || 0,
     };
   }
 }

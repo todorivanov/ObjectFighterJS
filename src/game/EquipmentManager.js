@@ -2,7 +2,13 @@
  * EquipmentManager - Handles equipment logic, equipping/unequipping, and stat calculations
  */
 
-import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
+import { gameStore } from '../store/gameStore.js';
+import {
+  addItem,
+  removeItem,
+  equipItem as equipItemAction,
+  unequipItem as unequipItemAction,
+} from '../store/actions.js';
 import { getEquipmentById, getRandomEquipmentDrop } from '../data/equipment.js';
 import { Logger } from '../utils/logger.js';
 
@@ -20,8 +26,9 @@ export class EquipmentManager {
     }
 
     // Check if player meets requirements
-    const playerLevel = SaveManager.get('profile.level');
-    const playerClass = SaveManager.get('profile.character.class');
+    const state = gameStore.getState();
+    const playerLevel = state.player.level;
+    const playerClass = state.player.class;
 
     if (equipment.requirements.level > playerLevel) {
       console.log(`❌ Level ${equipment.requirements.level} required (you are ${playerLevel})`);
@@ -34,13 +41,13 @@ export class EquipmentManager {
     }
 
     // Unequip current item in that slot
-    const currentEquipped = SaveManager.get(`equipped.${equipment.type}`);
+    const currentEquipped = state.equipped[equipment.type];
     if (currentEquipped) {
       this.unequipItem(equipment.type);
     }
 
     // Equip new item
-    SaveManager.update(`equipped.${equipment.type}`, equipmentId);
+    gameStore.dispatch(equipItemAction(equipmentId, equipment.type));
     console.log(`⚔️ Equipped: ${equipment.name}`);
 
     return true;
@@ -52,13 +59,14 @@ export class EquipmentManager {
    * @returns {boolean} - Success
    */
   static unequipItem(slot) {
-    const currentEquipped = SaveManager.get(`equipped.${slot}`);
+    const state = gameStore.getState();
+    const currentEquipped = state.equipped[slot];
     if (!currentEquipped) {
       return false;
     }
 
     // Remove from equipped slot
-    SaveManager.update(`equipped.${slot}`, null);
+    gameStore.dispatch(unequipItemAction(slot));
     console.log(`🔓 Unequipped ${slot}`);
 
     return true;
@@ -75,7 +83,8 @@ export class EquipmentManager {
       return false;
     }
 
-    const inventory = SaveManager.get('inventory.equipment') || [];
+    const state = gameStore.getState();
+    const inventory = state.inventory.equipment || [];
 
     // Check inventory limit (20 items)
     if (inventory.length >= 20) {
@@ -83,8 +92,7 @@ export class EquipmentManager {
       return false;
     }
 
-    inventory.push(equipmentId);
-    SaveManager.update('inventory.equipment', inventory);
+    gameStore.dispatch(addItem(equipmentId));
 
     console.log(`📦 Added to inventory: ${equipment.name}`);
     return true;
@@ -96,16 +104,7 @@ export class EquipmentManager {
    * @returns {boolean} - Success
    */
   static removeFromInventory(equipmentId) {
-    const inventory = SaveManager.get('inventory.equipment') || [];
-    const index = inventory.indexOf(equipmentId);
-
-    if (index === -1) {
-      return false;
-    }
-
-    inventory.splice(index, 1);
-    SaveManager.update('inventory.equipment', inventory);
-
+    gameStore.dispatch(removeItem(equipmentId));
     return true;
   }
 
@@ -114,7 +113,8 @@ export class EquipmentManager {
    * @returns {Object} - Combined stats
    */
   static getEquippedStats() {
-    const equipped = SaveManager.get('equipped');
+    const state = gameStore.getState();
+    const equipped = state.equipped;
     const stats = {
       strength: 0,
       health: 0,
@@ -189,7 +189,8 @@ export class EquipmentManager {
    * @returns {Object} - Dropped equipment
    */
   static awardRandomDrop() {
-    const playerLevel = SaveManager.get('profile.level');
+    const state = gameStore.getState();
+    const playerLevel = state.player.level;
     const drop = getRandomEquipmentDrop(playerLevel);
 
     if (this.addToInventory(drop.id)) {
@@ -262,7 +263,8 @@ export class EquipmentManager {
    * @returns {Array} - Array of equipment objects
    */
   static getInventoryItems() {
-    const inventory = SaveManager.get('inventory.equipment') || [];
+    const state = gameStore.getState();
+    const inventory = state.inventory.equipment || [];
     return inventory.map((id) => getEquipmentById(id)).filter((eq) => eq !== null);
   }
 
@@ -271,7 +273,8 @@ export class EquipmentManager {
    * @returns {Object} - Object with weapon, armor, accessory
    */
   static getEquippedItems() {
-    const equipped = SaveManager.get('equipped');
+    const state = gameStore.getState();
+    const equipped = state.equipped;
     return {
       weapon: equipped.weapon ? getEquipmentById(equipped.weapon) : null,
       armor: equipped.armor ? getEquipmentById(equipped.armor) : null,
@@ -290,8 +293,9 @@ export class EquipmentManager {
       return { canEquip: false, reason: 'Equipment not found' };
     }
 
-    const playerLevel = SaveManager.get('profile.level');
-    const playerClass = SaveManager.get('profile.character.class');
+    const state = gameStore.getState();
+    const playerLevel = state.player.level;
+    const playerClass = state.player.class;
 
     if (equipment.requirements.level > playerLevel) {
       return {
