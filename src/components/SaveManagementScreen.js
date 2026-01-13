@@ -4,6 +4,7 @@
 
 import { BaseComponent } from './BaseComponent.js';
 import SaveManagerV2 from '../utils/SaveManagerV2.js';
+import styles from '../styles/components/SaveManagementScreen.scss?inline';
 
 export class SaveManagementScreen extends BaseComponent {
   constructor() {
@@ -172,189 +173,6 @@ export class SaveManagementScreen extends BaseComponent {
     const currentSave = this.saveSlots.find((s) => s.slot === this.currentSlot);
     const storageInfo = SaveManagerV2.getStorageInfo();
 
-    const styles = `
-      <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        :host {
-          display: block;
-          width: 100%;
-          height: 100vh;
-          background: linear-gradient(135deg, #1a0d2e 0%, #2d1b69 100%);
-          color: white;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          padding: 40px 20px;
-          overflow-y: auto;
-          overflow-x: hidden;
-        }
-
-        .container {
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-
-        .header {
-          text-align: center;
-          margin-bottom: 40px;
-        }
-
-        h1 {
-          font-size: 48px;
-          margin-bottom: 16px;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-
-        .subtitle {
-          font-size: 18px;
-          opacity: 0.8;
-        }
-
-        .slots-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 20px;
-          margin-bottom: 40px;
-        }
-
-        .slot-card {
-          background: rgba(255, 255, 255, 0.1);
-          border: 2px solid ${currentSave?.slot === this.currentSlot ? '#667eea' : 'rgba(255, 255, 255, 0.2)'};
-          border-radius: 16px;
-          padding: 24px;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .slot-card:hover {
-          transform: translateY(-4px);
-          border-color: #667eea;
-          box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
-        }
-
-        .slot-card.active {
-          border-color: #667eea;
-          background: rgba(102, 126, 234, 0.2);
-        }
-
-        .slot-card.empty {
-          opacity: 0.5;
-        }
-
-        .slot-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 16px;
-        }
-
-        .slot-number {
-          font-size: 24px;
-          font-weight: bold;
-        }
-
-        .slot-info p {
-          margin: 8px 0;
-          font-size: 14px;
-        }
-
-        .actions-section {
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 16px;
-          padding: 24px;
-          margin-bottom: 40px;
-        }
-
-        .actions-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 16px;
-          margin-top: 20px;
-        }
-
-        button {
-          padding: 12px 24px;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          border: none;
-          border-radius: 8px;
-          font-size: 16px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        button:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        button.danger {
-          background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
-        }
-
-        button.secondary {
-          background: rgba(255, 255, 255, 0.1);
-        }
-
-        .backups-section {
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 16px;
-          padding: 24px;
-          margin-bottom: 40px;
-        }
-
-        .backup-list {
-          margin-top: 20px;
-        }
-
-        .backup-item {
-          background: rgba(255, 255, 255, 0.05);
-          padding: 16px;
-          border-radius: 8px;
-          margin-bottom: 12px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .storage-info {
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 16px;
-          padding: 24px;
-          text-align: center;
-        }
-
-        .storage-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 16px;
-          margin-top: 20px;
-        }
-
-        .storage-item {
-          background: rgba(255, 255, 255, 0.05);
-          padding: 16px;
-          border-radius: 8px;
-        }
-
-        .storage-value {
-          font-size: 24px;
-          font-weight: bold;
-          color: #667eea;
-        }
-
-        input[type="file"] {
-          display: none;
-        }
-
-        #back-btn {
-          margin-top: 20px;
-        }
-      </style>
-    `;
-
     const slotsHTML = this.saveSlots
       .map(
         (slot) => `
@@ -405,7 +223,7 @@ export class SaveManagementScreen extends BaseComponent {
         : '<p style="opacity: 0.6;">No backups available</p>';
 
     this.shadowRoot.innerHTML = `
-      ${styles}
+      <style>${styles}</style>
       <div class="container">
         <div class="header">
           <h1>💾 Save Management</h1>

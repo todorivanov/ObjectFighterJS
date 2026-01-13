@@ -3,6 +3,7 @@
  */
 
 import { BaseComponent } from './BaseComponent.js';
+import perfMonitorStyles from '../styles/components/PerformanceMonitorUI.scss?inline';
 import { performanceMonitor } from '../utils/PerformanceMonitor.js';
 import { poolManager } from '../utils/ObjectPool.js';
 import { lazyLoader } from '../utils/LazyLoader.js';
@@ -167,128 +168,7 @@ export class PerformanceMonitorUI extends BaseComponent {
   }
 
   styles() {
-    return `
-      :host {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        z-index: 9999;
-        font-family: 'Courier New', monospace;
-        user-select: none;
-      }
-
-      .perf-monitor {
-        background: rgba(0, 0, 0, 0.85);
-        border: 2px solid #3b82f6;
-        border-radius: 8px;
-        padding: 10px;
-        min-width: 180px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(4px);
-        transition: all 0.3s ease;
-      }
-
-      .perf-monitor.expanded {
-        min-width: 250px;
-      }
-
-      .perf-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        cursor: pointer;
-        padding: 2px 4px;
-        margin: -4px -4px 8px -4px;
-        border-radius: 4px;
-        transition: background 0.2s;
-      }
-
-      .perf-header:hover {
-        background: rgba(59, 130, 246, 0.2);
-      }
-
-      .perf-title {
-        color: #3b82f6;
-        font-size: 14px;
-        font-weight: bold;
-      }
-
-      .perf-toggle {
-        color: #3b82f6;
-        font-size: 16px;
-        font-weight: bold;
-      }
-
-      .perf-content {
-        color: #fff;
-        font-size: 12px;
-      }
-
-      .perf-metric {
-        display: flex;
-        justify-content: space-between;
-        margin: 4px 0;
-        padding: 2px 0;
-      }
-
-      .perf-label {
-        color: #9ca3af;
-      }
-
-      .perf-value {
-        font-weight: bold;
-      }
-
-      .perf-divider {
-        height: 1px;
-        background: rgba(255, 255, 255, 0.2);
-        margin: 10px 0;
-      }
-
-      .perf-section {
-        margin: 10px 0;
-      }
-
-      .perf-section-title {
-        color: #60a5fa;
-        font-size: 11px;
-        font-weight: bold;
-        margin-bottom: 6px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      .perf-pool {
-        display: flex;
-        justify-content: space-between;
-        font-size: 11px;
-        margin: 3px 0;
-        padding: 2px 0;
-      }
-
-      .pool-name {
-        color: #9ca3af;
-        text-transform: capitalize;
-      }
-
-      .pool-stats {
-        color: #d1d5db;
-      }
-
-      /* Responsive */
-      @media (max-width: 768px) {
-        :host {
-          top: 10px;
-          left: 10px;
-        }
-
-        .perf-monitor {
-          font-size: 11px;
-          padding: 8px;
-          min-width: 150px;
-        }
-      }
-    `;
+    return perfMonitorStyles;
   }
 
   attachEventListeners() {

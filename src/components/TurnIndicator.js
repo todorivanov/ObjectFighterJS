@@ -1,4 +1,5 @@
 import { BaseComponent } from './BaseComponent.js';
+import turnIndicatorStyles from '../styles/components/TurnIndicator.scss?inline';
 
 /**
  * TurnIndicator Web Component
@@ -19,44 +20,7 @@ export class TurnIndicator extends BaseComponent {
   }
 
   styles() {
-    return `
-      :host {
-        position: fixed;
-        top: 30%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 10000;
-        pointer-events: none;
-      }
-
-      .turn-indicator {
-        background: linear-gradient(135deg, rgba(106, 66, 194, 0.95), rgba(255, 167, 38, 0.95));
-        color: white;
-        padding: 20px 50px;
-        border-radius: 16px;
-        font-size: 28px;
-        font-weight: bold;
-        text-align: center;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
-        animation: turnIndicatorPulse 0.6s ease;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        backdrop-filter: blur(10px);
-      }
-
-      @keyframes turnIndicatorPulse {
-        0% {
-          transform: scale(0);
-          opacity: 0;
-        }
-        50% {
-          transform: scale(1.1);
-        }
-        100% {
-          transform: scale(1);
-          opacity: 1;
-        }
-      }
-    `;
+    return turnIndicatorStyles;
   }
 
   template() {

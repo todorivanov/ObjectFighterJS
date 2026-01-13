@@ -5,6 +5,7 @@
 import { BaseComponent } from './BaseComponent.js';
 import './NavigationBar.js';
 import './SoundToggle.js';
+import styles from '../styles/components/AppLayout.scss?inline';
 
 export class AppLayout extends BaseComponent {
   connectedCallback() {
@@ -12,39 +13,8 @@ export class AppLayout extends BaseComponent {
   }
 
   render() {
-    const styles = `
-      <style>
-        :host {
-          display: block;
-        }
-
-        .layout-container {
-          position: relative;
-          width: 100%;
-          min-height: 100vh;
-        }
-
-        .content-area {
-          width: 100%;
-          min-height: 100vh;
-        }
-
-        .nav-overlay {
-          position: fixed;
-          top: 0;
-          right: 0;
-          z-index: 9999;
-          pointer-events: none;
-        }
-
-        .nav-overlay > * {
-          pointer-events: auto;
-        }
-      </style>
-    `;
-
     this.shadowRoot.innerHTML = `
-      ${styles}
+      <style>${styles}</style>
       <div class="layout-container">
         <div class="nav-overlay">
           <navigation-bar></navigation-bar>

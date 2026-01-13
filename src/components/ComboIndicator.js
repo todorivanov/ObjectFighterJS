@@ -1,4 +1,5 @@
 import { BaseComponent } from './BaseComponent.js';
+import comboIndicatorStyles from '../styles/components/ComboIndicator.scss?inline';
 
 /**
  * ComboIndicator Web Component
@@ -19,42 +20,7 @@ export class ComboIndicator extends BaseComponent {
   }
 
   styles() {
-    return `
-      :host {
-        position: fixed;
-        top: 20%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(0);
-        z-index: 2000;
-        pointer-events: none;
-      }
-
-      .combo-indicator {
-        font-size: 48px;
-        font-weight: bold;
-        color: #ffc107;
-        text-shadow: 
-          2px 2px 0 #000,
-          -2px -2px 0 #000,
-          2px -2px 0 #000,
-          -2px 2px 0 #000;
-        animation: comboPopIn 0.6s ease forwards;
-      }
-
-      @keyframes comboPopIn {
-        0% {
-          transform: translate(-50%, -50%) scale(0) rotate(-10deg);
-          opacity: 0;
-        }
-        50% {
-          transform: translate(-50%, -50%) scale(1.3) rotate(5deg);
-        }
-        100% {
-          transform: translate(-50%, -50%) scale(1) rotate(0deg);
-          opacity: 1;
-        }
-      }
-    `;
+    return comboIndicatorStyles;
   }
 
   template() {
