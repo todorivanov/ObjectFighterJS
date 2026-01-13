@@ -377,9 +377,9 @@ describe('SaveManager Integration Tests', () => {
       // Simulate corruption
       localStorage.setItem('legends_arena_save_slot1', 'corrupted{invalid}json');
 
-      // Load should return default profile
+      // Load should return null on corruption
       const loaded = SaveManagerV2.load(1);
-      expect(loaded.profile.characterCreated).toBe(false);
+      expect(loaded).toBeNull();
 
       // Restore from backup (should get the previous save with level 1)
       SaveManagerV2.restoreBackup(1, 0);

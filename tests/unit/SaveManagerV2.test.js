@@ -151,10 +151,9 @@ describe('SaveManagerV2', () => {
   });
 
   describe('load', () => {
-    it('should return default profile when no save exists', () => {
+    it('should return null when no save exists', () => {
       const profile = SaveManagerV2.load(1);
-      expect(profile.profile.characterCreated).toBe(false);
-      expect(profile.version).toBe('4.2.0');
+      expect(profile).toBeNull();
     });
 
     it('should load saved data', () => {
@@ -202,8 +201,7 @@ describe('SaveManagerV2', () => {
       localStorage.setItem('legends_arena_save_slot1', 'corrupted{invalid}json');
       const loaded = SaveManagerV2.load(1);
 
-      expect(loaded.profile.characterCreated).toBe(false);
-      expect(loaded.version).toBe('4.2.0');
+      expect(loaded).toBeNull();
     });
   });
 
@@ -527,15 +525,13 @@ describe('SaveManagerV2', () => {
       localStorageMock.clear();
       const profile = SaveManagerV2.load(1);
       
-      expect(profile).toBeDefined();
-      expect(profile.version).toBe('4.2.0');
+      expect(profile).toBeNull();
     });
 
     it('should handle loading non-existent slot', () => {
       const profile = SaveManagerV2.load(99);
       
-      expect(profile).toBeDefined();
-      expect(profile.profile.characterCreated).toBe(false);
+      expect(profile).toBeNull();
     });
 
     it('should handle deleting non-existent save', () => {

@@ -10,6 +10,7 @@ vi.mock('../../src/utils/SaveManagerV2.js', () => {
   let mockData = {};
   return {
     SaveManagerV2: {
+      load: vi.fn(() => null),
       get: vi.fn((key) => {
         const keys = key.split('.');
         let value = mockData;
