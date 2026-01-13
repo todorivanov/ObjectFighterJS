@@ -696,6 +696,40 @@ export class SaveManagerV2 {
     }
 
     target[lastKey] = value;
+
+    // Maintain backward compatibility: sync story <-> storyProgress
+    if (path.startsWith('story.')) {
+      const storyKey = path.replace('story.', '');
+      if (!data.storyProgress) {
+        data.storyProgress = {};
+      }
+      const storyKeys = storyKey.split('.');
+      const storyLastKey = storyKeys.pop();
+      let storyTarget = data.storyProgress;
+      for (const key of storyKeys) {
+        if (!storyTarget[key]) {
+          storyTarget[key] = {};
+        }
+        storyTarget = storyTarget[key];
+      }
+      storyTarget[storyLastKey] = value;
+    } else if (path.startsWith('storyProgress.')) {
+      const storyKey = path.replace('storyProgress.', '');
+      if (!data.story) {
+        data.story = {};
+      }
+      const storyKeys = storyKey.split('.');
+      const storyLastKey = storyKeys.pop();
+      let storyTarget = data.story;
+      for (const key of storyKeys) {
+        if (!storyTarget[key]) {
+          storyTarget[key] = {};
+        }
+        storyTarget = storyTarget[key];
+      }
+      storyTarget[storyLastKey] = value;
+    }
+
     this.save(data);
   }
 

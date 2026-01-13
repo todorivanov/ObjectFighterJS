@@ -367,6 +367,10 @@ describe('SaveManager Integration Tests', () => {
 
     it('should recover from save corruption', () => {
       const profile = SaveManagerV2.getDefaultProfile();
+      // First save to establish initial save file
+      SaveManagerV2.save(profile, 1, false);
+      
+      // Modify and save again to create a backup (backup will have level 1)
       profile.profile.level = 10;
       SaveManagerV2.save(profile, 1, false);
 
@@ -377,10 +381,10 @@ describe('SaveManager Integration Tests', () => {
       const loaded = SaveManagerV2.load(1);
       expect(loaded.profile.characterCreated).toBe(false);
 
-      // But we can restore from backup
+      // Restore from backup (should get the previous save with level 1)
       SaveManagerV2.restoreBackup(1, 0);
       const restored = SaveManagerV2.load(1);
-      expect(restored.profile.level).toBe(10);
+      expect(restored.profile.level).toBe(1); // Backup contains previous state
     });
 
     it('should maintain backup history chronologically', () => {
