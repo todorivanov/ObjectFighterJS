@@ -60,13 +60,73 @@ export class GridCombatIntegration {
 
   /**
    * Place fighters at initial positions
+   * Uses spawn zones to ensure fighters don't spawn on walls/impassable terrain
    */
   placeFightersInitial(playerFighter, enemyFighter) {
-    // Player starts at bottom-left
-    gridManager.placeFighter(playerFighter, 0, 4);
+    // Get valid spawn zones
+    const playerSpawnZones = gridManager.getValidSpawnZones('player');
+    const enemySpawnZones = gridManager.getValidSpawnZones('enemy');
 
-    // Enemy starts at top-right
-    gridManager.placeFighter(enemyFighter, 4, 0);
+    // Place player fighter
+    let playerPlaced = false;
+    // Try preferred position (0,4) first if passable
+    if (playerSpawnZones.some(pos => pos.x === 0 && pos.y === 4)) {
+      playerPlaced = gridManager.placeFighter(playerFighter, 0, 4);
+    }
+    // Fallback to any valid position in spawn zone
+    if (!playerPlaced && playerSpawnZones.length > 0) {
+      const randomPos = playerSpawnZones[Math.floor(Math.random() * playerSpawnZones.length)];
+      playerPlaced = gridManager.placeFighter(playerFighter, randomPos.x, randomPos.y);
+    }
+    // Final fallback: try bottom row
+    if (!playerPlaced) {
+      for (let x = 0; x < 5; x++) {
+        if (gridManager.placeFighter(playerFighter, x, 4)) {
+          playerPlaced = true;
+          break;
+        }
+      }
+    }
+
+    if (!playerPlaced) {
+      console.error('⚠️ Failed to place player fighter on grid!');
+    }
+
+    // Place enemy fighter
+    let enemyPlaced = false;
+    // Try preferred position (4,0) first if passable
+    if (enemySpawnZones.some(pos => pos.x === 4 && pos.y === 0)) {
+      enemyPlaced = gridManager.placeFighter(enemyFighter, 4, 0);
+    }
+    // Fallback to any valid position in spawn zone
+    if (!enemyPlaced && enemySpawnZones.length > 0) {
+      const randomPos = enemySpawnZones[Math.floor(Math.random() * enemySpawnZones.length)];
+      enemyPlaced = gridManager.placeFighter(enemyFighter, randomPos.x, randomPos.y);
+    }
+    // Final fallback: try top row
+    if (!enemyPlaced) {
+      for (let x = 4; x >= 0; x--) {
+        if (gridManager.placeFighter(enemyFighter, x, 0)) {
+          enemyPlaced = true;
+          break;
+        }
+      }
+    }
+
+    if (!enemyPlaced) {
+      console.error('⚠️ Failed to place enemy fighter on grid!');
+    }
+
+    console.log(`🗺️ Fighters placed: Player at (${playerFighter.gridPosition?.x}, ${playerFighter.gridPosition?.y}), Enemy at (${enemyFighter.gridPosition?.x}, ${enemyFighter.gridPosition?.y})`);
+  }
+
+  /**
+   * Get valid spawn zones for a side
+   * @param {string} side - 'player' or 'enemy'
+   * @returns {Array} Valid spawn positions
+   */
+  getSpawnZonePositions(side = 'player') {
+    return gridManager.getValidSpawnZones(side);
   }
 
   /**

@@ -479,6 +479,209 @@ gridUI.clearSelection();
 
 ---
 
+## Spawn Zone System
+
+### Overview
+
+Version 4.11.0 introduces **Spawn Zone Validation** to ensure strategic and fair initial positioning.
+
+### Spawn Zone Layout
+
+**5x5 Grid Rows:**
+```
+Row 0 ──┐
+Row 1   ├─ Enemy Spawn Zone (Top 2 rows)
+        │
+Row 2   ── Neutral Zone
+        │
+Row 3   ├─ Player Spawn Zone (Bottom 2 rows)
+Row 4 ──┘
+```
+
+**Player Spawn Zone:**
+- Rows: y=3, y=4 (bottom 2 rows)
+- Columns: x=0-4 (all 5 columns)
+- Total: 10 possible cells
+- Preferred: (0, 4) - bottom-left corner
+
+**Enemy Spawn Zone:**
+- Rows: y=0, y=1 (top 2 rows)
+- Columns: x=0-4 (all 5 columns)
+- Total: 10 possible cells
+- Preferred: (4, 0) - top-right corner
+
+### Spawn Validation
+
+**Requirements:**
+1. ✅ **Passable Terrain** - Only normal, grass, forest, water, mud, rock, high/low ground
+2. ❌ **No Walls** - Cannot spawn on 🧱 wall tiles
+3. ❌ **No Pits** - Cannot spawn on ⚫ pit tiles
+4. ✅ **Not Occupied** - Cell must be empty
+
+**Example Valid Spawn:**
+```
+[⬜][🟩][🌲][🪨][⛰️]  ← Row 0 (Enemy Zone)
+[⬜][🟩][🌲][🪨][⛰️]  ← Row 1 (Enemy Zone)
+[⬜][⬜][⬜][⬜][⬜]  ← Row 2 (Neutral)
+[⬜][🟩][🌲][🪨][⛰️]  ← Row 3 (Player Zone)
+[⬜][🟩][🌲][🪨][⛰️]  ← Row 4 (Player Zone)
+
+✅ All cells are passable
+```
+
+**Example Invalid Spawn:**
+```
+[🧱][🟩][🌲][🪨][⛰️]  ← Row 0 (Enemy Zone)
+[🧱][🟩][🌲][🪨][⛰️]  ← Row 1 (Enemy Zone)
+[⬜][⬜][⬜][⬜][⬜]  ← Row 2 (Neutral)
+[🧱][🟩][🌲][🪨][⛰️]  ← Row 3 (Player Zone)
+[🧱][🟩][🌲][🪨][⛰️]  ← Row 4 (Player Zone)
+
+❌ Walls block preferred spawn positions!
+```
+
+### Spawn Logic
+
+**3-Tier Fallback System:**
+
+**Tier 1: Preferred Position**
+```javascript
+Player: (0, 4)  // Bottom-left
+Enemy: (4, 0)   // Top-right
+```
+- Tries preferred position first
+- Skipped if blocked by wall/pit
+
+**Tier 2: Random Valid Spawn**
+```javascript
+// Get all valid cells in spawn zone
+const validCells = getValidSpawnZones(side);
+// Pick random valid cell
+const randomCell = validCells[Math.random()];
+```
+- Searches all 10 cells in spawn zone
+- Filters by passable terrain + not occupied
+- Randomly selects from valid options
+
+**Tier 3: Full Row Scan**
+```javascript
+// Scan entire spawn rows systematically
+for (let y of spawnRows) {
+  for (let x = 0; x < 5; x++) {
+    if (isValidSpawn(x, y)) return {x, y};
+  }
+}
+```
+- Last resort scan
+- Guarantees placement if ANY cell is valid
+
+**Tier 4: Error Logging**
+```javascript
+console.error('CRITICAL: No valid spawn position found!');
+// Game should still start, but fighter may not be placed
+```
+
+### Strategic Benefits
+
+**Protect Squishies:**
+```
+Spawn Setup for Player:
+Row 3: [Mage 🧙] [Empty] [Empty] [Empty] [Empty]
+Row 4: [Tank 🛡️] [Empty] [Empty] [Empty] [Empty]
+
+Tank protects mage from frontal assault!
+```
+
+**Tactical Positioning:**
+```
+High Ground Start:
+Row 3: [Empty] [Empty] [⛰️ Fighter] [Empty] [Empty]
+Row 4: [Empty] [Empty] [Empty] [Empty] [Empty]
+
+Immediately gain +25% attack bonus!
+```
+
+**Avoid Bad Terrain:**
+```
+Wall Trap (OLD BUG):
+Row 4: [🧱 Fighter] [Empty] [Empty] [Empty] [Empty]
+       ↑
+       Stuck! Can't move left
+
+Fixed with Spawn Zones (NEW):
+Row 4: [Empty] [⬜ Fighter] [Empty] [Empty] [Empty]
+              ↑
+              Can move freely!
+```
+
+### API Reference
+
+**Get Valid Spawn Positions:**
+```javascript
+import { gridManager } from './game/GridManager.js';
+
+// Get all valid spawn cells for player
+const playerSpawns = gridManager.getValidSpawnZones('player');
+// Returns: [{x: 0, y: 3}, {x: 1, y: 3}, ..., {x: 4, y: 4}]
+
+// Get all valid spawn cells for enemy
+const enemySpawns = gridManager.getValidSpawnZones('enemy');
+// Returns: [{x: 0, y: 0}, {x: 1, y: 0}, ..., {x: 4, y: 1}]
+```
+
+**Place Fighter with Validation:**
+```javascript
+import { gridManager } from './game/GridManager.js';
+
+// Automatically validates terrain
+const success = gridManager.placeFighter(fighter, 0, 4);
+
+if (!success) {
+  console.warn('Placement failed - invalid terrain or occupied');
+}
+
+// Console warnings appear:
+// "Cannot place fighter at (0,4): cell occupied"
+// "Cannot place fighter at (0,4): terrain impassable"
+```
+
+**Get Spawn Zone Info:**
+```javascript
+import { gridCombatIntegration } from './game/GridCombatIntegration.js';
+
+// For UI highlighting or testing
+const spawnInfo = gridCombatIntegration.getSpawnZonePositions('player');
+console.log(spawnInfo);
+// {
+//   side: 'player',
+//   rows: [3, 4],
+//   cells: [{x:0,y:3}, {x:1,y:3}, ...]
+// }
+```
+
+### Console Logging
+
+**Successful Placement:**
+```
+✅ Fighter "Warrior" placed at (0,4)
+✅ Fighter "Goblin" placed at (4,0)
+```
+
+**Warning Messages:**
+```
+⚠️ Cannot place fighter at (0,4): terrain impassable (wall)
+⚠️ Preferred position (0,4) occupied, trying alternative
+⚠️ No valid spawn position in preferred row, scanning alternatives
+```
+
+**Critical Errors:**
+```
+❌ CRITICAL: No valid spawn position found for player fighter!
+❌ Combat initialization may be unstable
+```
+
+---
+
 ## Future Enhancements
 
 ### Planned Features
@@ -551,11 +754,12 @@ gridUI.clearSelection();
 
 ## Version
 
-- **Version**: 4.7.0
-- **Date**: 2026-01-09
+- **Version**: 4.11.0
+- **Date**: 2026-01-14
 - **Grid Size**: 5x5
 - **Terrain Types**: 10
 - **Battlefield Layouts**: 6
+- **Spawn System**: ✅ Validated Zones
 - **Status**: ✅ Complete
 
 ---

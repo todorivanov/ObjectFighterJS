@@ -5,6 +5,58 @@ All notable changes to Legends of the Arena will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+---
+
+## [4.10.1] - 2026-01-13
+
+### Added - Spawn Zone Validation System \ud83c\udfaf
+
+**Strategic Spawn Positioning:**
+- **Spawn Zones** - Dedicated areas for fighter placement
+  - Player spawn zone: Bottom 2 rows (y=3, y=4)
+  - Enemy spawn zone: Top 2 rows (y=0, y=1)
+- **Terrain Validation** - Prevents spawning on impassable terrain
+  - No spawning on walls (\ud83e\uddf1)
+  - No spawning on pits (\u26ab)
+  - Only passable terrain allowed for initial placement
+- **Smart Fallback System** - Ensures fighters always spawn successfully
+  - Tries preferred position first (player: 0,4 | enemy: 4,0)
+  - Falls back to random valid position in spawn zone
+  - Final fallback scans entire spawn row
+  - Logs warnings if placement fails
+
+**Strategic Benefits:**
+- \ud83d\udee1\ufe0f **Protect Squishies** - Position mages behind tanks in spawn zone
+- \ud83c\udfaf **Tactical Setup** - Choose advantageous starting positions
+- \u26d3\ufe0f **Bug Fix** - No more spawning on walls that restrict movement
+- \ud83e\udde0 **AI Intelligence** - AI also gets valid spawn positions
+
+**Technical Implementation:**
+- `GridManager.getValidSpawnZones(side)` - Get all valid positions for a side
+- `GridManager.placeFighter(fighter, x, y)` - Validates terrain passability
+- `GridCombatIntegration.placeFightersInitial()` - Smart placement with fallbacks
+- `GridCombatIntegration.getSpawnZonePositions(side)` - Helper for UI/testing
+
+**API Reference:**
+```javascript
+// Get valid spawn positions
+const playerSpawns = gridManager.getValidSpawnZones('player');
+const enemySpawns = gridManager.getValidSpawnZones('enemy');
+
+// Place fighter (with automatic validation)
+const success = gridManager.placeFighter(fighter, x, y);
+if (!success) {
+  console.warn('Cannot spawn on impassable terrain!');
+}
+
+// Get spawn zone info for UI
+const spawnZones = gridCombatIntegration.getSpawnZonePositions('player');
+```
+
+---
+
 ## [4.10.0] - 2026-01-13
 
 ### Fixed - Complete State Management Migration 🔧
