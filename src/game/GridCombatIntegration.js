@@ -70,7 +70,7 @@ export class GridCombatIntegration {
     // Place player fighter
     let playerPlaced = false;
     // Try preferred position (0,4) first if passable
-    if (playerSpawnZones.some(pos => pos.x === 0 && pos.y === 4)) {
+    if (playerSpawnZones.some((pos) => pos.x === 0 && pos.y === 4)) {
       playerPlaced = gridManager.placeFighter(playerFighter, 0, 4);
     }
     // Fallback to any valid position in spawn zone
@@ -95,7 +95,7 @@ export class GridCombatIntegration {
     // Place enemy fighter
     let enemyPlaced = false;
     // Try preferred position (4,0) first if passable
-    if (enemySpawnZones.some(pos => pos.x === 4 && pos.y === 0)) {
+    if (enemySpawnZones.some((pos) => pos.x === 4 && pos.y === 0)) {
       enemyPlaced = gridManager.placeFighter(enemyFighter, 4, 0);
     }
     // Fallback to any valid position in spawn zone
@@ -117,7 +117,9 @@ export class GridCombatIntegration {
       console.error('⚠️ Failed to place enemy fighter on grid!');
     }
 
-    console.log(`🗺️ Fighters placed: Player at (${playerFighter.gridPosition?.x}, ${playerFighter.gridPosition?.y}), Enemy at (${enemyFighter.gridPosition?.x}, ${enemyFighter.gridPosition?.y})`);
+    console.log(
+      `🗺️ Fighters placed: Player at (${playerFighter.gridPosition?.x}, ${playerFighter.gridPosition?.y}), Enemy at (${enemyFighter.gridPosition?.x}, ${enemyFighter.gridPosition?.y})`
+    );
   }
 
   /**

@@ -177,12 +177,12 @@ export class GridManager {
    */
   getValidSpawnZones(side = 'player') {
     const validPositions = [];
-    
+
     // Define spawn zones
     // Player spawn zone: bottom 2 rows (y=3,4)
     // Enemy spawn zone: top 2 rows (y=0,1)
     const rows = side === 'player' ? [3, 4] : [0, 1];
-    
+
     for (const y of rows) {
       for (let x = 0; x < this.width; x++) {
         const cell = this.getCell(x, y);
@@ -191,7 +191,7 @@ export class GridManager {
         }
       }
     }
-    
+
     return validPositions;
   }
 
