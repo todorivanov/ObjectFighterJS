@@ -7,6 +7,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { GridManager } from '../../src/game/GridManager.js';
 import { gridCombatIntegration } from '../../src/game/GridCombatIntegration.js';
 import { TerrainGenerator } from '../../src/game/TerrainSystem.js';
+import { ConsoleLogger } from '../../src/utils/ConsoleLogger.js';
 
 describe('Spawn Zone Validation', () => {
   let gridManager;
@@ -186,7 +187,7 @@ describe('Spawn Zone Validation', () => {
     });
 
     it('should log warning if no valid spawn position found', () => {
-      const consoleWarnSpy = vi.spyOn(console, 'warn');
+      const consoleWarnSpy = vi.spyOn(ConsoleLogger, 'warn').mockImplementation();
       
       // Block ALL spawn zone cells with walls
       for (let y = 3; y <= 4; y++) {
@@ -203,8 +204,11 @@ describe('Spawn Zone Validation', () => {
       expect(placed).toBe(false);
       // Should log warning about impassable terrain
       expect(consoleWarnSpy).toHaveBeenCalledWith(
+        expect.anything(),
         expect.stringContaining('terrain')
       );
+      
+      consoleWarnSpy.mockRestore();
     });
   });
 
