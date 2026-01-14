@@ -3,7 +3,7 @@
  * Tests for 8 equipment slots, movement modifiers, and equipment stats
  */
 
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { EquipmentManager } from '../../src/game/EquipmentManager.js';
 
 // Mock gameStore

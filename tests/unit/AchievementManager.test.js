@@ -251,9 +251,7 @@ describe('AchievementManager', () => {
       );
     });
 
-    it('should add achievement to unlocked list', async () => {
-      const { SaveManagerV2 } = await import('../../src/utils/SaveManagerV2.js');
-      
+    it('should add achievement to unlocked list', async () => {      
       AchievementManager.unlockAchievement('first_victory');
       
       expect(mockState.unlocks.achievements).toContain('first_victory');

@@ -3,7 +3,7 @@
  * Tests for 8-slot system and backward compatibility with save data
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 describe('Equipment Slots - State Management', () => {
   describe('8 Equipment Slots Structure', () => {
@@ -329,7 +329,6 @@ describe('Equipment Slots - Slot Type Mapping', () => {
   });
 
   it('should correctly identify deprecated slot names', () => {
-    const deprecatedSlots = ['armor', 'accessory_old'];
     const currentSlots = ['weapon', 'head', 'torso', 'arms', 'trousers', 'shoes', 'coat', 'accessory'];
 
     // 'armor' was renamed to 'torso'

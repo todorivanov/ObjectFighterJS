@@ -26,12 +26,7 @@ import { DifficultyManager } from './game/DifficultyManager.js';
 import { getMissionById } from './data/storyMissions.js';
 import { router } from './utils/Router.js';
 import { getRouteConfig, RouteGuards, RoutePaths } from './config/routes.js';
-import {
-  gameStore,
-  setGameMode,
-  setScreen,
-  startAutoSave,
-} from './store/index.js';
+import { gameStore, setGameMode, setScreen, startAutoSave } from './store/index.js';
 import { incrementStat } from './store/actions.js';
 
 // Make bootstrap available globally if needed

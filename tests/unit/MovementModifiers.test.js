@@ -3,7 +3,7 @@
  * Tests for equipment-based movement bonuses and special movement types
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 describe('Movement Modifiers - Equipment Integration', () => {
   describe('Movement Bonus Calculation', () => {
@@ -212,7 +212,6 @@ describe('Grid Combat - Movement Integration', () => {
 
       const hasPhaseThrough = true;
       const start = { x: 0, y: 1 };
-      const target = { x: 3, y: 1 };
 
       // With phaseThrough, can move through occupied cells
       const canReach = hasPhaseThrough || (grid[start.y][start.x + 1] === 0);
