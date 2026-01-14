@@ -126,35 +126,19 @@ export class EquipmentManager {
       movementBonus: 0,
     };
 
-    // Weapon
-    if (equipped.weapon) {
-      const weapon = getEquipmentById(equipped.weapon);
-      if (weapon) {
-        Object.keys(weapon.stats).forEach((stat) => {
-          stats[stat] = (stats[stat] || 0) + weapon.stats[stat];
-        });
+    // All 8 equipment slots
+    const slots = ['weapon', 'head', 'torso', 'arms', 'trousers', 'shoes', 'coat', 'accessory'];
+    
+    slots.forEach((slotName) => {
+      if (equipped[slotName]) {
+        const item = getEquipmentById(equipped[slotName]);
+        if (item && item.stats) {
+          Object.keys(item.stats).forEach((stat) => {
+            stats[stat] = (stats[stat] || 0) + item.stats[stat];
+          });
+        }
       }
-    }
-
-    // Armor
-    if (equipped.armor) {
-      const armor = getEquipmentById(equipped.armor);
-      if (armor) {
-        Object.keys(armor.stats).forEach((stat) => {
-          stats[stat] = (stats[stat] || 0) + armor.stats[stat];
-        });
-      }
-    }
-
-    // Accessory
-    if (equipped.accessory) {
-      const accessory = getEquipmentById(equipped.accessory);
-      if (accessory) {
-        Object.keys(accessory.stats).forEach((stat) => {
-          stats[stat] = (stats[stat] || 0) + accessory.stats[stat];
-        });
-      }
-    }
+    });
 
     return stats;
   }
@@ -171,8 +155,11 @@ export class EquipmentManager {
       specialTypes: [], // e.g., ['phaseThrough', 'ignoreTerrainCost']
     };
 
-    // Check all equipped items for movement modifiers
-    [equipped.weapon, equipped.armor, equipped.accessory].forEach((itemId) => {
+    // Check all 8 equipped slots for movement modifiers
+    const slots = ['weapon', 'head', 'torso', 'arms', 'trousers', 'shoes', 'coat', 'accessory'];
+    
+    slots.forEach((slotName) => {
+      const itemId = equipped[slotName];
       if (itemId) {
         const item = getEquipmentById(itemId);
         if (item) {
@@ -326,7 +313,12 @@ export class EquipmentManager {
     const equipped = state.equipped;
     return {
       weapon: equipped.weapon ? getEquipmentById(equipped.weapon) : null,
-      armor: equipped.armor ? getEquipmentById(equipped.armor) : null,
+      head: equipped.head ? getEquipmentById(equipped.head) : null,
+      torso: equipped.torso ? getEquipmentById(equipped.torso) : null,
+      arms: equipped.arms ? getEquipmentById(equipped.arms) : null,
+      trousers: equipped.trousers ? getEquipmentById(equipped.trousers) : null,
+      shoes: equipped.shoes ? getEquipmentById(equipped.shoes) : null,
+      coat: equipped.coat ? getEquipmentById(equipped.coat) : null,
       accessory: equipped.accessory ? getEquipmentById(equipped.accessory) : null,
     };
   }

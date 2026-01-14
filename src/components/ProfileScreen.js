@@ -453,15 +453,37 @@ export class ProfileScreen extends BaseComponent {
           ${totalStats.critChance > 0 ? `<div class="stat-row"><span class="stat-label">Crit Chance</span><span class="stat-value highlight">+${totalStats.critChance}%</span></div>` : ''}
           ${totalStats.critDamage > 0 ? `<div class="stat-row"><span class="stat-label">Crit Damage</span><span class="stat-value highlight">+${totalStats.critDamage}%</span></div>` : ''}
           ${totalStats.manaRegen > 0 ? `<div class="stat-row"><span class="stat-label">Mana Regen</span><span class="stat-value highlight">+${totalStats.manaRegen}</span></div>` : ''}
+          ${totalStats.movementBonus > 0 ? `<div class="stat-row"><span class="stat-label">⚡ Movement</span><span class="stat-value highlight">+${totalStats.movementBonus}</span></div>` : ''}
         </div>
       `
-          : ''
+        : ''
       }
 
-      <div class="profile-grid">
-        ${this.renderEquipmentSlot('weapon', '⚔️', equipped.weapon)}
-        ${this.renderEquipmentSlot('armor', '🛡️', equipped.armor)}
-        ${this.renderEquipmentSlot('accessory', '💍', equipped.accessory)}
+      <div class="character-equipment-layout">
+        <div class="equipment-slot-head">
+          ${this.renderEquipmentSlot('head', '🪖', equipped.head)}
+        </div>
+        <div class="equipment-slot-weapon">
+          ${this.renderEquipmentSlot('weapon', '⚔️', equipped.weapon)}
+        </div>
+        <div class="equipment-slot-coat">
+          ${this.renderEquipmentSlot('coat', '🧥', equipped.coat)}
+        </div>
+        <div class="equipment-slot-arms">
+          ${this.renderEquipmentSlot('arms', '🥊', equipped.arms)}
+        </div>
+        <div class="equipment-slot-torso">
+          ${this.renderEquipmentSlot('torso', '🛡️', equipped.torso)}
+        </div>
+        <div class="equipment-slot-trousers">
+          ${this.renderEquipmentSlot('trousers', '👖', equipped.trousers)}
+        </div>
+        <div class="equipment-slot-shoes">
+          ${this.renderEquipmentSlot('shoes', '👢', equipped.shoes)}
+        </div>
+        <div class="equipment-slot-accessory">
+          ${this.renderEquipmentSlot('accessory', '💍', equipped.accessory)}
+        </div>
       </div>
 
       <h2 style="font-size: 24px; color: #ffa726; margin: 30px 0 20px 0;">📦 Inventory (${inventory.length}/20)</h2>
@@ -484,15 +506,28 @@ export class ProfileScreen extends BaseComponent {
   }
 
   renderEquipmentSlot(slotType, icon, item) {
+    // Define slot labels for proper display
+    const slotLabels = {
+      weapon: 'Weapon',
+      head: 'Head',
+      torso: 'Torso',
+      arms: 'Arms',
+      trousers: 'Trousers',
+      shoes: 'Shoes',
+      coat: 'Coat',
+      accessory: 'Accessory',
+    };
+    const slotLabel = slotLabels[slotType] || slotType.charAt(0).toUpperCase() + slotType.slice(1);
+
     if (!item) {
       return `
         <div class="profile-card">
           <h2 class="card-title">
             <span class="card-icon">${icon}</span>
-            ${slotType.charAt(0).toUpperCase() + slotType.slice(1)}
+            ${slotLabel}
           </h2>
           <div style="text-align: center; padding: 40px 20px; color: #7e57c2; font-style: italic;">
-            No ${slotType} equipped
+            No ${slotLabel.toLowerCase()} equipped
           </div>
         </div>
       `;
@@ -507,6 +542,7 @@ export class ProfileScreen extends BaseComponent {
           critChance: 'Crit%',
           critDamage: 'Crit Dmg',
           manaRegen: 'Mana+',
+          movementBonus: 'Move',
         };
         return `<span style="background: rgba(255, 167, 38, 0.2); border: 1px solid #ffa726; border-radius: 8px; padding: 4px 10px; font-size: 12px; color: #ffa726; font-weight: 600; display: inline-block; margin: 4px;">+${value} ${statNames[stat]}</span>`;
       })
@@ -516,7 +552,7 @@ export class ProfileScreen extends BaseComponent {
       <div class="profile-card" style="border: 2px solid ${RARITY_COLORS[item.rarity]};">
         <h2 class="card-title">
           <span class="card-icon">${icon}</span>
-          ${slotType.charAt(0).toUpperCase() + slotType.slice(1)}
+          ${slotLabel}
         </h2>
         <div style="background: rgba(0, 0, 0, 0.3); border-radius: 12px; padding: 15px; border: 2px solid ${RARITY_COLORS[item.rarity]};">
           <div style="font-size: 18px; font-weight: 700; color: white; margin-bottom: 5px;">${item.name}</div>
@@ -539,6 +575,19 @@ export class ProfileScreen extends BaseComponent {
     const meetsClass = !item.requirements.class || item.requirements.class.includes(playerClass);
     const canEquip = meetsLevel && meetsClass;
 
+    // Slot type icons and labels
+    const slotInfo = {
+      weapon: { icon: '⚔️', label: 'Weapon' },
+      head: { icon: '🪖', label: 'Head' },
+      torso: { icon: '🛡️', label: 'Torso' },
+      arms: { icon: '🥊', label: 'Arms' },
+      trousers: { icon: '👖', label: 'Trousers' },
+      shoes: { icon: '👢', label: 'Shoes' },
+      coat: { icon: '🧥', label: 'Coat' },
+      accessory: { icon: '💍', label: 'Accessory' },
+    };
+    const slot = slotInfo[item.type] || { icon: '📦', label: item.type };
+
     const statsHtml = Object.entries(item.stats)
       .map(([stat, value]) => {
         const statNames = {
@@ -548,6 +597,7 @@ export class ProfileScreen extends BaseComponent {
           critChance: 'Crit%',
           critDamage: 'Crit Dmg',
           manaRegen: 'Mana+',
+          movementBonus: 'Move',
         };
         return `<span style="background: rgba(255, 167, 38, 0.2); border: 1px solid #ffa726; border-radius: 8px; padding: 4px 10px; font-size: 12px; color: #ffa726; font-weight: 600; display: inline-block; margin: 4px;">+${value} ${statNames[stat]}</span>`;
       })
@@ -558,6 +608,9 @@ export class ProfileScreen extends BaseComponent {
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
           <div>
             <div style="font-size: 18px; font-weight: 700; color: white;">${item.name}</div>
+            <div style="color: #90caf9; font-size: 13px; font-weight: 600; margin: 5px 0;">
+              ${slot.icon} ${slot.label}
+            </div>
             <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: ${RARITY_COLORS[item.rarity]};">
               ${RARITY_NAMES[item.rarity]}
             </div>

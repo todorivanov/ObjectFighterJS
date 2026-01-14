@@ -69,7 +69,12 @@ function getInitialState() {
       },
       equipped: {
         weapon: null,
-        armor: null,
+        head: null,
+        torso: null,
+        arms: null,
+        trousers: null,
+        shoes: null,
+        coat: null,
         accessory: null,
       },
       equipmentDurability: {},
@@ -192,11 +197,16 @@ function getInitialState() {
         mana_potion: 3,
       },
     },
-    equipped: saveData.equipped || {
-      weapon: null,
-      armor: null,
-      accessory: null,
-    },
+        equipped: {
+          weapon: saveData.equipped?.weapon || null,
+          head: saveData.equipped?.head || null,
+          torso: saveData.equipped?.torso || saveData.equipped?.armor || null, // Backward compat: armor -> torso
+          arms: saveData.equipped?.arms || null,
+          trousers: saveData.equipped?.trousers || null,
+          shoes: saveData.equipped?.shoes || null,
+          coat: saveData.equipped?.coat || null,
+          accessory: saveData.equipped?.accessory || null,
+        },
     equipmentDurability: saveData.equipmentDurability || {},
 
     // Statistics

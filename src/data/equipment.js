@@ -217,7 +217,7 @@ export const EQUIPMENT_DATABASE = {
   leather_vest: {
     id: 'leather_vest',
     name: 'Leather Vest',
-    type: 'armor',
+    type: 'torso',
     rarity: 'common',
     stats: {
       health: 30,
@@ -238,7 +238,7 @@ export const EQUIPMENT_DATABASE = {
   chainmail: {
     id: 'chainmail',
     name: 'Chainmail Armor',
-    type: 'armor',
+    type: 'torso',
     rarity: 'common',
     stats: {
       health: 50,
@@ -260,7 +260,7 @@ export const EQUIPMENT_DATABASE = {
   steel_plate: {
     id: 'steel_plate',
     name: 'Steel Plate Armor',
-    type: 'armor',
+    type: 'torso',
     rarity: 'rare',
     stats: {
       health: 80,
@@ -282,7 +282,7 @@ export const EQUIPMENT_DATABASE = {
   mystic_robes: {
     id: 'mystic_robes',
     name: 'Mystic Robes',
-    type: 'armor',
+    type: 'torso',
     rarity: 'rare',
     stats: {
       health: 40,
@@ -306,7 +306,7 @@ export const EQUIPMENT_DATABASE = {
   titans_guard: {
     id: 'titans_guard',
     name: "Titan's Guard",
-    type: 'armor',
+    type: 'torso',
     rarity: 'epic',
     stats: {
       health: 120,
@@ -329,7 +329,7 @@ export const EQUIPMENT_DATABASE = {
   phoenix_armor: {
     id: 'phoenix_armor',
     name: 'Phoenix Armor',
-    type: 'armor',
+    type: 'torso',
     rarity: 'epic',
     stats: {
       health: 100,
@@ -352,7 +352,7 @@ export const EQUIPMENT_DATABASE = {
   aegis_of_legends: {
     id: 'aegis_of_legends',
     name: 'Aegis of Legends',
-    type: 'armor',
+    type: 'torso',
     rarity: 'legendary',
     stats: {
       health: 150,
@@ -376,7 +376,7 @@ export const EQUIPMENT_DATABASE = {
   boots_of_haste: {
     id: 'boots_of_haste',
     name: 'Boots of Haste',
-    type: 'accessory',
+    type: 'shoes',
     rarity: 'rare',
     stats: {
       movementBonus: 1,
@@ -419,7 +419,7 @@ export const EQUIPMENT_DATABASE = {
   strider_greaves: {
     id: 'strider_greaves',
     name: "Strider's Greaves",
-    type: 'accessory',
+    type: 'shoes',
     rarity: 'epic',
     stats: {
       movementBonus: 1,
@@ -442,7 +442,7 @@ export const EQUIPMENT_DATABASE = {
   winged_sandals: {
     id: 'winged_sandals',
     name: 'Winged Sandals',
-    type: 'accessory',
+    type: 'shoes',
     rarity: 'legendary',
     stats: {
       movementBonus: 2,
@@ -462,7 +462,472 @@ export const EQUIPMENT_DATABASE = {
     icon: '🪽',
   },
 
-  // ========== ACCESSORIES ==========
+  // ========== HEAD EQUIPMENT ==========
+
+  leather_cap: {
+    id: 'leather_cap',
+    name: 'Leather Cap',
+    type: 'head',
+    rarity: 'common',
+    stats: {
+      defense: 2,
+    },
+    requirements: {
+      level: 1,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 8,
+      repairCostBase: 5,
+    },
+    description: 'Basic head protection.',
+    icon: '🧢',
+  },
+
+  iron_helmet: {
+    id: 'iron_helmet',
+    name: 'Iron Helmet',
+    type: 'head',
+    rarity: 'common',
+    stats: {
+      defense: 5,
+      health: 10,
+    },
+    requirements: {
+      level: 3,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 7,
+      repairCostBase: 10,
+    },
+    description: 'Solid iron protection for your head.',
+    icon: '⛑️',
+  },
+
+  crown_of_wisdom: {
+    id: 'crown_of_wisdom',
+    name: 'Crown of Wisdom',
+    type: 'head',
+    rarity: 'rare',
+    stats: {
+      manaRegen: 5,
+      defense: 3,
+    },
+    requirements: {
+      level: 6,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 6,
+      repairCostBase: 25,
+    },
+    description: 'Enhances magical abilities.',
+    icon: '👑',
+  },
+
+  battle_helm: {
+    id: 'battle_helm',
+    name: 'Battle Helm',
+    type: 'head',
+    rarity: 'rare',
+    stats: {
+      defense: 8,
+      health: 20,
+      strength: 5,
+    },
+    requirements: {
+      level: 7,
+      class: ['WARRIOR', 'TANK', 'BALANCED'],
+    },
+    durability: {
+      max: 100,
+      degradationRate: 5,
+      repairCostBase: 30,
+    },
+    description: 'Forged for battle. Heavy but protective.',
+    icon: '🪖',
+  },
+
+  dragon_helm: {
+    id: 'dragon_helm',
+    name: 'Dragon Helm',
+    type: 'head',
+    rarity: 'epic',
+    stats: {
+      defense: 12,
+      health: 40,
+      strength: 10,
+    },
+    requirements: {
+      level: 12,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 4,
+      repairCostBase: 60,
+    },
+    description: 'Crafted from dragon scales. Legendary protection.',
+    icon: '🐲',
+  },
+
+  divine_circlet: {
+    id: 'divine_circlet',
+    name: 'Divine Circlet',
+    type: 'head',
+    rarity: 'legendary',
+    stats: {
+      defense: 15,
+      health: 50,
+      manaRegen: 15,
+      critChance: 10,
+    },
+    requirements: {
+      level: 15,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 2,
+      repairCostBase: 120,
+    },
+    description: 'Blessed by the gods themselves.',
+    icon: '✨',
+  },
+
+  // ========== ARMS EQUIPMENT ==========
+
+  leather_bracers: {
+    id: 'leather_bracers',
+    name: 'Leather Bracers',
+    type: 'arms',
+    rarity: 'common',
+    stats: {
+      defense: 2,
+      strength: 2,
+    },
+    requirements: {
+      level: 1,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 8,
+      repairCostBase: 5,
+    },
+    description: 'Basic arm protection.',
+    icon: '🤜',
+  },
+
+  iron_gauntlets: {
+    id: 'iron_gauntlets',
+    name: 'Iron Gauntlets',
+    type: 'arms',
+    rarity: 'common',
+    stats: {
+      strength: 5,
+      defense: 3,
+    },
+    requirements: {
+      level: 3,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 7,
+      repairCostBase: 10,
+    },
+    description: 'Increases striking power.',
+    icon: '🥊',
+  },
+
+  power_bracers: {
+    id: 'power_bracers',
+    name: 'Power Bracers',
+    type: 'arms',
+    rarity: 'rare',
+    stats: {
+      strength: 12,
+      critChance: 5,
+    },
+    requirements: {
+      level: 6,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 6,
+      repairCostBase: 25,
+    },
+    description: 'Amplifies physical strength.',
+    icon: '💪',
+  },
+
+  vambraces_of_fury: {
+    id: 'vambraces_of_fury',
+    name: 'Vambraces of Fury',
+    type: 'arms',
+    rarity: 'epic',
+    stats: {
+      strength: 18,
+      critChance: 10,
+      critDamage: 15,
+    },
+    requirements: {
+      level: 10,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 5,
+      repairCostBase: 55,
+    },
+    description: 'Unleash devastating blows.',
+    icon: '⚡',
+  },
+
+  titans_grip: {
+    id: 'titans_grip',
+    name: "Titan's Grip",
+    type: 'arms',
+    rarity: 'legendary',
+    stats: {
+      strength: 30,
+      critChance: 15,
+      critDamage: 25,
+      defense: 10,
+    },
+    requirements: {
+      level: 15,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 3,
+      repairCostBase: 110,
+    },
+    description: 'The strength of titans flows through you.',
+    icon: '🔥',
+  },
+
+  // ========== TROUSERS EQUIPMENT ==========
+
+  cloth_pants: {
+    id: 'cloth_pants',
+    name: 'Cloth Pants',
+    type: 'trousers',
+    rarity: 'common',
+    stats: {
+      health: 5,
+    },
+    requirements: {
+      level: 1,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 9,
+      repairCostBase: 4,
+    },
+    description: 'Basic leg protection.',
+    icon: '👖',
+  },
+
+  leather_leggings: {
+    id: 'leather_leggings',
+    name: 'Leather Leggings',
+    type: 'trousers',
+    rarity: 'common',
+    stats: {
+      health: 10,
+      defense: 3,
+    },
+    requirements: {
+      level: 3,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 8,
+      repairCostBase: 8,
+    },
+    description: 'Flexible and protective.',
+    icon: '🦵',
+  },
+
+  chain_leggings: {
+    id: 'chain_leggings',
+    name: 'Chain Leggings',
+    type: 'trousers',
+    rarity: 'rare',
+    stats: {
+      health: 20,
+      defense: 7,
+      movementBonus: 0, // Doesn't slow you down despite being heavy
+    },
+    requirements: {
+      level: 6,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 6,
+      repairCostBase: 22,
+    },
+    description: 'Balanced protection and mobility.',
+    icon: '⛓️',
+  },
+
+  steel_greaves: {
+    id: 'steel_greaves',
+    name: 'Steel Greaves',
+    type: 'trousers',
+    rarity: 'epic',
+    stats: {
+      health: 35,
+      defense: 12,
+      strength: 5,
+    },
+    requirements: {
+      level: 10,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 5,
+      repairCostBase: 50,
+    },
+    description: 'Heavy-duty leg armor.',
+    icon: '🛡️',
+  },
+
+  celestial_legplates: {
+    id: 'celestial_legplates',
+    name: 'Celestial Legplates',
+    type: 'trousers',
+    rarity: 'legendary',
+    stats: {
+      health: 60,
+      defense: 18,
+      movementBonus: 1,
+      strength: 10,
+    },
+    requirements: {
+      level: 15,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 3,
+      repairCostBase: 100,
+    },
+    description: 'Divine armor that doesn\'t hinder movement.',
+    icon: '⭐',
+  },
+
+  // ========== COAT EQUIPMENT ==========
+
+  travelers_cloak: {
+    id: 'travelers_cloak',
+    name: "Traveler's Cloak",
+    type: 'coat',
+    rarity: 'common',
+    stats: {
+      defense: 1,
+      movementBonus: 1,
+    },
+    requirements: {
+      level: 1,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 7,
+      repairCostBase: 6,
+    },
+    description: 'Light and allows free movement.',
+    icon: '🧥',
+  },
+
+  shadow_cloak: {
+    id: 'shadow_cloak',
+    name: 'Shadow Cloak',
+    type: 'coat',
+    rarity: 'rare',
+    stats: {
+      defense: 3,
+      critChance: 8,
+    },
+    requirements: {
+      level: 5,
+      class: ['ASSASSIN', 'AGILE', 'GLASS_CANNON'],
+    },
+    durability: {
+      max: 100,
+      degradationRate: 6,
+      repairCostBase: 28,
+    },
+    description: 'Blend with shadows for deadly strikes.',
+    icon: '🌑',
+  },
+
+  mages_mantle: {
+    id: 'mages_mantle',
+    name: "Mage's Mantle",
+    type: 'coat',
+    rarity: 'rare',
+    stats: {
+      manaRegen: 10,
+      defense: 5,
+    },
+    requirements: {
+      level: 6,
+      class: ['BALANCED', 'GLASS_CANNON'],
+    },
+    durability: {
+      max: 100,
+      degradationRate: 5,
+      repairCostBase: 30,
+    },
+    description: 'Channels magical energy.',
+    icon: '🔮',
+  },
+
+  dragon_scale_cape: {
+    id: 'dragon_scale_cape',
+    name: 'Dragon Scale Cape',
+    type: 'coat',
+    rarity: 'epic',
+    stats: {
+      defense: 10,
+      health: 30,
+      critChance: 5,
+    },
+    requirements: {
+      level: 11,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 4,
+      repairCostBase: 65,
+    },
+    description: 'Crafted from ancient dragon scales.',
+    icon: '🐉',
+  },
+
+  phoenix_wings: {
+    id: 'phoenix_wings',
+    name: 'Phoenix Wings',
+    type: 'coat',
+    rarity: 'legendary',
+    stats: {
+      defense: 15,
+      health: 50,
+      manaRegen: 15,
+      movementBonus: 1,
+    },
+    movementType: ['ignoreTerrainCost'],
+    requirements: {
+      level: 15,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 2,
+      repairCostBase: 130,
+    },
+    description: 'Rise like the phoenix. Ignore terrain and soar above obstacles.',
+    icon: '🔥',
+  },
+
+  // ========== ACCESSORIES (Rings, Amulets) ==========
 
   // Common Accessories
   bronze_ring: {

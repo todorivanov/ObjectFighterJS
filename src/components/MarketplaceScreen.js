@@ -6,6 +6,7 @@ import { EconomyManager } from '../game/EconomyManager.js';
 import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 import { RARITY_COLORS, RARITY_NAMES } from '../data/equipment.js';
 import { GameConfig } from '../config/gameConfig.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
 import marketplaceStyles from '../styles/components/MarketplaceScreen.scss?inline';
 
 /**
@@ -225,9 +226,25 @@ export class MarketplaceScreen extends BaseComponent {
       .map(([stat, value]) => `+${value} ${stat}`)
       .join(', ');
 
+    // Get slot label and icon
+    const slotInfo = {
+      weapon: { icon: '⚔️', label: 'Weapon' },
+      head: { icon: '🪖', label: 'Head' },
+      torso: { icon: '🛡️', label: 'Torso' },
+      arms: { icon: '🥊', label: 'Arms' },
+      trousers: { icon: '👖', label: 'Trousers' },
+      shoes: { icon: '👢', label: 'Shoes' },
+      coat: { icon: '🧥', label: 'Coat' },
+      accessory: { icon: '💍', label: 'Accessory' },
+    };
+    const slot = slotInfo[equipment.type] || { icon: '📦', label: equipment.type };
+
     return `
       <div class="item-card" data-equipment-id="${equipment.id}">
         <div class="item-icon">${equipment.icon}</div>
+        <div class="item-slot-type" style="color: #90caf9; font-size: 13px; font-weight: 600; margin: 5px 0;">
+          ${slot.icon} ${slot.label}
+        </div>
         <div class="item-rarity" style="color: ${RARITY_COLORS[equipment.rarity]}">
           ${RARITY_NAMES[equipment.rarity]}
         </div>
@@ -328,9 +345,25 @@ export class MarketplaceScreen extends BaseComponent {
       .map(([stat, value]) => `+${value} ${stat}`)
       .join(', ');
 
+    // Get slot label and icon
+    const slotInfo = {
+      weapon: { icon: '⚔️', label: 'Weapon' },
+      head: { icon: '🪖', label: 'Head' },
+      torso: { icon: '🛡️', label: 'Torso' },
+      arms: { icon: '🥊', label: 'Arms' },
+      trousers: { icon: '👖', label: 'Trousers' },
+      shoes: { icon: '👢', label: 'Shoes' },
+      coat: { icon: '🧥', label: 'Coat' },
+      accessory: { icon: '💍', label: 'Accessory' },
+    };
+    const slot = slotInfo[equipment.type] || { icon: '📦', label: equipment.type };
+
     return `
       <div class="item-card" data-equipment-id="${equipment.id}">
         <div class="item-icon">${equipment.icon}</div>
+        <div class="item-slot-type" style="color: #90caf9; font-size: 13px; font-weight: 600; margin: 5px 0;">
+          ${slot.icon} ${slot.label}
+        </div>
         <div class="item-rarity" style="color: ${RARITY_COLORS[equipment.rarity]}; font-size: 12px; text-transform: uppercase; text-align: center; margin: 4px 0;">
           ${RARITY_NAMES[equipment.rarity]}
         </div>
@@ -404,9 +437,25 @@ export class MarketplaceScreen extends BaseComponent {
       .map(([stat, value]) => `+${value} ${stat}`)
       .join(', ');
 
+    // Get slot label and icon
+    const slotInfo = {
+      weapon: { icon: '⚔️', label: 'Weapon' },
+      head: { icon: '🪖', label: 'Head' },
+      torso: { icon: '🛡️', label: 'Torso' },
+      arms: { icon: '🥊', label: 'Arms' },
+      trousers: { icon: '👖', label: 'Trousers' },
+      shoes: { icon: '👢', label: 'Shoes' },
+      coat: { icon: '🧥', label: 'Coat' },
+      accessory: { icon: '💍', label: 'Accessory' },
+    };
+    const slot = slotInfo[equipment.type] || { icon: '📦', label: equipment.type };
+
     return `
       <div class="item-card" data-equipment-id="${equipment.id}">
         <div class="item-icon">${equipment.icon}</div>
+        <div class="item-slot-type" style="color: #90caf9; font-size: 13px; font-weight: 600; margin: 5px 0;">
+          ${slot.icon} ${slot.label}
+        </div>
         <div class="item-rarity" style="color: ${RARITY_COLORS[equipment.rarity]}">
           ${RARITY_NAMES[equipment.rarity]}
         </div>
@@ -483,10 +532,16 @@ export class MarketplaceScreen extends BaseComponent {
         const type = btn.dataset.type;
         const qty = parseInt(btn.dataset.qty);
 
+        ConsoleLogger.debug(LogCategory.MARKETPLACE, `Action clicked: ${action}, ID: ${id}`);
+
         switch (action) {
           case 'buy':
+            ConsoleLogger.info(LogCategory.MARKETPLACE, `Attempting to purchase item: ${id}`);
             if (MarketplaceManager.purchaseItem(id)) {
+              ConsoleLogger.info(LogCategory.MARKETPLACE, `Purchase successful, re-rendering...`);
               this.render(); // Refresh
+            } else {
+              ConsoleLogger.warn(LogCategory.MARKETPLACE, `Purchase failed for item: ${id}`);
             }
             break;
           case 'sell':
