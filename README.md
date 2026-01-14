@@ -1,8 +1,8 @@
-# Legends of the Arena v4.10 ⚔️
+# Legends of the Arena v4.11 ⚔️
 
-**A modern browser-based RPG fighting game with tactical grid combat, story campaigns, character progression, and dynamic equipment systems.**
+**A modern browser-based RPG fighting game with tactical grid combat, story campaigns, character progression, talent trees, and dynamic equipment systems.**
 
-> **Latest Update (v4.10.0):** Major state management refactor! All game systems now use centralized gameStore for better performance and reliability. Fixed story mission completion, statistics tracking, marketplace activity, and numerous UI bugs. [See full changelog](CHANGELOG.md#4100---2026-01-13)
+> **Latest Update (v4.11.0):** 🌟 **Talent Tree System!** Deep character customization with 3 specialization trees per class, 40+ unique talents, passive abilities, and strategic build diversity. Level up to earn talent points and create your perfect warrior or mage! [See full changelog](CHANGELOG.md#4110---2026-01-14)
 
 ## 🎮 [Play Live Demo](https://todorivanov.github.io/legends-of-the-rena/)
 
@@ -35,7 +35,17 @@
 
 ## 🌟 Key Features
 
-### 🗺️ **Tactical Grid Combat** ⭐NEW in v4.9⭐
+### ⭐ **Talent Tree System** ⭐NEW in v4.11⭐
+- **3 specialization trees per class** - Arms, Fury, Protection | Fire, Frost, Arcane
+- **40+ unique talents** with multiple ranks
+- **Progressive talent points** - 1 point per level (max 19 at level 20)
+- **Strategic dependencies** - prerequisites and point requirements
+- **Stat modifiers** - +Strength, +Health, +Defense, +Crit, +Mana
+- **Passive abilities** - Execute, Bleed, Block, Ignite, Lifesteal, Freeze
+- **Respec system** - Reset talents anytime for gold
+- **Build diversity** - Countless combinations for unique playstyles
+
+### 🗺️ **Tactical Grid Combat**
 - **5x5 tactical grid** with 10 distinct terrain types
 - **Strategic positioning** - terrain provides bonuses/penalties
 - **Movement skills** - class-specific movement abilities
@@ -51,6 +61,7 @@
 ### 👤 **Character System**
 - **10 unique classes** with distinct playstyles
 - **Level progression** (1-20) with stat bonuses
+- **Talent system** - 3 specialization trees with deep customization
 - **Equipment system** - 24 items across 4 rarity tiers
 - **Combo system** - chain attacks for powerful effects
 - **17 status effects** with interaction matrix
@@ -74,6 +85,7 @@
 ## 📚 Documentation
 
 ### 📖 **User Guides**
+- [Talent System Guide](guides/TALENT_SYSTEM_GUIDE.md) - Talent trees, builds, and strategies ⭐NEW⭐
 - [Story Mode Guide](guides/STORY_MODE_GUIDE.md) - Campaign walkthrough
 - [Character Classes Guide](guides/CHARACTER_CLASSES_GUIDE.md) - Class details and strategies
 - [Equipment System Guide](guides/EQUIPMENT_SYSTEM_GUIDE.md) - Items and gear
