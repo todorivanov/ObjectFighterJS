@@ -31,8 +31,6 @@ import {
   setGameMode,
   setScreen,
   startAutoSave,
-  stopAutoSave,
-  saveGameState,
 } from './store/index.js';
 import { incrementStat } from './store/actions.js';
 

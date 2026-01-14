@@ -3,12 +3,11 @@
  * Tests SaveManager integration with game systems and real localStorage
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { SaveManagerV2 } from '../../src/utils/SaveManagerV2.js';
 import { LevelingSystem } from '../../src/game/LevelingSystem.js';
 import { EquipmentManager } from '../../src/game/EquipmentManager.js';
 import { AchievementManager } from '../../src/game/AchievementManager.js';
-import { EQUIPMENT_DATABASE } from '../../src/data/equipment.js';
 
 // Mock localStorage for integration tests
 const localStorageMock = (() => {

@@ -3,7 +3,6 @@
  * Manages the campaign system and mission rewards
  */
 
-import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 import { gameStore } from '../store/gameStore.js';
 import {
   setCurrentMissionState,
