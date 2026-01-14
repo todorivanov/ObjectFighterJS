@@ -328,7 +328,7 @@ export class GridManager {
         if (canPhaseThrough && !cell.isPassable() && !isOccupied) continue; // Still can't move through walls/pits
 
         // Calculate movement cost
-        let moveCost = ignoreTerrainCost ? 1 : cell.getMovementCost();
+        const moveCost = ignoreTerrainCost ? 1 : cell.getMovementCost();
         const totalCost = current.cost + moveCost;
 
         if (totalCost <= maxDistance) {

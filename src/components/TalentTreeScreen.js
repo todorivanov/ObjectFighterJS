@@ -216,7 +216,7 @@ export class TalentTreeScreen extends BaseComponent {
 
     // Tree tabs
     this.shadowRoot.querySelectorAll('.tree-tab').forEach((tab) => {
-      tab.addEventListener('click', (e) => {
+      tab.addEventListener('click', () => {
         this.selectedTree = tab.dataset.tree;
         this.render();
       });
@@ -224,7 +224,7 @@ export class TalentTreeScreen extends BaseComponent {
 
     // Talent nodes - left click to learn
     this.shadowRoot.querySelectorAll('.talent-node').forEach((node) => {
-      node.addEventListener('click', (e) => {
+      node.addEventListener('click', () => {
         const talentId = node.dataset.talentId;
         const treeId = node.dataset.treeId;
 
@@ -249,11 +249,11 @@ export class TalentTreeScreen extends BaseComponent {
       });
 
       // Hover for tooltip
-      node.addEventListener('mouseenter', (e) => {
+      node.addEventListener('mouseenter', () => {
         this.showTalentTooltip(node);
       });
 
-      node.addEventListener('mouseleave', (e) => {
+      node.addEventListener('mouseleave', () => {
         this.hideTalentTooltip();
       });
     });

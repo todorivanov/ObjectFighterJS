@@ -261,7 +261,7 @@ test.describe('8-Slot Equipment System E2E', () => {
         const save = JSON.parse(localStorage.getItem('legends_arena_save_slot1'));
 
         // Check if old 'armor' was migrated to 'torso'
-        const hasTorsoSlot = save.equipped.hasOwnProperty('torso');
+        const hasTorsoSlot = Object.prototype.hasOwnProperty.call(save.equipped, 'torso');
         const hasWeapon = save.equipped.weapon === 'sword_basic';
         const hasAccessory = save.equipped.accessory === 'ring_power';
 
@@ -297,7 +297,7 @@ test.describe('8-Slot Equipment System E2E', () => {
         const save = JSON.parse(localStorage.getItem('legends_arena_save_slot1'));
         const requiredSlots = ['weapon', 'head', 'torso', 'arms', 'trousers', 'shoes', 'coat', 'accessory'];
 
-        return requiredSlots.every((slot) => save.equipped.hasOwnProperty(slot));
+        return requiredSlots.every((slot) => Object.prototype.hasOwnProperty.call(save.equipped, slot));
       });
 
       expect(hasAllSlots).toBe(true);

@@ -131,7 +131,7 @@ class ConsoleLoggerClass {
    * @param {boolean} enabled
    */
   setLevelEnabled(level, enabled) {
-    if (this.settings.levels.hasOwnProperty(level)) {
+    if (Object.prototype.hasOwnProperty.call(this.settings.levels, level)) {
       this.settings.levels[level] = enabled;
       this.saveSettings();
     }
