@@ -267,12 +267,6 @@ function showProfileScreen() {
     appState.reset();
     router.navigate(RoutePaths.HOME);
   });
-  profileScreen.addEventListener('navigate', (e) => {
-    const { screen } = e.detail;
-    if (screen === 'talents') {
-      router.navigate(RoutePaths.TALENTS);
-    }
-  });
 
   root.appendChild(profileScreen);
   appState.currentScreen = 'profile';

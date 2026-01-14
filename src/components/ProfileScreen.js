@@ -152,11 +152,6 @@ export class ProfileScreen extends BaseComponent {
 
         <div class="profile-header">
           <h1 class="profile-title">👤 Player Profile</h1>
-          <div class="quick-actions">
-            <button class="action-btn talents-btn" id="talents-btn">
-              ⭐ Talents
-            </button>
-          </div>
         </div>
 
         <!-- Tab Navigation -->
@@ -650,14 +645,6 @@ export class ProfileScreen extends BaseComponent {
     if (backBtn) {
       backBtn.addEventListener('click', () => {
         this.emit('back-to-menu');
-      });
-    }
-
-    // Talents button
-    const talentsBtn = this.shadowRoot.querySelector('#talents-btn');
-    if (talentsBtn) {
-      talentsBtn.addEventListener('click', () => {
-        this.emit('navigate', { screen: 'talents' });
       });
     }
 
