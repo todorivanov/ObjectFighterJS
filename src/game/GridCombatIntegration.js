@@ -208,6 +208,15 @@ export class GridCombatIntegration {
       range -= 1;
     }
 
+    // Equipment modifiers (e.g., Boots of Haste +1)
+    if (fighter.movementBonus) {
+      range += fighter.movementBonus;
+      ConsoleLogger.debug(
+        LogCategory.GRID,
+        `⚡ Equipment movement bonus: +${fighter.movementBonus} (total: ${range})`
+      );
+    }
+
     // Status effects could modify this
     // TODO: Add status effect modifiers
 

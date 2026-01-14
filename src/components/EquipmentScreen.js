@@ -107,6 +107,16 @@ export class EquipmentScreen extends BaseComponent {
               `
                   : ''
               }
+              ${
+                totalStats.movementBonus > 0
+                  ? `
+                <div class="stat-display">
+                  <div class="stat-value">+${totalStats.movementBonus}</div>
+                  <div class="stat-label">⚡ Movement</div>
+                </div>
+              `
+                  : ''
+              }
             </div>
           </div>
         `
@@ -192,10 +202,24 @@ export class EquipmentScreen extends BaseComponent {
           critChance: 'Crit%',
           critDamage: 'Crit Dmg',
           manaRegen: 'Mana+',
+          movementBonus: '⚡ Move',
         };
         return `<span class="stat-badge">+${value} ${statNames[stat]}</span>`;
       })
       .join('');
+
+    // Add special movement type badges
+    let specialMovementHtml = '';
+    if (item.movementType) {
+      const types = Array.isArray(item.movementType) ? item.movementType : [item.movementType];
+      const typeLabels = {
+        phaseThrough: '👻 Phase',
+        ignoreTerrainCost: '🥾 Swift',
+      };
+      specialMovementHtml = types
+        .map((type) => `<span class="stat-badge special">${typeLabels[type] || type}</span>`)
+        .join('');
+    }
 
     return `
       <div class="equipment-slot">
@@ -208,7 +232,7 @@ export class EquipmentScreen extends BaseComponent {
           <div class="item-rarity" style="color: ${RARITY_COLORS[item.rarity]}">
             ${RARITY_NAMES[item.rarity]}
           </div>
-          <div class="item-stats">${statsHtml}</div>
+          <div class="item-stats">${statsHtml}${specialMovementHtml}</div>
           <button class="unequip-btn" data-slot="${slotType}">Unequip</button>
         </div>
       </div>
@@ -232,10 +256,24 @@ export class EquipmentScreen extends BaseComponent {
           critChance: 'Crit%',
           critDamage: 'Crit Dmg',
           manaRegen: 'Mana+',
+          movementBonus: '⚡ Move',
         };
         return `<span class="stat-badge">+${value} ${statNames[stat]}</span>`;
       })
       .join('');
+
+    // Add special movement type badges
+    let specialMovementHtml = '';
+    if (item.movementType) {
+      const types = Array.isArray(item.movementType) ? item.movementType : [item.movementType];
+      const typeLabels = {
+        phaseThrough: '👻 Phase',
+        ignoreTerrainCost: '🥾 Swift',
+      };
+      specialMovementHtml = types
+        .map((type) => `<span class="stat-badge special">${typeLabels[type] || type}</span>`)
+        .join('');
+    }
 
     return `
       <div class="inventory-item ${item.rarity}" data-item-id="${item.id}">
@@ -249,7 +287,7 @@ export class EquipmentScreen extends BaseComponent {
           <div class="item-icon-large">${item.icon}</div>
         </div>
         <div class="item-description">${item.description}</div>
-        <div class="item-stats">${statsHtml}</div>
+        <div class="item-stats">${statsHtml}${specialMovementHtml}</div>
         <div class="item-requirements">
           <div class="${meetsLevel ? 'requirement-met' : 'requirement-not-met'}">
             Level ${item.requirements.level} ${meetsLevel ? '✓' : '✗'}

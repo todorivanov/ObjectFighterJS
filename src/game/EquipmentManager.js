@@ -123,6 +123,7 @@ export class EquipmentManager {
       critChance: 0,
       critDamage: 0,
       manaRegen: 0,
+      movementBonus: 0,
     };
 
     // Weapon
@@ -159,6 +160,46 @@ export class EquipmentManager {
   }
 
   /**
+   * Get movement modifiers from equipped items
+   * @returns {Object} - Movement modifiers { bonus: number, specialTypes: string[] }
+   */
+  static getMovementModifiers() {
+    const state = gameStore.getState();
+    const equipped = state.equipped;
+    const modifiers = {
+      bonus: 0,
+      specialTypes: [], // e.g., ['phaseThrough', 'ignoreTerrainCost']
+    };
+
+    // Check all equipped items for movement modifiers
+    [equipped.weapon, equipped.armor, equipped.accessory].forEach((itemId) => {
+      if (itemId) {
+        const item = getEquipmentById(itemId);
+        if (item) {
+          // Add movement bonus
+          if (item.stats?.movementBonus) {
+            modifiers.bonus += item.stats.movementBonus;
+          }
+
+          // Add special movement types
+          if (item.movementType) {
+            if (Array.isArray(item.movementType)) {
+              modifiers.specialTypes.push(...item.movementType);
+            } else {
+              modifiers.specialTypes.push(item.movementType);
+            }
+          }
+        }
+      }
+    });
+
+    // Remove duplicates from special types
+    modifiers.specialTypes = [...new Set(modifiers.specialTypes)];
+
+    return modifiers;
+  }
+
+  /**
    * Apply equipment bonuses to a fighter
    * @param {Object} fighter - Fighter object
    * @returns {Object} - Modified fighter with equipment bonuses
@@ -175,11 +216,18 @@ export class EquipmentManager {
     fighter.baseCritDamage = stats.critDamage;
     fighter.baseManaRegen = stats.manaRegen;
 
+    // Apply movement modifiers
+    const movementMods = this.getMovementModifiers();
+    fighter.movementBonus = movementMods.bonus;
+    fighter.movementSpecialTypes = movementMods.specialTypes;
+
     ConsoleLogger.debug(LogCategory.EQUIPMENT, `⚔️ Equipment bonuses applied:`, {
       '+HP': stats.health,
       '+STR': stats.strength,
       '+DEF': stats.defense,
       '+Crit': stats.critChance,
+      '+Move': movementMods.bonus,
+      'Special': movementMods.specialTypes.join(', ') || 'none',
     });
 
     return fighter;

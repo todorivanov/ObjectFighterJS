@@ -371,6 +371,97 @@ export const EQUIPMENT_DATABASE = {
     icon: '🛡️',
   },
 
+  // ========== BOOTS (NEW: Movement Equipment) ==========
+
+  boots_of_haste: {
+    id: 'boots_of_haste',
+    name: 'Boots of Haste',
+    type: 'accessory',
+    rarity: 'rare',
+    stats: {
+      movementBonus: 1,
+    },
+    requirements: {
+      level: 5,
+      class: null,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 6,
+      repairCostBase: 30,
+    },
+    description: '+1 Movement range. Swift as the wind.',
+    icon: '👢',
+  },
+
+  ghost_walker_boots: {
+    id: 'ghost_walker_boots',
+    name: 'Ghost Walker',
+    type: 'accessory',
+    rarity: 'epic',
+    stats: {
+      movementBonus: 1,
+    },
+    movementType: ['phaseThrough'],
+    requirements: {
+      level: 10,
+      class: ['ASSASSIN', 'AGILE', 'BALANCED'],
+    },
+    durability: {
+      max: 100,
+      degradationRate: 5,
+      repairCostBase: 50,
+    },
+    description: '+1 Movement, can pass through enemies (but not end on them). Phase like a ghost.',
+    icon: '👻',
+  },
+
+  strider_greaves: {
+    id: 'strider_greaves',
+    name: "Strider's Greaves",
+    type: 'accessory',
+    rarity: 'epic',
+    stats: {
+      movementBonus: 1,
+      defense: 5,
+    },
+    movementType: ['ignoreTerrainCost'],
+    requirements: {
+      level: 12,
+      class: null,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 5,
+      repairCostBase: 55,
+    },
+    description: '+1 Movement, +5 DEF, ignore terrain costs. Traverse any battlefield.',
+    icon: '🥾',
+  },
+
+  winged_sandals: {
+    id: 'winged_sandals',
+    name: 'Winged Sandals',
+    type: 'accessory',
+    rarity: 'legendary',
+    stats: {
+      movementBonus: 2,
+      strength: 10,
+    },
+    movementType: ['ignoreTerrainCost'],
+    requirements: {
+      level: 15,
+      class: null,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 4,
+      repairCostBase: 100,
+    },
+    description: '+2 Movement, +10 STR, ignore terrain. Blessed by Hermes himself.',
+    icon: '🪽',
+  },
+
   // ========== ACCESSORIES ==========
 
   // Common Accessories
