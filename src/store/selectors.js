@@ -71,7 +71,12 @@ export const selectEquipment = (state) => state.inventory?.equipment || [];
 export const selectConsumables = (state) => state.inventory?.consumables || {};
 export const selectEquipped = (state) => state.equipped || {};
 export const selectEquippedWeapon = (state) => state.equipped?.weapon;
-export const selectEquippedArmor = (state) => state.equipped?.armor;
+export const selectEquippedHead = (state) => state.equipped?.head;
+export const selectEquippedTorso = (state) => state.equipped?.torso;
+export const selectEquippedArms = (state) => state.equipped?.arms;
+export const selectEquippedTrousers = (state) => state.equipped?.trousers;
+export const selectEquippedShoes = (state) => state.equipped?.shoes;
+export const selectEquippedCoat = (state) => state.equipped?.coat;
 export const selectEquippedAccessory = (state) => state.equipped?.accessory;
 export const selectEquipmentDurability = (state) => state.equipmentDurability || {};
 

@@ -81,6 +81,85 @@
   }
 }
 
+// Character-shaped equipment layout
+.character-equipment-layout {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto auto auto auto;
+  gap: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  animation: fadeInUp 0.8s ease;
+
+  // Head - centered at top
+  .equipment-slot-head {
+    grid-column: 2 / 3;
+    grid-row: 1;
+  }
+
+  // Weapon - left side, upper
+  .equipment-slot-weapon {
+    grid-column: 1 / 2;
+    grid-row: 2;
+  }
+
+  // Torso - center
+  .equipment-slot-torso {
+    grid-column: 2 / 3;
+    grid-row: 2;
+  }
+
+  // Coat - right side, upper
+  .equipment-slot-coat {
+    grid-column: 3 / 4;
+    grid-row: 2;
+  }
+
+  // Arms - left side, middle
+  .equipment-slot-arms {
+    grid-column: 1 / 2;
+    grid-row: 3;
+  }
+
+  // Trousers - center, middle
+  .equipment-slot-trousers {
+    grid-column: 2 / 3;
+    grid-row: 3;
+  }
+
+  // Accessory - right side, middle (rings, amulets, etc.)
+  .equipment-slot-accessory {
+    grid-column: 3 / 4;
+    grid-row: 3;
+  }
+
+  // Shoes - centered at bottom
+  .equipment-slot-shoes {
+    grid-column: 2 / 3;
+    grid-row: 4;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 20px 10px;
+
+    // Stack vertically on mobile
+    .equipment-slot-head,
+    .equipment-slot-weapon,
+    .equipment-slot-coat,
+    .equipment-slot-arms,
+    .equipment-slot-torso,
+    .equipment-slot-trousers,
+    .equipment-slot-accessory,
+    .equipment-slot-shoes {
+      grid-column: 1 / 2;
+      grid-row: auto;
+    }
+  }
+}
+
 .profile-card {
   @include card-base;
 }

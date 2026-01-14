@@ -2,6 +2,8 @@
  * GridManager - Manages the 5x5 tactical grid for combat
  */
 
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 /**
  * Grid cell representing a position on the battlefield
  */
@@ -137,13 +139,19 @@ export class GridManager {
   placeFighter(fighter, x, y) {
     const cell = this.getCell(x, y);
     if (!cell || cell.isOccupied()) {
-      console.warn(`Cannot place fighter at (${x}, ${y}): cell occupied or invalid`);
+      ConsoleLogger.warn(
+        LogCategory.GRID,
+        `Cannot place fighter at (${x}, ${y}): cell occupied or invalid`
+      );
       return false;
     }
 
     // Validate terrain is passable (prevent spawning on walls/pits)
     if (!cell.isPassable()) {
-      console.warn(`Cannot place fighter at (${x}, ${y}): terrain '${cell.terrain}' is impassable`);
+      ConsoleLogger.warn(
+        LogCategory.GRID,
+        `Cannot place fighter at (${x}, ${y}): terrain '${cell.terrain}' is impassable`
+      );
       return false;
     }
 
@@ -284,6 +292,10 @@ export class GridManager {
     const { x, y } = fighter.gridPosition;
     const validMoves = [];
 
+    // Check for special movement types from equipment
+    const canPhaseThrough = fighter.movementSpecialTypes?.includes('phaseThrough');
+    const ignoreTerrainCost = fighter.movementSpecialTypes?.includes('ignoreTerrainCost');
+
     // Use breadth-first search to find all reachable cells
     const queue = [{ x, y, cost: 0 }];
     const visited = new Set();
@@ -308,14 +320,24 @@ export class GridManager {
         if (visited.has(key)) continue;
 
         const cell = this.getCell(newX, newY);
-        if (!cell || !cell.isPassable()) continue;
+        if (!cell) continue;
 
-        const moveCost = cell.getMovementCost();
+        // Check passability (phaseThrough allows moving through occupied cells)
+        const isOccupied = cell.occupant !== null;
+        if (!canPhaseThrough && !cell.isPassable()) continue;
+        if (canPhaseThrough && !cell.isPassable() && !isOccupied) continue; // Still can't move through walls/pits
+
+        // Calculate movement cost
+        let moveCost = ignoreTerrainCost ? 1 : cell.getMovementCost();
         const totalCost = current.cost + moveCost;
 
         if (totalCost <= maxDistance) {
           visited.add(key);
-          validMoves.push({ x: newX, y: newY, cost: totalCost });
+          // Don't allow ending movement on an occupied cell (even with phaseThrough)
+          if (!isOccupied) {
+            validMoves.push({ x: newX, y: newY, cost: totalCost });
+          }
+          // But can pass through it to reach other cells
           queue.push({ x: newX, y: newY, cost: totalCost });
         }
       }

@@ -11,6 +11,7 @@ import {
 } from '../store/actions.js';
 import { getEquipmentById, getRandomEquipmentDrop } from '../data/equipment.js';
 import { Logger } from '../utils/logger.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
 
 export class EquipmentManager {
   /**
@@ -21,7 +22,7 @@ export class EquipmentManager {
   static equipItem(equipmentId) {
     const equipment = getEquipmentById(equipmentId);
     if (!equipment) {
-      console.error('Equipment not found:', equipmentId);
+      ConsoleLogger.error(LogCategory.EQUIPMENT, 'Equipment not found:', equipmentId);
       return false;
     }
 
@@ -31,12 +32,18 @@ export class EquipmentManager {
     const playerClass = state.player.class;
 
     if (equipment.requirements.level > playerLevel) {
-      console.log(`❌ Level ${equipment.requirements.level} required (you are ${playerLevel})`);
+      ConsoleLogger.warn(
+        LogCategory.EQUIPMENT,
+        `❌ Level ${equipment.requirements.level} required (you are ${playerLevel})`
+      );
       return false;
     }
 
     if (equipment.requirements.class && !equipment.requirements.class.includes(playerClass)) {
-      console.log(`❌ Class requirement not met: ${equipment.requirements.class.join(', ')}`);
+      ConsoleLogger.warn(
+        LogCategory.EQUIPMENT,
+        `❌ Class requirement not met: ${equipment.requirements.class.join(', ')}`
+      );
       return false;
     }
 
@@ -48,7 +55,7 @@ export class EquipmentManager {
 
     // Equip new item
     gameStore.dispatch(equipItemAction(equipmentId, equipment.type));
-    console.log(`⚔️ Equipped: ${equipment.name}`);
+    ConsoleLogger.info(LogCategory.EQUIPMENT, `⚔️ Equipped: ${equipment.name}`);
 
     return true;
   }
@@ -67,7 +74,7 @@ export class EquipmentManager {
 
     // Remove from equipped slot
     gameStore.dispatch(unequipItemAction(slot));
-    console.log(`🔓 Unequipped ${slot}`);
+    ConsoleLogger.info(LogCategory.EQUIPMENT, `🔓 Unequipped ${slot}`);
 
     return true;
   }
@@ -88,13 +95,13 @@ export class EquipmentManager {
 
     // Check inventory limit (20 items)
     if (inventory.length >= 20) {
-      console.log('⚠️ Inventory full! Sell or discard items.');
+      ConsoleLogger.warn(LogCategory.EQUIPMENT, '⚠️ Inventory full! Sell or discard items.');
       return false;
     }
 
     gameStore.dispatch(addItem(equipmentId));
 
-    console.log(`📦 Added to inventory: ${equipment.name}`);
+    ConsoleLogger.info(LogCategory.EQUIPMENT, `📦 Added to inventory: ${equipment.name}`);
     return true;
   }
 
@@ -122,39 +129,67 @@ export class EquipmentManager {
       critChance: 0,
       critDamage: 0,
       manaRegen: 0,
+      movementBonus: 0,
     };
 
-    // Weapon
-    if (equipped.weapon) {
-      const weapon = getEquipmentById(equipped.weapon);
-      if (weapon) {
-        Object.keys(weapon.stats).forEach((stat) => {
-          stats[stat] = (stats[stat] || 0) + weapon.stats[stat];
-        });
-      }
-    }
+    // All 8 equipment slots
+    const slots = ['weapon', 'head', 'torso', 'arms', 'trousers', 'shoes', 'coat', 'accessory'];
 
-    // Armor
-    if (equipped.armor) {
-      const armor = getEquipmentById(equipped.armor);
-      if (armor) {
-        Object.keys(armor.stats).forEach((stat) => {
-          stats[stat] = (stats[stat] || 0) + armor.stats[stat];
-        });
+    slots.forEach((slotName) => {
+      if (equipped[slotName]) {
+        const item = getEquipmentById(equipped[slotName]);
+        if (item && item.stats) {
+          Object.keys(item.stats).forEach((stat) => {
+            stats[stat] = (stats[stat] || 0) + item.stats[stat];
+          });
+        }
       }
-    }
-
-    // Accessory
-    if (equipped.accessory) {
-      const accessory = getEquipmentById(equipped.accessory);
-      if (accessory) {
-        Object.keys(accessory.stats).forEach((stat) => {
-          stats[stat] = (stats[stat] || 0) + accessory.stats[stat];
-        });
-      }
-    }
+    });
 
     return stats;
+  }
+
+  /**
+   * Get movement modifiers from equipped items
+   * @returns {Object} - Movement modifiers { bonus: number, specialTypes: string[] }
+   */
+  static getMovementModifiers() {
+    const state = gameStore.getState();
+    const equipped = state.equipped;
+    const modifiers = {
+      bonus: 0,
+      specialTypes: [], // e.g., ['phaseThrough', 'ignoreTerrainCost']
+    };
+
+    // Check all 8 equipped slots for movement modifiers
+    const slots = ['weapon', 'head', 'torso', 'arms', 'trousers', 'shoes', 'coat', 'accessory'];
+
+    slots.forEach((slotName) => {
+      const itemId = equipped[slotName];
+      if (itemId) {
+        const item = getEquipmentById(itemId);
+        if (item) {
+          // Add movement bonus
+          if (item.stats?.movementBonus) {
+            modifiers.bonus += item.stats.movementBonus;
+          }
+
+          // Add special movement types
+          if (item.movementType) {
+            if (Array.isArray(item.movementType)) {
+              modifiers.specialTypes.push(...item.movementType);
+            } else {
+              modifiers.specialTypes.push(item.movementType);
+            }
+          }
+        }
+      }
+    });
+
+    // Remove duplicates from special types
+    modifiers.specialTypes = [...new Set(modifiers.specialTypes)];
+
+    return modifiers;
   }
 
   /**
@@ -174,11 +209,18 @@ export class EquipmentManager {
     fighter.baseCritDamage = stats.critDamage;
     fighter.baseManaRegen = stats.manaRegen;
 
-    console.log(`⚔️ Equipment bonuses applied:`, {
+    // Apply movement modifiers
+    const movementMods = this.getMovementModifiers();
+    fighter.movementBonus = movementMods.bonus;
+    fighter.movementSpecialTypes = movementMods.specialTypes;
+
+    ConsoleLogger.debug(LogCategory.EQUIPMENT, `⚔️ Equipment bonuses applied:`, {
       '+HP': stats.health,
       '+STR': stats.strength,
       '+DEF': stats.defense,
       '+Crit': stats.critChance,
+      '+Move': movementMods.bonus,
+      Special: movementMods.specialTypes.join(', ') || 'none',
     });
 
     return fighter;
@@ -277,7 +319,12 @@ export class EquipmentManager {
     const equipped = state.equipped;
     return {
       weapon: equipped.weapon ? getEquipmentById(equipped.weapon) : null,
-      armor: equipped.armor ? getEquipmentById(equipped.armor) : null,
+      head: equipped.head ? getEquipmentById(equipped.head) : null,
+      torso: equipped.torso ? getEquipmentById(equipped.torso) : null,
+      arms: equipped.arms ? getEquipmentById(equipped.arms) : null,
+      trousers: equipped.trousers ? getEquipmentById(equipped.trousers) : null,
+      shoes: equipped.shoes ? getEquipmentById(equipped.shoes) : null,
+      coat: equipped.coat ? getEquipmentById(equipped.coat) : null,
       accessory: equipped.accessory ? getEquipmentById(equipped.accessory) : null,
     };
   }

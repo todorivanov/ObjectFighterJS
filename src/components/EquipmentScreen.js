@@ -107,6 +107,16 @@ export class EquipmentScreen extends BaseComponent {
               `
                   : ''
               }
+              ${
+                totalStats.movementBonus > 0
+                  ? `
+                <div class="stat-display">
+                  <div class="stat-value">+${totalStats.movementBonus}</div>
+                  <div class="stat-label">⚡ Movement</div>
+                </div>
+              `
+                  : ''
+              }
             </div>
           </div>
         `
@@ -117,12 +127,16 @@ export class EquipmentScreen extends BaseComponent {
         <div class="equipped-section">
           <div class="section-title">
             <span>⚡</span>
-            Currently Equipped
+            Currently Equipped (7 Slots)
           </div>
           <div class="equipped-grid">
             ${this.renderEquippedSlot('weapon', '⚔️', equipped.weapon)}
-            ${this.renderEquippedSlot('armor', '🛡️', equipped.armor)}
-            ${this.renderEquippedSlot('accessory', '💍', equipped.accessory)}
+            ${this.renderEquippedSlot('head', '🪖', equipped.head)}
+            ${this.renderEquippedSlot('torso', '🛡️', equipped.torso)}
+            ${this.renderEquippedSlot('arms', '🥊', equipped.arms)}
+            ${this.renderEquippedSlot('trousers', '👖', equipped.trousers)}
+            ${this.renderEquippedSlot('shoes', '👢', equipped.shoes)}
+            ${this.renderEquippedSlot('coat', '🧥', equipped.coat)}
           </div>
         </div>
 
@@ -140,8 +154,23 @@ export class EquipmentScreen extends BaseComponent {
             <button class="tab-btn ${this.selectedTab === 'weapon' ? 'active' : ''}" data-tab="weapon">
               ⚔️ Weapons
             </button>
-            <button class="tab-btn ${this.selectedTab === 'armor' ? 'active' : ''}" data-tab="armor">
-              🛡️ Armor
+            <button class="tab-btn ${this.selectedTab === 'head' ? 'active' : ''}" data-tab="head">
+              🪖 Head
+            </button>
+            <button class="tab-btn ${this.selectedTab === 'torso' ? 'active' : ''}" data-tab="torso">
+              🛡️ Torso
+            </button>
+            <button class="tab-btn ${this.selectedTab === 'arms' ? 'active' : ''}" data-tab="arms">
+              🥊 Arms
+            </button>
+            <button class="tab-btn ${this.selectedTab === 'trousers' ? 'active' : ''}" data-tab="trousers">
+              👖 Trousers
+            </button>
+            <button class="tab-btn ${this.selectedTab === 'shoes' ? 'active' : ''}" data-tab="shoes">
+              👢 Shoes
+            </button>
+            <button class="tab-btn ${this.selectedTab === 'coat' ? 'active' : ''}" data-tab="coat">
+              🧥 Coat
             </button>
             <button class="tab-btn ${this.selectedTab === 'accessory' ? 'active' : ''}" data-tab="accessory">
               💍 Accessories
@@ -192,10 +221,24 @@ export class EquipmentScreen extends BaseComponent {
           critChance: 'Crit%',
           critDamage: 'Crit Dmg',
           manaRegen: 'Mana+',
+          movementBonus: '⚡ Move',
         };
         return `<span class="stat-badge">+${value} ${statNames[stat]}</span>`;
       })
       .join('');
+
+    // Add special movement type badges
+    let specialMovementHtml = '';
+    if (item.movementType) {
+      const types = Array.isArray(item.movementType) ? item.movementType : [item.movementType];
+      const typeLabels = {
+        phaseThrough: '👻 Phase',
+        ignoreTerrainCost: '🥾 Swift',
+      };
+      specialMovementHtml = types
+        .map((type) => `<span class="stat-badge special">${typeLabels[type] || type}</span>`)
+        .join('');
+    }
 
     return `
       <div class="equipment-slot">
@@ -208,7 +251,7 @@ export class EquipmentScreen extends BaseComponent {
           <div class="item-rarity" style="color: ${RARITY_COLORS[item.rarity]}">
             ${RARITY_NAMES[item.rarity]}
           </div>
-          <div class="item-stats">${statsHtml}</div>
+          <div class="item-stats">${statsHtml}${specialMovementHtml}</div>
           <button class="unequip-btn" data-slot="${slotType}">Unequip</button>
         </div>
       </div>
@@ -232,16 +275,46 @@ export class EquipmentScreen extends BaseComponent {
           critChance: 'Crit%',
           critDamage: 'Crit Dmg',
           manaRegen: 'Mana+',
+          movementBonus: '⚡ Move',
         };
         return `<span class="stat-badge">+${value} ${statNames[stat]}</span>`;
       })
       .join('');
+
+    // Add special movement type badges
+    let specialMovementHtml = '';
+    if (item.movementType) {
+      const types = Array.isArray(item.movementType) ? item.movementType : [item.movementType];
+      const typeLabels = {
+        phaseThrough: '👻 Phase',
+        ignoreTerrainCost: '🥾 Swift',
+      };
+      specialMovementHtml = types
+        .map((type) => `<span class="stat-badge special">${typeLabels[type] || type}</span>`)
+        .join('');
+    }
+
+    // Get slot label and icon
+    const slotInfo = {
+      weapon: { icon: '⚔️', label: 'Weapon' },
+      head: { icon: '🪖', label: 'Head' },
+      torso: { icon: '🛡️', label: 'Torso' },
+      arms: { icon: '🥊', label: 'Arms' },
+      trousers: { icon: '👖', label: 'Trousers' },
+      shoes: { icon: '👢', label: 'Shoes' },
+      coat: { icon: '🧥', label: 'Coat' },
+      accessory: { icon: '💍', label: 'Accessory' },
+    };
+    const slot = slotInfo[item.type] || { icon: '📦', label: item.type };
 
     return `
       <div class="inventory-item ${item.rarity}" data-item-id="${item.id}">
         <div class="item-header">
           <div>
             <div class="item-name">${item.name}</div>
+            <div style="color: #90caf9; font-size: 13px; font-weight: 600; margin: 3px 0;">
+              ${slot.icon} ${slot.label}
+            </div>
             <div class="item-rarity" style="color: ${RARITY_COLORS[item.rarity]}">
               ${RARITY_NAMES[item.rarity]}
             </div>
@@ -249,7 +322,7 @@ export class EquipmentScreen extends BaseComponent {
           <div class="item-icon-large">${item.icon}</div>
         </div>
         <div class="item-description">${item.description}</div>
-        <div class="item-stats">${statsHtml}</div>
+        <div class="item-stats">${statsHtml}${specialMovementHtml}</div>
         <div class="item-requirements">
           <div class="${meetsLevel ? 'requirement-met' : 'requirement-not-met'}">
             Level ${item.requirements.level} ${meetsLevel ? '✓' : '✗'}

@@ -4,6 +4,7 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ObjectPool, PoolManager } from '../../src/utils/ObjectPool.js';
+import { ConsoleLogger } from '../../src/utils/ConsoleLogger.js';
 
 describe('ObjectPool', () => {
   let pool;
@@ -117,7 +118,7 @@ describe('ObjectPool', () => {
     });
 
     it('should warn when releasing non-pool object', () => {
-      const spy = vi.spyOn(console, 'warn').mockImplementation();
+      const spy = vi.spyOn(ConsoleLogger, 'warn').mockImplementation();
       const foreignObj = { value: 0 };
 
       pool.release(foreignObj);

@@ -19,6 +19,9 @@ export class WikiScreen extends BaseComponent {
         </div>
 
         <div class="tab-navigation">
+          <button class="tab-button ${this._activeTab === 'talents' ? 'active' : ''}" data-tab="talents">
+            ⭐ Talents
+          </button>
           <button class="tab-button ${this._activeTab === 'grid-combat' ? 'active' : ''}" data-tab="grid-combat">
             🗺️ Grid Combat
           </button>
@@ -52,6 +55,7 @@ export class WikiScreen extends BaseComponent {
         </div>
 
         <div class="wiki-content">
+          ${this.renderTalentsContent()}
           ${this.renderGridCombatContent()}
           ${this.renderStoryContent()}
           ${this.renderStatusEffectsContent()}
@@ -62,6 +66,236 @@ export class WikiScreen extends BaseComponent {
           ${this.renderEquipmentContent()}
           ${this.renderTournamentContent()}
           ${this.renderDifficultyContent()}
+        </div>
+      </div>
+    `;
+  }
+
+  renderTalentsContent() {
+    return `
+      <div class="content-section ${this._activeTab === 'talents' ? 'active' : ''}" id="talents-content">
+        <h1>⭐ Talent Tree System</h1>
+        
+        <div class="info-box">
+          <strong>3 Trees Per Class | 40+ Talents | Strategic Progression | Build Diversity</strong><br>
+          Customize your character with unique talent trees and create your perfect build!
+        </div>
+
+        <h2>🌳 Overview</h2>
+        <p>The Talent System adds deep customization to your character. Each class has <strong>3 unique specialization trees</strong> with multiple talent nodes providing stat bonuses and passive abilities.</p>
+
+        <div class="mechanic-card">
+          <h3>📊 Talent Points</h3>
+          <ul>
+            <li><strong>Earn Points</strong> - Gain 1 talent point per level (starting at level 2)</li>
+            <li><strong>Level 10</strong> - 9 talent points available</li>
+            <li><strong>Level 20</strong> - 19 talent points available (maximum)</li>
+            <li><strong>Strategic Choices</strong> - Can't max everything, must choose wisely!</li>
+          </ul>
+        </div>
+
+        <div class="mechanic-card">
+          <h3>🎯 Talent Requirements</h3>
+          <ul>
+            <li><strong>Row 0 (Foundation)</strong> - No requirements, always available</li>
+            <li><strong>Row 1 (Tier 1)</strong> - Requires 5 points spent in tree</li>
+            <li><strong>Row 2 (Tier 2)</strong> - Requires 10 points + prerequisite talents</li>
+            <li><strong>Row 3 (Capstone)</strong> - Requires 15 points + multiple prerequisites</li>
+            <li><strong>Prerequisites</strong> - Some talents require other talents to be maxed first</li>
+          </ul>
+        </div>
+
+        <h2>⚔️ WARRIOR Talent Trees</h2>
+
+        <div class="class-section">
+          <h3>⚔️ Arms (DPS)</h3>
+          <p><em>Master of weapons and devastating strikes</em></p>
+          <ul>
+            <li><strong>Weapon Mastery</strong> (Rank 5) - +2 Strength per rank</li>
+            <li><strong>Precise Strikes</strong> (Rank 3) - +2% Crit Chance per rank</li>
+            <li><strong>Execute</strong> - Deal 50% more damage to enemies below 20% HP</li>
+            <li><strong>Mortal Strike</strong> - Attacks have a chance to cause bleeding</li>
+            <li><strong>Bladestorm</strong> (Ultimate) - +50% Critical Damage</li>
+          </ul>
+          <p><strong>Best For:</strong> Pure DPS, high burst damage</p>
+        </div>
+
+        <div class="class-section">
+          <h3>😤 Fury (Burst)</h3>
+          <p><em>Rage-fueled relentless attacks</em></p>
+          <ul>
+            <li><strong>Building Rage</strong> (Rank 5) - +1 STR, +1% Crit per rank</li>
+            <li><strong>Enrage</strong> - Critical hits grant temporary strength boost</li>
+            <li><strong>Rampage</strong> (Rank 3) - Each attack increases damage of next attack</li>
+            <li><strong>Bloodthirst</strong> (Rank 3) - Restore 5% health when dealing crits</li>
+            <li><strong>Reckless Abandon</strong> (Ultimate) - +20% damage, +30% crit chance</li>
+          </ul>
+          <p><strong>Best For:</strong> Sustained DPS, self-healing</p>
+        </div>
+
+        <div class="class-section">
+          <h3>🛡️ Protection (Tank)</h3>
+          <p><em>Impenetrable defense and battlefield control</em></p>
+          <ul>
+            <li><strong>Thick Skin</strong> (Rank 5) - +3 Defense per rank</li>
+            <li><strong>Toughness</strong> (Rank 5) - +25 HP per rank</li>
+            <li><strong>Shield Block</strong> (Rank 3) - 10% chance to block attacks per rank</li>
+            <li><strong>Challenging Shout</strong> - Force enemies to attack you (taunt)</li>
+            <li><strong>Shield Wall</strong> (Ultimate) - +50 Defense, reflect 20% damage taken</li>
+          </ul>
+          <p><strong>Best For:</strong> Tanking, team play, survival</p>
+        </div>
+
+        <h2>🔮 MAGE Talent Trees</h2>
+
+        <div class="class-section">
+          <h3>🔥 Fire (Burn)</h3>
+          <p><em>Burn enemies with devastating flames</em></p>
+          <ul>
+            <li><strong>Flame Touched</strong> (Rank 5) - +2 Spell Damage per rank</li>
+            <li><strong>Critical Mass</strong> (Rank 3) - +3% Crit Chance per rank</li>
+            <li><strong>Ignite</strong> - Critical strikes set enemies on fire (8 damage over 4 turns)</li>
+            <li><strong>Pyroblast</strong> - 15% chance to deal 2.5x damage</li>
+            <li><strong>Combustion</strong> (Ultimate) - Ignite explodes for AoE damage</li>
+          </ul>
+          <p><strong>Best For:</strong> Burst damage, damage over time</p>
+        </div>
+
+        <div class="class-section">
+          <h3>❄️ Frost (Control)</h3>
+          <p><em>Control the battlefield with ice and cold</em></p>
+          <ul>
+            <li><strong>Ice Veins</strong> (Rank 5) - +1 Damage, +2 Defense per rank</li>
+            <li><strong>Frost Nova</strong> - Attacks slow enemy movement</li>
+            <li><strong>Ice Barrier</strong> (Rank 3) - Absorb 20 damage per rank</li>
+            <li><strong>Deep Freeze</strong> - 20% chance to freeze enemies in place</li>
+            <li><strong>Blizzard</strong> (Ultimate) - AoE frost damage and control</li>
+          </ul>
+          <p><strong>Best For:</strong> Battlefield control, defensive mage</p>
+        </div>
+
+        <div class="class-section">
+          <h3>🔮 Arcane (Power)</h3>
+          <p><em>Harness raw magical power</em></p>
+          <ul>
+            <li><strong>Arcane Power</strong> (Rank 5) - +3 Damage per rank</li>
+            <li><strong>Arcane Intellect</strong> (Rank 3) - +2 Mana Regen per rank</li>
+            <li><strong>Arcane Missiles</strong> - Attacks hit multiple times</li>
+            <li><strong>Arcane Surge</strong> (Rank 3) - Attacks amplify next spell (10% per rank)</li>
+            <li><strong>Arcane Mastery</strong> (Ultimate) - +25 STR, +5 Mana Regen, +15% Crit, +25% all damage</li>
+          </ul>
+          <p><strong>Best For:</strong> Pure power, sustained damage</p>
+        </div>
+
+        <h2>💪 Talent Effects</h2>
+
+        <div class="mechanic-card">
+          <h3>📈 Stat Modifiers</h3>
+          <ul>
+            <li><strong>+Strength</strong> - More damage in combat</li>
+            <li><strong>+Health</strong> - Higher HP pool for survivability</li>
+            <li><strong>+Defense</strong> - Damage reduction from attacks</li>
+            <li><strong>+Crit Chance</strong> - More frequent critical hits</li>
+            <li><strong>+Crit Damage</strong> - Bigger critical strike multipliers</li>
+            <li><strong>+Mana Regen</strong> - Faster mana recovery per turn</li>
+            <li><strong>+Movement</strong> - Bonus movement range on grid</li>
+          </ul>
+        </div>
+
+        <div class="mechanic-card">
+          <h3>⚡ Passive Abilities</h3>
+          <ul>
+            <li><strong>Execute</strong> - Deal bonus damage to low HP enemies (automatic)</li>
+            <li><strong>Bleed</strong> - Chance to inflict damage over time</li>
+            <li><strong>Block</strong> - Chance to block incoming attacks (reduces damage by 50%)</li>
+            <li><strong>Ignite</strong> - Set enemies on fire with critical strikes</li>
+            <li><strong>Lifesteal</strong> - Heal for percentage of damage dealt</li>
+            <li><strong>Slow/Freeze</strong> - Reduce or prevent enemy movement</li>
+            <li><strong>Taunt</strong> - Force enemies to attack you</li>
+            <li><strong>Reflect</strong> - Damage reflection back to attacker</li>
+          </ul>
+        </div>
+
+        <h2>🎮 How to Use Talents</h2>
+
+        <div class="mechanic-card">
+          <h3>🖱️ Interacting with Talents</h3>
+          <ul>
+            <li><strong>Access</strong> - Click "⭐ Talents" in top navigation</li>
+            <li><strong>Select Tree</strong> - Click on one of the 3 tree tabs</li>
+            <li><strong>Learn Talent</strong> - Left-click on an available talent (green glow)</li>
+            <li><strong>Unlearn Talent</strong> - Right-click on a learned talent</li>
+            <li><strong>View Details</strong> - Hover over talent for tooltip</li>
+            <li><strong>Respec</strong> - Click "Reset Talents" button (costs gold)</li>
+          </ul>
+        </div>
+
+        <div class="mechanic-card">
+          <h3>💰 Respec System</h3>
+          <ul>
+            <li><strong>Cost</strong> - 50 gold × total talent points spent</li>
+            <li><strong>Example</strong> - 9 points = 450 gold to reset</li>
+            <li><strong>Refund</strong> - All talent points are refunded immediately</li>
+            <li><strong>When to Respec</strong> - Try different builds, optimize for specific content</li>
+          </ul>
+        </div>
+
+        <h2>🧠 Strategy Tips</h2>
+
+        <div class="tip-box">
+          <h4>✅ DO:</h4>
+          <ul>
+            <li><strong>Max foundation talents first</strong> - Rank 5 talents are most efficient</li>
+            <li><strong>Plan your build</strong> - Look at full tree before spending points</li>
+            <li><strong>Specialize</strong> - Focus on one tree initially for capstone talents</li>
+            <li><strong>Experiment</strong> - Try different builds for different content</li>
+          </ul>
+        </div>
+
+        <div class="tip-box warning">
+          <h4>❌ DON'T:</h4>
+          <ul>
+            <li><strong>Spread too thin</strong> - Don't put 1-2 points in every talent</li>
+            <li><strong>Ignore prerequisites</strong> - Plan path to capstone talents</li>
+            <li><strong>Skip foundation</strong> - They're the most cost-effective</li>
+            <li><strong>Forget to respec</strong> - Don't stick with bad build if not working</li>
+          </ul>
+        </div>
+
+        <h2>🏆 Sample Builds</h2>
+
+        <div class="build-card">
+          <h3>⚔️ Warrior - Arms DPS (19 points)</h3>
+          <p><strong>Goal:</strong> Maximum burst damage</p>
+          <ul>
+            <li><strong>Arms (15):</strong> Weapon Mastery 5/5, Execute, Mortal Strike, Bladestorm</li>
+            <li><strong>Fury (4):</strong> Building Rage 4/5</li>
+          </ul>
+          <p><strong>Result:</strong> +14 STR, +10% Crit, +50% Crit Dmg, Execute + Bleed passives</p>
+        </div>
+
+        <div class="build-card">
+          <h3>🛡️ Warrior - Protection Tank (19 points)</h3>
+          <p><strong>Goal:</strong> Maximum survivability</p>
+          <ul>
+            <li><strong>Protection (15):</strong> Thick Skin 5/5, Toughness 5/5, Shield Block 3/3, Shield Wall</li>
+            <li><strong>Arms (4):</strong> Weapon Mastery 4/5</li>
+          </ul>
+          <p><strong>Result:</strong> +8 STR, +125 HP, +65 DEF, 30% Block, Damage Reflect</p>
+        </div>
+
+        <div class="build-card">
+          <h3>🔥 Mage - Fire Burst (19 points)</h3>
+          <p><strong>Goal:</strong> Maximum burst and DoT</p>
+          <ul>
+            <li><strong>Fire (15):</strong> Flame Touched 5/5, Critical Mass 3/3, Ignite, Pyroblast, Combustion</li>
+            <li><strong>Arcane (4):</strong> Arcane Power 4/5</li>
+          </ul>
+          <p><strong>Result:</strong> +22 Dmg, +9% Crit, Ignite + Pyroblast + AoE Combustion</p>
+        </div>
+
+        <div class="note-box">
+          <strong>💡 Pro Tip:</strong> Talents apply to ALL game modes - Story Mode, Tournaments, Free Play, and Grid Combat!
         </div>
       </div>
     `;

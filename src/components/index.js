@@ -3,6 +3,8 @@
  * Import all components to register them
  */
 
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 export { BaseComponent } from './BaseComponent.js';
 export { FighterCard } from './FighterCard.js';
 export { ActionSelection } from './ActionSelection.js';
@@ -31,6 +33,7 @@ export { SaveManagementScreen } from './SaveManagementScreen.js'; // v4.1 - Save
 export { ComboHint } from './ComboHint.js'; // v4.2 - Combo System
 export { PerformanceMonitorUI } from './PerformanceMonitorUI.js'; // v4.6 - Performance
 export { GridCombatUI } from './GridCombatUI.js'; // v4.7 - Grid Combat
+export { TalentTreeScreen } from './TalentTreeScreen.js'; // v4.11 - Talent System
 
 // Auto-register all components by importing this file
-console.log('✅ All Web Components registered');
+ConsoleLogger.info(LogCategory.UI, '✅ All Web Components registered');

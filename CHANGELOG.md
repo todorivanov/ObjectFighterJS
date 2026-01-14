@@ -9,6 +9,196 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [4.11.0] - 2026-01-14
+
+### Added - Talent Tree System ⭐🌳
+
+**Major Feature: Deep Character Customization**
+
+The Talent System adds massive replayability and build diversity to your character. Each class now has **3 unique specialization trees** with multiple talent nodes providing stat bonuses and passive abilities.
+
+**Core Features:**
+- 🌳 **3 Talent Trees Per Class** - Each class has distinct specializations
+  - WARRIOR: Arms (DPS), Fury (Burst), Protection (Tank)
+  - MAGE: Fire (Burn), Frost (Control), Arcane (Power)
+- 📊 **Progressive Talent Points** - Earn 1 talent point per level (starting at level 2)
+  - Level 10 = 9 talent points
+  - Level 20 = 19 talent points
+- 🎯 **Talent Dependencies** - Strategic progression with prerequisites
+  - Foundation talents (Row 0) - No requirements
+  - Tier 1 talents (Row 1) - Require 5 points in tree
+  - Tier 2 talents (Row 2) - Require 10 points in tree + prerequisites
+  - Capstone talents (Row 3) - Require 15 points in tree + multiple prerequisites
+- 💪 **40+ Unique Talents** - 20+ talents per class with multiple ranks
+- ⚡ **Two Effect Types**:
+  - **Stat Modifiers**: +Strength, +Health, +Defense, +Crit Chance/Damage, +Mana Regen, +Movement
+  - **Passive Abilities**: Execute, Bleed, Block, Ignite, Lifesteal, Slow/Freeze, Cleave, Reflect, Taunt, and more
+
+**WARRIOR Talent Trees:**
+- ⚔️ **Arms (DPS)** - Weapon mastery and devastating strikes
+  - Weapon Mastery (Rank 5): +2 Strength per rank
+  - Precise Strikes (Rank 3): +2% Crit Chance per rank
+  - Execute (Capstone): +50% damage to enemies below 20% HP
+  - Mortal Strike: Attacks cause bleeding
+  - Bladestorm (Ultimate): +50% Critical Damage
+- 😤 **Fury (Burst)** - Rage-fueled relentless attacks
+  - Building Rage (Rank 5): +1 STR, +1% Crit per rank
+  - Enrage: Critical hits grant temporary strength boost
+  - Rampage (Rank 3): Stacking damage on consecutive attacks
+  - Bloodthirst (Rank 3): 5% lifesteal on critical hits
+  - Reckless Abandon (Ultimate): +20% damage, +30% crit chance
+- 🛡️ **Protection (Tank)** - Impenetrable defense and battlefield control
+  - Thick Skin (Rank 5): +3 Defense per rank
+  - Toughness (Rank 5): +25 HP per rank
+  - Shield Block (Rank 3): 10% chance to block attacks per rank
+  - Challenging Shout: Force enemies to attack you (taunt)
+  - Shield Wall (Ultimate): +50 Defense, reflect 20% damage
+
+**MAGE Talent Trees:**
+- 🔥 **Fire (Burn)** - Devastating flames and damage over time
+  - Flame Touched (Rank 5): +2 Spell Damage per rank
+  - Critical Mass (Rank 3): +3% Crit Chance per rank
+  - Ignite: Critical strikes set enemies on fire (8 damage over 4 turns)
+  - Pyroblast: 15% chance to deal 2.5x damage
+  - Combustion (Ultimate): Ignite explodes for AoE damage
+- ❄️ **Frost (Control)** - Battlefield control with ice and cold
+  - Ice Veins (Rank 5): +1 Damage, +2 Defense per rank
+  - Frost Nova: Attacks slow enemy movement
+  - Ice Barrier (Rank 3): Absorb 20 damage per rank
+  - Deep Freeze: 20% chance to freeze enemies in place
+  - Blizzard (Ultimate): AoE frost damage and control
+- 🔮 **Arcane (Power)** - Raw magical power
+  - Arcane Power (Rank 5): +3 Damage per rank
+  - Arcane Intellect (Rank 3): +2 Mana Regen per rank
+  - Arcane Missiles: Attacks hit multiple times
+  - Arcane Surge (Rank 3): Attacks amplify next spell (10% per rank, stacks)
+  - Arcane Mastery (Ultimate): +25 STR, +5 Mana Regen, +15% Crit, +25% all damage
+
+**UI & Interaction:**
+- 🎨 **Beautiful Talent Tree Screen** - Interactive node-based interface
+  - Visual dependency connections between talents
+  - Color-coded talent states: Locked (gray), Available (green), Learned (blue), Maxed (gold)
+  - Detailed tooltips showing effects, requirements, and descriptions
+  - Real-time point counter (available/spent)
+- 🖱️ **Intuitive Controls**:
+  - Left-click to learn talents
+  - Right-click to unlearn talents
+  - Hover for detailed tooltips
+- 🔄 **Respec System** - Reset all talents anytime
+  - Cost: 50 gold × total talent points spent
+  - All points refunded immediately
+
+**Integration & Mechanics:**
+- ⚔️ **Fighter Integration** - Talents apply to all game modes
+  - Stat bonuses automatically added to fighter stats
+  - Passive abilities stored and checked during combat
+  - `applyTalents()` method for fighter creation
+- 🎮 **Universal Application** - Works in ALL game modes:
+  - Story Mode missions
+  - Tournament battles
+  - Single combat
+  - Grid combat system
+- 💾 **Save System** - Talents fully integrated with save/load
+  - Talent selections persist across sessions
+  - Backward compatible with older saves
+  - State stored in `player.talents` (tree1, tree2, tree3)
+
+**Navigation:**
+- 📍 **Top Navigation Bar** - "⭐ Talents" button between Profile and Achievements
+- 🔗 **Direct URL Access** - `/talents` route with character creation guard
+
+**Technical Implementation:**
+- 🔧 **TalentManager** - Core system for managing talent trees
+  - `getTalentTrees(class)` - Retrieve talent trees by class
+  - `learnTalent(treeId, talentId)` - Spend talent point
+  - `unlearnTalent(treeId, talentId)` - Refund talent point
+  - `canLearnTalent()` - Validate prerequisites and requirements
+  - `resetAllTalents(cost)` - Full respec with gold cost
+  - `getActiveTalentEffects()` - Aggregate all active effects
+  - `applyTalentsToFighter(fighter)` - Apply bonuses to fighter
+- 📊 **State Management** - Redux-like pattern with gameStore
+  - Actions: `LEARN_TALENT`, `UNLEARN_TALENT`, `RESET_TALENTS`
+  - Reducers handle state mutations
+  - Real-time UI updates via store subscriptions
+- 📁 **Data Structure** - JSON-based talent definitions
+  - `src/data/talents.js` - 40+ talent definitions
+  - Flexible structure for easy expansion
+
+**Testing & Quality:**
+- ✅ **29 Unit Tests** - All passing with 100% success rate
+  - Talent tree retrieval
+  - Point management and calculations
+  - Learning/unlearning validation
+  - Prerequisite checking
+  - Respec functionality
+  - Effect aggregation
+  - Fighter integration
+- 📝 **Comprehensive Documentation**:
+  - `guides/TALENT_SYSTEM_GUIDE.md` - Full user guide (300+ lines)
+  - Sample builds for each specialization
+  - Strategy guide (early/mid/late game)
+  - FAQ with 10+ common questions
+
+**Strategic Depth:**
+- 🎯 **Build Diversity** - Countless build combinations
+  - Pure DPS builds (Arms/Fire)
+  - Tank builds (Protection/Frost)
+  - Hybrid builds (mix trees)
+- 🧠 **Strategic Choices** - Can't max everything!
+  - 19 points max at level 20
+  - Must choose between trees
+  - Trade-offs between foundation and capstone talents
+- 🔄 **Replayability** - Try different builds
+  - Same class, different playstyle
+  - Respec for specific challenges
+  - Experiment with synergies
+
+**Sample Builds:**
+```
+Warrior - Arms DPS (19 points):
+├── Arms (15): Weapon Mastery 5/5, Execute, Bladestorm
+└── Fury (4): Building Rage 4/5
+Result: +14 STR, +10% Crit, +50% Crit Dmg, Execute passive
+
+Mage - Fire Burst (19 points):
+├── Fire (15): Flame Touched 5/5, Ignite, Combustion
+└── Arcane (4): Arcane Power 4/5
+Result: +22 Dmg, +9% Crit, Ignite + AoE explosion
+```
+
+**Performance:**
+- ⚡ **Zero Performance Impact** - Calculations done at fighter creation
+- 💾 **Minimal Save Size** - Only stores allocated points (compact format)
+- 🔄 **Real-time Updates** - Instant UI feedback on talent changes
+
+**Future Expansion:**
+- More classes with unique trees (Assassin, Berserker, Paladin, Necromancer)
+- Additional talent rows (5-6)
+- Legendary/Ultimate tier talents
+- Talent presets (save/load builds)
+- Talent import/export codes
+
+**Files Added:**
+- `src/game/TalentManager.js` - Core talent management system
+- `src/data/talents.js` - Talent tree definitions (40+ talents)
+- `src/components/TalentTreeScreen.js` - Interactive UI component
+- `src/styles/components/TalentTreeScreen.scss` - Talent tree styling
+- `tests/unit/TalentManager.test.js` - Unit tests (29 tests)
+- `guides/TALENT_SYSTEM_GUIDE.md` - Comprehensive documentation
+
+**Files Modified:**
+- `src/store/gameStore.js` - Added talents state
+- `src/store/reducers.js` - Added talent reducers
+- `src/entities/Fighter.js` - Talent integration methods
+- `src/components/NavigationBar.js` - Added Talents button
+- `src/main-new.js` - Added showTalentTreeScreen handler
+- `src/config/routes.js` - Added /talents route
+- `package.json` - Version bump to 4.11.0
+
+This is a **game-changing feature** that transforms character progression! Two Level 10 Warriors can now be completely different based on their talent choices. 🎮⭐
+
+---
+
 ## [4.10.2] - 2026-01-13
 
 ### Fixed
