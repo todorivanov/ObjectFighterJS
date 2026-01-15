@@ -392,4 +392,130 @@ test.describe('Combat Special Features', () => {
 
     expect(hasDefend).toBe(true);
   });
+
+  test('should reset opponent health between consecutive single combat battles', async ({ page }) => {
+    // This test verifies the fix for: [BUG] Single-combat victories leave lasting effect on heroes
+    // When you win a single-combat victory, the next time you fight - the enemy should have full health
+    
+    // Helper function to get opponent health from combat arena
+    const getOpponentHealth = async () => {
+      return await page.evaluate(() => {
+        const arena = document.querySelector('combat-arena');
+        if (!arena?.shadowRoot) return null;
+        
+        // Try to find health display elements
+        const healthElements = Array.from(arena.shadowRoot.querySelectorAll('.health, .hp, [class*="health"], [class*="hp"]'));
+        
+        // Look for health text patterns in all elements
+        for (const el of healthElements) {
+          const text = el.textContent || '';
+          const match = text.match(/(\d+)\s*\/\s*(\d+)/); // Match "X / Y" pattern
+          if (match) {
+            return { current: parseInt(match[1]), max: parseInt(match[2]) };
+          }
+        }
+        return null;
+      });
+    };
+    
+    // Helper function to complete a battle quickly using auto-battle
+    const completeBattle = async () => {
+      // Enable auto-battle if available
+      const autoBattleBtn = page.locator('combat-arena').locator('button, input[type="checkbox"]').filter({ hasText: /auto/i }).first();
+      const autoBattleExists = await autoBattleBtn.isVisible().catch(() => false);
+      if (autoBattleExists) {
+        await autoBattleBtn.click();
+        await page.waitForTimeout(500);
+      }
+      
+      // Wait for battle to complete (up to 30 seconds)
+      for (let i = 0; i < 60; i++) {
+        const victoryScreen = await page.locator('victory-screen, .victory').isVisible().catch(() => false);
+        if (victoryScreen) {
+          return true;
+        }
+        
+        // Also check for defeat screen
+        const defeatScreen = await page.locator('defeat-screen, .defeat').isVisible().catch(() => false);
+        if (defeatScreen) {
+          return false; // Player lost
+        }
+        
+        await page.waitForTimeout(500);
+      }
+      
+      return null; // Timeout
+    };
+    
+    // Start first combat
+    await startCombatFromTitleScreen(page);
+    
+    // Get initial opponent health to use as reference
+    await page.waitForTimeout(2000); // Wait for UI to fully render
+    const initialHealth = await getOpponentHealth();
+    
+    // Skip test if we can't read health (UI might be different)
+    if (!initialHealth || !initialHealth.max) {
+      console.log('Could not read opponent health, skipping test');
+      return;
+    }
+    
+    const expectedMaxHealth = initialHealth.max;
+    
+    // Complete the first battle
+    const firstBattleResult = await completeBattle();
+    
+    // If player lost or timeout, we can still test by going back to menu
+    if (firstBattleResult === false || firstBattleResult === null) {
+      // Return to menu
+      const menuBtn = page.locator('combat-arena, victory-screen, defeat-screen').locator('button').filter({ hasText: /menu|back|return/i }).first();
+      if (await menuBtn.isVisible().catch(() => false)) {
+        await menuBtn.click();
+        await page.waitForTimeout(1000);
+      }
+    } else if (firstBattleResult === true) {
+      // Victory! Click continue or return to menu
+      const continueBtn = page.locator('victory-screen').locator('button').filter({ hasText: /continue|menu|return/i }).first();
+      if (await continueBtn.isVisible().catch(() => false)) {
+        await continueBtn.click();
+        await page.waitForTimeout(1000);
+      }
+    }
+    
+    // Start second combat with the SAME opponent
+    await page.waitForTimeout(1000);
+    
+    // Navigate to single combat again
+    const titleScreen = await page.locator('title-screen').isVisible().catch(() => false);
+    if (titleScreen) {
+      const singleCombatBtn = page.locator('title-screen').locator('button').filter({ hasText: /Single Combat/i });
+      await singleCombatBtn.click();
+      await page.waitForTimeout(1500);
+    }
+    
+    // Select the SAME first opponent again
+    await expect(page.locator('fighter-gallery')).toBeVisible({ timeout: 10000 });
+    const firstOpponent = page.locator('fighter-gallery').locator('button, .fighter-card, .opponent-card').first();
+    await firstOpponent.click();
+    await page.waitForTimeout(1000);
+    
+    // Start the second battle
+    const startBattleBtn = page.locator('fighter-gallery').locator('button').filter({ hasText: /Start Battle|Begin|Fight/i });
+    await expect(startBattleBtn).toBeVisible({ timeout: 5000 });
+    await startBattleBtn.click();
+    await page.waitForTimeout(2000);
+    
+    // Wait for combat arena
+    await expect(page.locator('combat-arena')).toBeVisible({ timeout: 10000 });
+    await page.waitForTimeout(2000);
+    
+    // Get opponent health at start of second battle
+    const secondBattleHealth = await getOpponentHealth();
+    
+    // Verify opponent has full health (not 0 or reduced from previous battle)
+    expect(secondBattleHealth).not.toBeNull();
+    expect(secondBattleHealth.current).toBeGreaterThan(0);
+    expect(secondBattleHealth.max).toBe(expectedMaxHealth);
+    expect(secondBattleHealth.current).toBe(expectedMaxHealth); // Should be at full health
+  });
 });
