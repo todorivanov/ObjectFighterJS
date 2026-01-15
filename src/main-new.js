@@ -743,6 +743,9 @@ function startTournamentBattle() {
     return;
   }
 
+  // Reset opponent to full health/mana before battle
+  opponent.fullRestore();
+
   // Get player's character
   const state = gameStore.getState();
   const playerCharacter = createPlayerFighter(state.player.character);
@@ -819,6 +822,10 @@ function showOpponentSelection() {
 
     // Get opponent and apply difficulty modifiers
     const opponent = e.detail.fighters[0];
+
+    // Reset opponent to full health/mana before battle
+    opponent.fullRestore();
+
     DifficultyManager.applyDifficultyModifiers(opponent, false); // false = isEnemy
 
     // Start battle: Player vs Opponent
