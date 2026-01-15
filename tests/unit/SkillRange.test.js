@@ -124,14 +124,15 @@ describe('Skill Range Validation', () => {
   });
 
   describe('Skills without range requirement', () => {
-    it('should have null range for self-target skills', () => {
-      const buff = new Skill('Iron Wall', 30, 3, 'buff', 0, 'STRENGTH_BOOST', null);
-      const heal = new Skill('Second Wind', 30, 4, 'heal', 60, null, null);
-      const movement = new Skill('Reposition', 10, 1, 'movement', 0, null, null);
+    it('should have null range for self-target and non-combat skills', () => {
+      // Test examples of skills that don't need range validation
+      const buffSkill = new Skill('Test Buff', 30, 3, 'buff', 0, 'STRENGTH_BOOST', null);
+      const healSkill = new Skill('Test Heal', 30, 4, 'heal', 60, null, null);
+      const movementSkill = new Skill('Test Movement', 10, 1, 'movement', 0, null, null);
 
-      expect(buff.range).toBeNull();
-      expect(heal.range).toBeNull();
-      expect(movement.range).toBeNull();
+      expect(buffSkill.range).toBeNull();
+      expect(healSkill.range).toBeNull();
+      expect(movementSkill.range).toBeNull();
     });
   });
 });

@@ -758,7 +758,7 @@ export default class Game {
     // Check skill range before executing skill
     if (action === 'skill' && actionData.skillIndex !== undefined) {
       const skill = attacker.skills[actionData.skillIndex];
-      if (skill && skill.range !== null && skill.range !== undefined) {
+      if (skill && skill.range != null) {
         // Skill has a specific range - validate it
         const skillRange = skill.range;
         if (!gridManager.isInAttackRange(attacker.id, defender.id, skillRange)) {
